@@ -1,0 +1,77 @@
+---
+title: "高等数据统计分析"
+subtitle: "第一讲 R语言基础"
+author: "易湘琦"
+format:
+  revealjs: 
+    slide-number: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: images/JMU_logo.jpg
+    css: styles.css
+    footer: '[https://quarto.org](https://quarto.org)'
+resources:
+  - demo.pdf
+---
+
+# 课程介绍
+
+## 为什么开/选这门课？
+
+::: incremental
+-   First item
+-   Second item
+-   Third item
+:::
+
+## 主要内容
+
+::: incremental
+- R语言基础与`tidyverse`
+- “基础统计方法”的回顾：t检验，方差分析，线性回归
+- “基础统计方法“的**局限性**
+    - “基础统计方法“的关键假设
+    - 模型诊断
+- “基础统计方法“的拓展
+  - 广义线性模型
+  - 混合效应模型
+  - 广义加性模型
+:::
+
+
+## 考核方式
+
+平时作业和课程项目各占50%
+
+- 平时作业
+  - 提交方式：课堂派
+  - 提交截止时间：星期一
+  - 提交文件格式：qmd文件+html文件
+
+- 课程项目
+  - 提交方式：课堂派
+  - 提交截止时间：第18周的周日
+  - 提交文件格式：qmd文件+html文件+其它文件 
+
+## 关于课程项目
+
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+
+## Bullets
+
+When you click the **Render** button a document will be generated that includes:
+
+-   Content authored with markdown
+-   Output from executable code
+
+## Code
+
+When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+
+

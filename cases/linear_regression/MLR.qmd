@@ -1,0 +1,18 @@
+---
+title: "Multiple Linear Regression"
+format: html
+---
+
+> 参考资料：  
+- [*Multiple Linear Regression R Guide* by Marsha Ella L. Maceren](https://rpubs.com/Maceren19/PS5)   
+
+
+```{r}
+head(mtcars)
+```
+
+
+```{r}
+model <- lm(mpg~cyl+disp+hp+drat+wt+qsec+vs+am+gear+carb, data = mtcars)
+model
+```
