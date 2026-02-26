@@ -4,3 +4,7 @@
 .Ruserdata
 slides/talk01/talk01_files/
 cases/linear_regression/MLR_files
+.DS_Store/
+slides/.DS_Store/
+cases/.DS_Store/
+slides/talk01/.DS_Store/

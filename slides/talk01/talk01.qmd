@@ -17,31 +17,32 @@ resources:
 
 # 课程介绍
 
-## 为什么开/选这门课？
+## 思考题：为什么选这门课？
 
 ::: incremental
--   First item
--   Second item
--   Third item
+-   研究方向
+-   数据分析和编程的基础
+-   期待从这门课学到什么
 :::
 
 ## 主要内容
 
 ::: incremental
-- R语言基础与`tidyverse`
-- “基础统计方法”的回顾：t检验，方差分析，线性回归
-- “基础统计方法“的**局限性**
-    - “基础统计方法“的关键假设
+- `R`语言基础与`tidyverse`
+- *基础*统计方法”的回顾：t检验，方差分析，线性回归......
+- *基础*统计方法的**局限性**
+    - 关键假设
     - 模型诊断
-- “基础统计方法“的拓展
+- *基础*统计方法的拓展
   - 广义线性模型
   - 混合效应模型
-  - 广义加性模型
+  - 广义加性模型......
 :::
 
 
 ## 考核方式
 
+::: incremental
 平时作业和课程项目各占50%
 
 - 平时作业
@@ -53,25 +54,164 @@ resources:
   - 提交方式：课堂派
   - 提交截止时间：第18周的周日
   - 提交文件格式：qmd文件+html文件+其它文件 
+:::
+
+## 关于课程项目：
+
+选择一篇已发表的学术论文，重现其中的数据分析过程，并撰写一篇报告。报告内容包括：
+
+-   论文的研究问题和数据来源 
+-   数据的预处理、统计分析和可视化 
+-   对原文所用方法的评价和改进建议 
+-   可选部分：使用你认为更合理的方法进行分析，并比较结果 
 
 ## 关于课程项目
+评分标准：  
 
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+-   所选论文的质量和分析方法的难度（20%）
+-   数据分析的正确性和完整性（40%）
+-   报告的清晰度和逻辑性（30%）
+-   创新性（10%）
 
-## Bullets
+> 关于AI的使用：可以使用AI工具辅助数据分析和报告撰写，但必须在报告中明确说明使用了哪些AI工具，以及它们在分析中的具体作用。评分时会考虑AI工具的合理使用和对分析结果的贡献。
 
-When you click the **Render** button a document will be generated that includes:
+## 思考题：为什么选这门课？
 
--   Content authored with markdown
--   Output from executable code
 
-## Code
+-   研究方向
+-   数据分析和编程的基础
+-   期待从这门课学到什么
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
 
+##
+
+:::: {.columns}
+
+::: {.column width="60%"}
+<span style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 5rem;">
+“Young man, in mathematics, you don't understand things. You just get used to them.”
+</span>
+:::
+
+::: {.column width="40%"}
+![](images/JohnvonNeumann-LosAlamos.gif)
+
+<div style="text-align:center">John von Neumann (1903–1957)</div>
+:::
+
+::::
+
+# R语言基础
+
+## R语言是什么？
+R是一种主要用于**统计分析**和**数据可视化**的编程语言和环境。
+
+R语言的特点：
+
+-   **开源**：免费使用，拥有庞大的社区支持。
+-   **专为统计分析设计**：提供了丰富的统计方法和工具，适合各种数据分析任务。
+-   **优秀的可视化功能**：如ggplot2等包提供了强大的数据可视化工具。
+-   **丰富的包**：有成千上万的包，涵盖各种工具，例如，机器学习、深度学习、生物信息学等领域。
+
+## R语言的安装
+R语言的安装包括R本身和一个集成开发环境（IDE）,推荐使用`RStudio`作为IDE。
+
+1. 安装R语言：
+   - 访问[R项目官网](https://www.r-project.org/){target="_blank" rel="noopener noreferrer"}下载并安装适合你操作系统的R版本。
+2. 安装RStudio：
+   - 访问[RStudio官网](https://posit.co/download/rstudio-desktop/){target="_blank" rel="noopener noreferrer"}下载并安装RStudio Desktop版本。
+
+> Positron是Posit公司全新推出的IDE，如果你熟悉vs code，想要更好的AI支持，可以考虑安装[Positron](https://positron.posit.co){target="_blank" rel="noopener noreferrer"}。
+
+## R自带的GUI
+`R`语言安装完成后，会有一个自带的图形交互界面（GUI）:
+
+::: {.r-stack}
+![](images/R_GUI.png){.fragment width=800px}
+:::
+
+## 命令行中使用R
+在命令行中输入`R`命令可以进入R的交互式环境：
+
+::: {.r-stack}
+![](images/R_terminal.png){.fragment width=800px}
+:::
+
+
+## RStudio界面介绍
+RStudio界面主要分为四个部分：
+
+1. **源代码编辑器**：用于编写和编辑R脚本、R Markdown文档等。
+2. **控制台**：用于直接输入R命令并查看输出结果。
+3. **环境/历史**：显示当前工作环境中的变量和历史命令。
+4. **文件/图形/包/帮助**：用于管理文件、查看图形输出、安装和加载包，以及查看帮助文档。
+
+## 变量与赋值
+**变量**：在R中，变量是用来存储数据的容器，可以是数值、字符、逻辑值等类型。
+
+**变量赋值**：使用`<-`或`=`进行变量赋值。
 ```{r}
-1 + 1
+#| echo: true
+x <- 10
+y = 20
 ```
 
+> 注意：虽然`<-`和`=`都可以用于赋值，但在R中，推荐使用`<-`进行变量赋值，以避免与函数参数中的`=`混淆。
 
+## 变量命名规则
 
+变量命名的注意事项：
+
+-   变量名必须以字母或点（.）开头，后续可以包含字母、数字、点（.）或下划线（_）。
+-   变量名区分大小写，例如`myVar`和`myvar`是两个不同的变量。
+-   避免使用R的保留字（如`if`、`else`、`for`等）作为变量名。
+-   变量名应具有描述性，便于理解其用途，例如`age`、`height`等。
+-   变量名中不应包含空格，可以使用下划线（_）或驼峰命名法（如`myVariable`）来提高可读性。
+
+## 基础数据类型
+R中的基础数据类型包括：
+
+-   **浮点型**（double）：存储数值数据，例如`3.14`、`-2`等。
+-   **字符型**（character）：存储文本数据，例如`"Hello, World!"`。
+-   **逻辑型**（logical）：存储布尔值，只有`TRUE`和`FALSE`两种取值。
+-   **整数型**（integer）：存储整数数据，例如`1L`、`100L`等。
+-   **复数型**（complex）：存储复数数据，例如`1 + 2i`。
+-   **原生型**（raw）：存储原始字节数据，基本接触不到。 
+
+## 数据结构
+R中的常见数据结构包括：
+
+-   **向量**（vector）：同一类型元素的有序集合。
+-   **矩阵**（matrix）：二维数组，元素类型相同。
+-   **数组**（array）：多维数组，元素类型相同。
+-   **数据框**（data.frame）：表格数据结构，列可以是不同类型。
+-   **列表**（list）：可以包含不同类型的元素。
+-   **因子**（factor）：用于存储分类数据。
+
+## 向量
+**向量**（vector）是**同一类型**元素的**有序**集合。
+
+例如：
+```{r}
+#| echo: true
+# 创建一个数值向量
+num_v <- c(1, 2, 3, 4, 5)
+num_v_1 <- 1:5
+# 创建一个字符向量
+char_v <- c("a", "b", "c", "d", "e")
+# 创建一个逻辑向量
+log_v <- c(TRUE, FALSE, TRUE, FALSE, TRUE)
+```
+
+## 向量化
+>R中的许多操作都是向量化的，这意味着它们可以直接作用于整个向量，而不需要对向量中的元素逐一操作。
+
+```{r}
+#| echo: true
+# num_v中的每个元素都加10
+num_v + 10
+# char_v中的每个元素都转换为大写
+toupper(char_v) 
+# log_v中的每个元素取反
+!log_v
+```
