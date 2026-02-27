@@ -6,8 +6,8 @@
 <script src="talk01_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="talk01_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="talk01_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="talk01_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.32">
+<link href="talk01_files/libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.27">
 
   <meta name="author" content="易湘琦">
   <title>高等数据统计分析</title>
@@ -95,7 +95,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="talk01_files/libs/revealjs/dist/theme/quarto-f563837468303362081e247dddd440d0.css">
+  <link rel="stylesheet" href="talk01_files/libs/revealjs/dist/theme/quarto-534cd8e3a96973385dffff3f4709048d.css">
   <link rel="stylesheet" href="styles.css">
   <link href="talk01_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="talk01_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
@@ -225,13 +225,13 @@
 <h2>主要内容</h2>
 <ul>
 <li class="fragment"><code>R</code>语言基础与<code>tidyverse</code></li>
-<li class="fragment"><em>基础</em>统计方法”的回顾：t检验，方差分析，线性回归……</li>
-<li class="fragment"><em>基础</em>统计方法的<strong>局限性</strong>
+<li class="fragment"><em>基础统计方法的回顾</em>：t检验，方差分析，线性回归……</li>
+<li class="fragment"><em>基础统计方法的</em><strong>局限性</strong>
 <ul>
 <li class="fragment">关键假设</li>
 <li class="fragment">模型诊断</li>
 </ul></li>
-<li class="fragment"><em>基础</em>统计方法的拓展
+<li class="fragment"><em>基础统计方法</em>的<strong>拓展</strong>
 <ul>
 <li class="fragment">广义线性模型</li>
 <li class="fragment">混合效应模型</li>
@@ -261,7 +261,8 @@
 <h2>关于课程项目：</h2>
 <p>选择一篇已发表的学术论文，重现其中的数据分析过程，并撰写一篇报告。报告内容包括：</p>
 <ul>
-<li>论文的研究问题和数据来源</li>
+<li>论文的简介</li>
+<li>论文数据来源</li>
 <li>数据的预处理、统计分析和可视化</li>
 <li>对原文所用方法的评价和改进建议</li>
 <li>可选部分：使用你认为更合理的方法进行分析，并比较结果</li>
@@ -280,8 +281,9 @@
 <p>关于AI的使用：可以使用AI工具辅助数据分析和报告撰写，但必须在报告中明确说明使用了哪些AI工具，以及它们在分析中的具体作用。评分时会考虑AI工具的合理使用和对分析结果的贡献。</p>
 </blockquote>
 </section>
-<section id="思考题为什么选这门课-1" class="slide level2">
-<h2>思考题：为什么选这门课？</h2>
+<section id="作业1" class="slide level2">
+<h2>作业1：</h2>
+<p>为什么选这门课？</p>
 <ul>
 <li>研究方向</li>
 <li>数据分析和编程的基础</li>
@@ -351,101 +353,542 @@ John von Neumann (1903–1957)
 <h2>RStudio界面介绍</h2>
 <p>RStudio界面主要分为四个部分：</p>
 <ol type="1">
-<li><strong>源代码编辑器</strong>：用于编写和编辑R脚本、R Markdown文档等。</li>
 <li><strong>控制台</strong>：用于直接输入R命令并查看输出结果。</li>
-<li><strong>环境/历史</strong>：显示当前工作环境中的变量和历史命令。</li>
+<li><strong>源代码编辑器</strong>：用于编写和编辑R脚本、R Markdown文档等。</li>
+<li><strong>环境/历史</strong>：显示当前工作环境中的对象和历史命令。</li>
 <li><strong>文件/图形/包/帮助</strong>：用于管理文件、查看图形输出、安装和加载包，以及查看帮助文档。</li>
 </ol>
 </section>
-<section id="变量与赋值" class="slide level2">
-<h2>变量与赋值</h2>
-<p><strong>变量</strong>：在R中，变量是用来存储数据的容器，可以是数值、字符、逻辑值等类型。</p>
-<p><strong>变量赋值</strong>：使用<code>&lt;-</code>或<code>=</code>进行变量赋值。</p>
+<section id="作业2" class="slide level2">
+<h2>作业2</h2>
+<p>R和Rstudio（或Positron的安装）</p>
+</section>
+<section id="对象" class="slide level2">
+<h2>对象</h2>
+<p><strong>对象</strong>（object）：在R中，对象是数据的载体，可以是数值、字符、逻辑值、函数等。</p>
+<p><strong>赋值</strong>：要创建一个R对象，先确定一个名称，使用<code>&lt;-</code>或<code>=</code>将数据赋值给它。</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>x <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb1-2"><a href=""></a>y <span class="ot">=</span> <span class="dv">20</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="co"># 两种符号创建对象</span></span>
+<span id="cb1-2"><a href=""></a>x <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb1-3"><a href=""></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>y <span class="ot">=</span> <span class="dv">20</span></span>
+<span id="cb3-2"><a href=""></a>y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 20</code></pre>
+</div>
 </div>
 <blockquote>
-<p>注意：虽然<code>&lt;-</code>和<code>=</code>都可以用于赋值，但在R中，推荐使用<code>&lt;-</code>进行变量赋值，以避免与函数参数中的<code>=</code>混淆。</p>
+<p>虽然<code>&lt;-</code>和<code>=</code>都可以用于赋值，推荐使用<code>&lt;-</code>，以避免与函数参数中的<code>=</code>混淆。</p>
 </blockquote>
 </section>
-<section id="变量命名规则" class="slide level2">
-<h2>变量命名规则</h2>
-<p>变量命名的注意事项：</p>
+<section id="对象命名规则" class="slide level2">
+<h2>对象命名规则</h2>
 <ul>
-<li>变量名必须以字母或点（.）开头，后续可以包含字母、数字、点（.）或下划线（_）。</li>
-<li>变量名区分大小写，例如<code>myVar</code>和<code>myvar</code>是两个不同的变量。</li>
-<li>避免使用R的保留字（如<code>if</code>、<code>else</code>、<code>for</code>等）作为变量名。</li>
-<li>变量名应具有描述性，便于理解其用途，例如<code>age</code>、<code>height</code>等。</li>
-<li>变量名中不应包含空格，可以使用下划线（_）或驼峰命名法（如<code>myVariable</code>）来提高可读性。</li>
+<li>对象名以字母或点（.）开头，后续可以包含字母、数字、点（.）或下划线（_）。</li>
+<li>对象名区分大小写，例如<code>myVar</code>和<code>myvar</code>是两个不同的对象。</li>
+<li>避免使用R的保留字（如<code>if</code>、<code>else</code>、<code>for</code>等）作为对象名。</li>
+<li>对象名应具有描述性，便于理解其用途，例如<code>age</code>、<code>height</code>等。</li>
+<li>可以使用下划线（_）或驼峰命名法（如<code>male_age</code>、<code>myVariable</code>）来提高可读性.</li>
 </ul>
 </section>
-<section id="基础数据类型" class="slide level2">
-<h2>基础数据类型</h2>
-<p>R中的基础数据类型包括：</p>
+<section id="函数" class="slide level2">
+<h2>函数</h2>
 <ul>
-<li><strong>浮点型</strong>（double）：用于存储数值数据，例如<code>3.14</code>、<code>-2</code>等。</li>
-<li><strong>字符型</strong>（character）：用于存储文本数据，例如<code>"Hello, World!"</code>。</li>
-<li><strong>逻辑型</strong>（logical）：用于存储布尔值，只有<code>TRUE</code>和<code>FALSE</code>两种取值。</li>
-<li><strong>整数型</strong>（integer）：用于存储整数数据，例如<code>1L</code>、<code>100L</code>等。</li>
-<li><strong>复数型</strong>（complex）：用于存储复数数据，例如<code>1 + 2i</code>。</li>
-<li><strong>原生型</strong>（raw）：用于存储原始字节数据，基本接触不到。</li>
+<li>函数是执行特定任务的代码块</li>
+<li>使用函数时，需键入函数名并在其后的括号中再提供相应的数据, 即函数的参数（argument）</li>
+<li>R中有许多内置函数，也可以自定义函数。</li>
 </ul>
-</section>
-<section id="数据结构" class="slide level2">
-<h2>数据结构</h2>
-<p>R中的常见数据结构包括：</p>
-<ul>
-<li><strong>向量</strong>（vector）：同一类型元素的有序集合。</li>
-<li><strong>矩阵</strong>（matrix）：二维数组，元素类型相同。</li>
-<li><strong>数组</strong>（array）：多维数组，元素类型相同。</li>
-<li><strong>数据框</strong>（data.frame）：表格数据结构，列可以是不同类型。</li>
-<li><strong>列表</strong>（list）：可以包含不同类型的元素。</li>
-<li><strong>因子</strong>（factor）：用于存储分类数据。</li>
-</ul>
-</section>
-<section id="向量" class="slide level2">
-<h2>向量</h2>
-<p><strong>向量</strong>（vector）：<strong>同一类型</strong>元素的<strong>有序</strong>集合。例如：</p>
+<p>常用内置函数示例：</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a><span class="co"># 创建一个数值向量</span></span>
-<span id="cb2-2"><a href=""></a>num_v <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>)</span>
-<span id="cb2-3"><a href=""></a>num_v_1 <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span></span>
-<span id="cb2-4"><a href=""></a><span class="co"># 创建一个字符向量</span></span>
-<span id="cb2-5"><a href=""></a>char_v <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>)</span>
-<span id="cb2-6"><a href=""></a><span class="co"># 创建一个逻辑向量</span></span>
-<span id="cb2-7"><a href=""></a>log_v <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>die <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>) <span class="co"># 创建一个名为die的对象，包括1到6的数值</span></span>
+<span id="cb5-2"><a href=""></a><span class="fu">mean</span>(die) <span class="co"># 计算平均值</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">length</span>(die) <span class="co"># 计算长度</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6</code></pre>
+</div>
 </div>
 </section>
-<section id="向量化" class="slide level2">
-<h2>向量化</h2>
+<section id="函数参数" class="slide level2">
+<h2>函数参数</h2>
+<p>函数参数可以是原始数据、R对象、或其它函数的输出值。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">round</span>(<span class="fu">mean</span>(die), <span class="dv">2</span>) <span class="co"># 计算平均值并保留两位小数</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.5</code></pre>
+</div>
+</div>
 <blockquote>
-<p>R中的许多操作都是向量化的，这意味着它们可以直接作用于整个向量，而不需要对向量中的元素逐一操作。</p>
+<p>函数嵌套时，内层函数先执行，结果作为外层函数的参数。</p>
 </blockquote>
+<p>当函数有多个参数时，可以使用位置参数（positional argument）或命名参数（named argument）来传参。</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="co"># num_v中的每个元素都加10</span></span>
-<span id="cb3-2"><a href=""></a>num_v <span class="sc">+</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">round</span>(<span class="fl">3.14159</span>, <span class="dv">2</span>) <span class="co"># 使用位置参数</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 11 12 13 14 15</code></pre>
+<pre><code>[1] 3.14</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="co"># char_v中的每个元素都转换为大写</span></span>
-<span id="cb5-2"><a href=""></a><span class="fu">toupper</span>(char_v) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="fu">round</span>(<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">x =</span> <span class="fl">3.14159</span>) <span class="co"># 使用命名参数</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "A" "B" "C" "D" "E"</code></pre>
+<pre><code>[1] 3.14</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="co"># log_v中的每个元素取反</span></span>
-<span id="cb7-2"><a href=""></a><span class="sc">!</span>log_v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="函数参数-1" class="slide level2">
+<h2>函数参数</h2>
+<p><code>args</code>函数可以用来查看一个函数的参数列表和默认值。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="fu">args</span>(round) <span class="co"># 查看round函数的参数列表</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] FALSE  TRUE FALSE  TRUE FALSE</code></pre>
+<pre><code>function (x, digits = 0, ...) 
+NULL</code></pre>
 </div>
 </div>
+<p>这里显示<code>digits</code>已经被设置为0（默认值），意味着如果不提供<code>digits</code>参数，默认会将结果四舍五入到整数。</p>
+<blockquote>
+<p>需要了解某一函数的具体用法，可以查看该函数的帮助文档，在控制台键入<code>?函数名</code>，例如<code>?round</code>，或者使用<code>help(函数名)</code>，例如<code>help(round)</code>。</p>
+</blockquote>
+</section>
+<section id="自定义函数" class="slide level2">
+<h2>自定义函数</h2>
+<p>基本语法如下：</p>
+<pre><code>function_name &lt;- function(arg1, arg2 = default_value, ...) {
+  # 函数体
+  return(result)
+}</code></pre>
+<p>例如：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a><span class="co"># 定义一个函数，计算两个数的和</span></span>
+<span id="cb18-2"><a href=""></a>add <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">y =</span> <span class="dv">0</span>) {</span>
+<span id="cb18-3"><a href=""></a>  result <span class="ot">&lt;-</span> x <span class="sc">+</span> y</span>
+<span id="cb18-4"><a href=""></a>  <span class="fu">return</span>(result)</span>
+<span id="cb18-5"><a href=""></a>}</span>
+<span id="cb18-6"><a href=""></a><span class="co"># 调用函数</span></span>
+<span id="cb18-7"><a href=""></a><span class="fu">add</span>(<span class="dv">5</span>) <span class="co"># 只提供一个参数，y使用默认值0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a><span class="fu">add</span>(<span class="dv">5</span>, <span class="dv">10</span>) <span class="co"># 提供两个参数，覆盖默认值</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15</code></pre>
+</div>
+</div>
+</section>
+<section id="练习" class="slide level2">
+<h2>练习</h2>
+<p>定义一个名为<code>greet</code>的函数，接受一个参数<code>name</code>，返回一个问候语，例如“Hello, name!”。</p>
+</section>
+<section id="原子型向量" class="slide level2">
+<h2>原子型向量</h2>
+<p>R中的<strong>原子型向量</strong>（atomic vector）是由同一类型的元素组成的一维数组。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>die <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>) <span class="co"># 可以将一组数据用c()函数组合成一个原子型向量</span></span>
+<span id="cb22-2"><a href=""></a><span class="fu">is.atomic</span>(die) <span class="co"># 判断die是否是一个原子型向量</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a>five <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># 单个数值也是一个长度为1的原子型向量</span></span>
+<span id="cb24-2"><a href=""></a><span class="fu">is.atomic</span>(five)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p>R中有六种基本的原子型向量，分别是<strong>双整型</strong>（double）、<strong>字符型</strong>（character）、<strong>逻辑型</strong>（logical）、整数型（integer）、复数型（complex）和原生型（raw）。</p>
+</section>
+<section id="双整型向量" class="slide level2">
+<h2>双整型向量</h2>
+<p>双整型向量用来存储普通的数值型数据，R中键入的任何一个数值都会默认以双整型存储。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a>num_v <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">2.3</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="sc">-</span><span class="fl">100.4</span>) <span class="co"># 创建一个数值向量</span></span>
+<span id="cb26-2"><a href=""></a>num_v</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]    1.0    2.3   -3.0 -100.4</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a><span class="fu">typeof</span>(num_v) <span class="co"># 查看num_v的类型</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "double"</code></pre>
+</div>
+</div>
+<blockquote>
+<p>双整型常被称为数值型（numeric）。双整型来源于计算机科学中的双精度浮点数（double-precision floating-point number），它使用64位来存储一个数值。</p>
+</blockquote>
+</section>
+<section id="整数型向量" class="slide level2">
+<h2>整数型向量</h2>
+<p>整数型向量用来存储整数数据，在R中可以通过在数值后面添加<code>L</code>来创建一个整数型向量。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a>int_v <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>L, <span class="dv">2</span>L, <span class="dv">3</span>L, <span class="dv">4</span>L, <span class="dv">5</span>L) <span class="co"># 创建一个整数向量</span></span>
+<span id="cb30-2"><a href=""></a>int_v</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 2 3 4 5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href=""></a><span class="fu">typeof</span>(int_v) <span class="co"># 查看int_v的类型</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "integer"</code></pre>
+</div>
+</div>
+<blockquote>
+<p>思考题：<br>
+1. <code>sqrt(2)^2-2</code>的结果是什么？为什么？<br>
+2. 整数型相较于双整型有哪些优缺点？整数型的应用场景有哪些？</p>
+</blockquote>
+</section>
+<section id="字符型向量" class="slide level2">
+<h2>字符型向量</h2>
+<p>字符型向量用来存储文本数据:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a>text <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Hello"</span>, <span class="st">"World"</span>, <span class="st">"!"</span>, <span class="st">"2026"</span>) <span class="co"># 创建一个字符向量</span></span>
+<span id="cb34-2"><a href=""></a>text</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Hello" "World" "!"     "2026" </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href=""></a><span class="fu">typeof</span>(text) <span class="co"># 查看char_v的类型</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+</div>
+<p>字符型向量中的每个元素称作一个字符串（string），可以是单词、句子或任何文本，用一对引号包围。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href=""></a>x <span class="ot">&lt;-</span> <span class="st">"x"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<blockquote>
+<p>注意避免将字符串和R对象混淆，上例中<code>x</code>是一个字符型向量，长度为1，储存的值是字符串<code>"x"</code>。</p>
+</blockquote>
+</section>
+<section id="逻辑型向量" class="slide level2">
+<h2>逻辑型向量</h2>
+<p>逻辑型向量存储布尔值（Boolean values），即<code>TRUE</code>和<code>FALSE</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a>log_v <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, T, F) <span class="co"># 创建一个逻辑向量</span></span>
+<span id="cb39-2"><a href=""></a>log_v</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  TRUE FALSE  TRUE FALSE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href=""></a><span class="fu">typeof</span>(log_v) <span class="co"># 查看log_v的类型</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "logical"</code></pre>
+</div>
+</div>
+<p>比较算符（<code>==</code>、<code>!=</code>、<code>&gt;</code>、<code>&lt;</code>等）和逻辑算符（<code>&amp;</code>、<code>|</code>、<code>!</code>等）</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href=""></a><span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>) <span class="sc">&amp;</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE FALSE  TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href=""></a><span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>) <span class="sc">|</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  TRUE  TRUE FALSE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href=""></a><span class="sc">!</span><span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE  TRUE FALSE</code></pre>
+</div>
+</div>
+</section>
+<section id="矩阵" class="slide level2">
+<h2>矩阵</h2>
+<p><strong>矩阵</strong>（matrix）是二维数组，元素类型相同。可用<code>matrix()</code>创建矩阵。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href=""></a>m <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">ncol =</span> <span class="dv">3</span>) <span class="co"># 创建一个2行3列的矩阵</span></span>
+<span id="cb49-2"><a href=""></a>m</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    1    3    5
+[2,]    2    4    6</code></pre>
+</div>
+</div>
+<blockquote>
+<p>默认按照列优先（column-major order）填充矩阵。</p>
+</blockquote>
+<p>设置<code>byrow = TRUE</code>，按行优先（row-major order）填充：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href=""></a>m_byrow <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>) <span class="co"># 按行优先填充矩阵</span></span>
+<span id="cb51-2"><a href=""></a>m_byrow</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    1    2    3
+[2,]    4    5    6</code></pre>
+</div>
+</div>
+</section>
+<section id="数组" class="slide level2">
+<h2>数组</h2>
+<p><code>array</code>函数创建n纬数组，第一个参数是一个向量，<code>dim</code>参数指定了数组的维度。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href=""></a>ar <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="fu">c</span>(<span class="dv">11</span><span class="sc">:</span><span class="dv">14</span>, <span class="dv">21</span><span class="sc">:</span><span class="dv">24</span>, <span class="dv">31</span><span class="sc">:</span><span class="dv">34</span>), <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>)) <span class="co"># 创建一个2x2x3的数组</span></span>
+<span id="cb53-2"><a href=""></a>ar</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, , 1
+
+     [,1] [,2]
+[1,]   11   13
+[2,]   12   14
+
+, , 2
+
+     [,1] [,2]
+[1,]   21   23
+[2,]   22   24
+
+, , 3
+
+     [,1] [,2]
+[1,]   31   33
+[2,]   32   34</code></pre>
+</div>
+</div>
+</section>
+<section id="向量矩阵和数组之间的联系" class="slide level2">
+<h2>向量、矩阵和数组之间的联系</h2>
+<p>三者皆储存同类型数据，矩阵和数组比向量多了维度<strong>属性</strong>（attribute）。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href=""></a>vec <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>; mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">nrow =</span> <span class="dv">2</span>); arr <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">dim =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>))</span>
+<span id="cb55-2"><a href=""></a><span class="fu">attributes</span>(vec) <span class="co"># 向量没有属性</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NULL</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href=""></a><span class="fu">attributes</span>(mat) <span class="co"># 矩阵有dim属性</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$dim
+[1] 2 3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href=""></a><span class="fu">attributes</span>(arr) <span class="co"># 数组有dim属性</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$dim
+[1] 2 3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href=""></a><span class="fu">c</span>(<span class="fu">typeof</span>(vec), <span class="fu">typeof</span>(mat), <span class="fu">typeof</span>(arr)) <span class="co"># 元素类型都是整型</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "integer" "integer" "integer"</code></pre>
+</div>
+</div>
+</section>
+<section id="因子" class="slide level2">
+<h2>因子</h2>
+<p><strong>因子</strong>（factor）用于存储分类数据，比如性别、血型、教育水平等，可以使用<code>factor()</code>函数创建因子。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href=""></a>name <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span>, <span class="st">"David"</span>)</span>
+<span id="cb63-2"><a href=""></a>gender <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Female"</span>, <span class="st">"Female"</span>, <span class="st">"Male"</span>)) <span class="co"># 创建一个因子</span></span>
+<span id="cb63-3"><a href=""></a>gender</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Male   Female Female Male  
+Levels: Female Male</code></pre>
+</div>
+</div>
+<p><strong>因子和字符型向量有什么区别？</strong></p>
+</section>
+<section id="因子-1" class="slide level2">
+<h2>因子</h2>
+<p>向<code>factor</code>函数传递一个原子型向量以生成因子，向量中的值会重新编码为一串整数值储存为一个整数型。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href=""></a><span class="fu">typeof</span>(gender)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "integer"</code></pre>
+</div>
+</div>
+<p>此外，因子还具有一个重要的属性：<strong>水平</strong>（levels），它存储了分类变量的所有可能取值。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href=""></a><span class="fu">levels</span>(gender) <span class="co"># 查看gender因子的水平</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Female" "Male"  </code></pre>
+</div>
+</div>
+<p>因子还包含一个属性<strong>类</strong>（class），它告诉R这个对象是一个因子。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href=""></a><span class="fu">class</span>(gender) <span class="co"># 查看gender因子的类</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "factor"</code></pre>
+</div>
+</div>
+</section>
+<section id="列表" class="slide level2">
+<h2>列表</h2>
+<p><strong>列表</strong>（list）是一维有序集合，其中的元素是R对象，且可以是不同类型的对象。使用<code>list()</code>函数创建列表。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href=""></a>my_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">name =</span> <span class="st">"Alice"</span>, <span class="at">age =</span> <span class="dv">30</span>, <span class="at">scores =</span> <span class="fu">c</span>(<span class="dv">85</span>, <span class="dv">90</span>, <span class="dv">95</span>)) <span class="co"># 创建一个列表</span></span>
+<span id="cb71-2"><a href=""></a>my_list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$name
+[1] "Alice"
+
+$age
+[1] 30
+
+$scores
+[1] 85 90 95</code></pre>
+</div>
+</div>
+<p>列表中的每个元素都可以通过名称或位置访问：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href=""></a>my_list<span class="sc">$</span>name <span class="co"># 通过名称访问</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Alice"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href=""></a>my_list[[<span class="dv">2</span>]] <span class="co"># 通过位置访问</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30</code></pre>
+</div>
+</div>
+</section>
+<section id="数据框" class="slide level2">
+<h2>数据框</h2>
+<p><strong>数据框</strong>（data.frame）是表格数据结构，是数据分析中最为常用的数据结构。数据框的列可以是不同类型的数据。使用<code>data.frame()</code>函数创建数据框。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href=""></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">name =</span> <span class="fu">c</span>(<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span>), <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">25</span>, <span class="dv">35</span>), <span class="at">gender =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"Female"</span>, <span class="st">"Male"</span>, <span class="st">"Male"</span>))) <span class="co"># 创建一个数据框</span></span>
+<span id="cb77-2"><a href=""></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     name age gender
+1   Alice  30 Female
+2     Bob  25   Male
+3 Charlie  35   Male</code></pre>
+</div>
+</div>
+<blockquote>
+<p>思考题：<br>
+1. 数据框和矩阵有什么区别和联系？<br>
+2. 数据框和列表有什么区别和联系？</p>
+</blockquote>
+</section>
+<section id="向量索引和元素选取" class="slide level2">
+<h2>向量索引和元素选取</h2>
+<p>R中可以使用索引来选取向量、矩阵、数组、列表和数据框中的元素。</p>
+<p>向量索引常使用位置索引（整数）或逻辑索引（布尔值）：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href=""></a>vec <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>)</span>
+<span id="cb79-2"><a href=""></a>vec[<span class="dv">1</span>] <span class="co"># 位置索引，选取第一个元素</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href=""></a>vec[<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>)] <span class="co"># 位置索引，选取第二和第四个元素</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 20 40</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href=""></a>vec[vec <span class="sc">&gt;</span> <span class="dv">25</span>] <span class="co"># 逻辑索引，选取大于25的元素</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30 40 50</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href=""></a>vec[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>)] <span class="co"># 位置索引，选取第一个元素两次</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10 10</code></pre>
+</div>
+</div>
+<p>位置索引可以是负数，表示排除对应位置的元素：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb87"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href=""></a>vec[<span class="sc">-</span><span class="dv">1</span>] <span class="co"># 排除第一个元素</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 20 30 40 50</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb89"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href=""></a>vec[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>)] <span class="co"># 排除第二和第四个元素</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10 30 50</code></pre>
+</div>
+</div>
+</section>
+<section id="矩阵索引和元素选取" class="slide level2">
+<h2>矩阵索引和元素选取</h2>
+<p>矩阵和数组的索引：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href=""></a>m <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb91-2"><a href=""></a>m[<span class="dv">1</span>, <span class="dv">2</span>] <span class="co"># 选取第一行第二列的元素</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb93"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href=""></a>m[, <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">5</span>)] <span class="co"># 选取第三、五列的所有元素</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]    5    9
+[2,]    6   10</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb95"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href=""></a>m[<span class="sc">-</span><span class="dv">1</span>, <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">4</span>)] <span class="co"># 排除第一行，选取第一、四列的元素</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2 8</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb97"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href=""></a>m[m <span class="sc">&gt;</span> <span class="dv">4</span>] <span class="co"># 选取大于4的元素</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  5  6  7  8  9 10</code></pre>
+</div>
+</div>
+</section>
+<section id="数据框索引和元素选取" class="slide level2">
+<h2>数据框索引和元素选取</h2>
+<p>数据框的索引可以使用位置索引、列名索引或逻辑索引：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb99"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href=""></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">name =</span> <span class="fu">c</span>(<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Charlie"</span>), <span class="at">age =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">25</span>, <span class="dv">35</span>), <span class="at">gender =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"Female"</span>, <span class="st">"Male  "</span>, <span class="st">"Male"</span>))) <span class="co"># 创建一个数据框</span></span>
+<span id="cb99-2"><a href=""></a>df[<span class="dv">1</span>, ] <span class="co"># 选取第一行</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   name age gender
+1 Alice  30 Female</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb101"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href=""></a>df[, <span class="st">"age"</span>] <span class="co"># 选取age列</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30 25 35</code></pre>
+</div>
+</div>
+<p><code>$</code>符号是数据框和列表中特有的索引方式，用于选取列：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb103"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href=""></a>df<span class="sc">$</span>gender <span class="co"># 选取gender列</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Female Male   Male  
+Levels: Female Male Male  </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb105"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href=""></a>df[df<span class="sc">$</span>age <span class="sc">&gt;</span> <span class="dv">30</span>, ] <span class="co"># 选取age大于30的行</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     name age gender
+3 Charlie  35   Male</code></pre>
+</div>
+</div>
+</section>
+<section id="列表索引和元素选取" class="slide level2">
+<h2>列表索引和元素选取</h2>
+<p>列表的索引可以使用位置索引、名称索引或逻辑索引：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb107"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href=""></a>my_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">name =</span> <span class="st">"Alice"</span>, <span class="at">age =</span> <span class="dv">30</span>, <span class="at">scores =</span> <span class="fu">c</span>(<span class="dv">85</span>, <span class="dv">90</span>, <span class="dv">95</span>)) <span class="co"># 创建一个列表</span></span>
+<span id="cb107-2"><a href=""></a>my_list[[<span class="st">"name"</span>]] <span class="co"># 选取name元素</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Alice"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href=""></a>my_list[[<span class="dv">3</span>]] <span class="co"># 选取第三个元素，即scores</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 85 90 95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href=""></a>my_list<span class="sc">$</span>scores <span class="co"># 选取scores元素的另一种方式</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 85 90 95</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href=""></a>my_list[<span class="dv">3</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$scores
+[1] 85 90 95</code></pre>
+</div>
+</div>
+<p><code>[]</code>和<code>[[]]</code>的区别：</p>
+<ul>
+<li><code>[]</code>返回列表，即使只选一个元素，结果仍是一个列表。</li>
+<li><code>[[]]</code>返回元素本身，如果选取一个元素，结果就是该元素的值，而不是一个列表。</li>
+</ul>
+</section>
+<section id="脚本和quarto文档" class="slide level2">
+<h2>脚本和quarto文档</h2>
+<p>R脚本是纯文本文件，通常以<code>.R</code>为扩展名，用于编写和保存R代码。</p>
+<p>quarto文档是一个包含文本、代码和输出的文件，通常以<code>.qmd</code>为扩展名，用于创建动态报告和演示文稿。</p>
+</section>
+<section id="参考资料" class="slide level2">
+<h2>参考资料</h2>
+<ul>
+<li>R语言入门与实践（Hands-On Programming with R）, Garrett Grolemund著，人民邮电出版社，2016年</li>
+<li><a href="https://quarto.org">quarto官方文档</a></li>
+</ul>
 
 </section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="images/JMU_logo.jpg" class="slide-logo"></p>
 <div class="footer footer-default">
-<p><a href="https://quarto.org">https://quarto.org</a></p>
+<p><a href="https://github.com/YiXiangqi/Graduate_statistics_course">https://github.com/YiXiangqi/Graduate_statistics_course</a></p>
 </div>
 </div></div>
 
@@ -633,7 +1076,7 @@ John von Neumann (1903–1957)
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -745,13 +1188,14 @@ John von Neumann (1903–1957)
           e.clearSelection();
         }
         const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
             }
-            return codeEl.innerText;
+          }
+          return codeEl.innerText;
         }
         const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
           text: getTextToCopy
