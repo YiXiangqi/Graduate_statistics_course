@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="talk02_files/libs/clipboard/clipboard.min.js"></script>
+<script src="talk02_files/libs/quarto-html/tabby.min.js"></script>
+<script src="talk02_files/libs/quarto-html/popper.min.js"></script>
+<script src="talk02_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="talk02_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="talk02_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="talk02_files/libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.27">
+
+  <meta name="author" content="易湘琦">
+  <title>高等数据统计分析</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="talk02_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="talk02_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="talk02_files/libs/revealjs/dist/theme/quarto-534cd8e3a96973385dffff3f4709048d.css">
+  <link rel="stylesheet" href="styles.css">
+  <link href="talk02_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="talk02_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="talk02_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="talk02_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="talk02_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="talk02_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">高等数据统计分析</h1>
+  <p class="subtitle">第二讲 Tidyverse</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+易湘琦 
+</div>
+</div>
+</div>
+
+</section>
+<section>
+<section id="第二讲函数与-tidyverse" class="title-slide slide level1 center">
+<h1>第二讲：函数与 tidyverse</h1>
+
+</section>
+<section id="本讲目标" class="slide level2">
+<h2>本讲目标</h2>
+<ul>
+<li class="fragment">熟悉函数的基本用法与自定义函数</li>
+<li class="fragment">掌握 tidyverse 的核心工作流</li>
+<li class="fragment">能完成 4 类常见任务：
+<ol type="1">
+<li class="fragment">数据可视化（ggplot2）</li>
+<li class="fragment">数据转换（dplyr）</li>
+<li class="fragment">数据整理（tidyr）</li>
+<li class="fragment">数据导入（readr）</li>
+</ol></li>
+</ul>
+</section></section>
+<section>
+<section id="函数" class="title-slide slide level1 center">
+<h1>函数</h1>
+
+</section>
+<section id="函数-1" class="slide level2">
+<h2>函数</h2>
+<ul>
+<li>函数是执行特定任务的代码块</li>
+<li>使用函数时，需键入函数名并在其后的括号中提供参数（argument）</li>
+<li>R 中有许多内置函数，也可以自定义函数</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>die <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>)</span>
+<span id="cb1-2"><a href=""></a><span class="fu">mean</span>(die)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">length</span>(die)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6</code></pre>
+</div>
+</div>
+</section>
+<section id="函数参数" class="slide level2">
+<h2>函数参数</h2>
+<p>函数参数可以是原始数据、R 对象、或其它函数的输出值。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="fu">round</span>(<span class="fu">mean</span>(die), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.5</code></pre>
+</div>
+</div>
+<blockquote>
+<p>函数嵌套时，内层函数先执行，结果作为外层函数参数。</p>
+</blockquote>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">round</span>(<span class="fl">3.14159</span>, <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.14</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">round</span>(<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">x =</span> <span class="fl">3.14159</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.14</code></pre>
+</div>
+</div>
+</section>
+<section id="查看函数参数" class="slide level2">
+<h2>查看函数参数</h2>
+<p><code>args()</code> 可以查看函数参数列表和默认值。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">args</span>(round)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>function (x, digits = 0, ...) 
+NULL</code></pre>
+</div>
+</div>
+<blockquote>
+<p>需要了解某一函数细节，可用 <code>?round</code> 或 <code>help(round)</code>。</p>
+</blockquote>
+</section>
+<section id="自定义函数" class="slide level2">
+<h2>自定义函数</h2>
+<p>基本语法：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>function_name <span class="ot">&lt;-</span> <span class="cf">function</span>(arg1, <span class="at">arg2 =</span> default_value, ...) {</span>
+<span id="cb13-2"><a href=""></a>  <span class="co"># 函数体</span></span>
+<span id="cb13-3"><a href=""></a>  <span class="fu">return</span>(result)</span>
+<span id="cb13-4"><a href=""></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a>add <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">y =</span> <span class="dv">0</span>) {</span>
+<span id="cb14-2"><a href=""></a>  result <span class="ot">&lt;-</span> x <span class="sc">+</span> y</span>
+<span id="cb14-3"><a href=""></a>  <span class="fu">return</span>(result)</span>
+<span id="cb14-4"><a href=""></a>}</span>
+<span id="cb14-5"><a href=""></a></span>
+<span id="cb14-6"><a href=""></a><span class="fu">add</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a><span class="fu">add</span>(<span class="dv">5</span>, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15</code></pre>
+</div>
+</div>
+</section>
+<section id="参数dots" class="slide level2">
+<h2><code>...</code> 参数（dots）</h2>
+<p><code>...</code> 用于接收不定数量参数。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a>paste_words <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb18-2"><a href=""></a>  <span class="fu">paste</span>(..., <span class="at">sep =</span> <span class="st">" "</span>)</span>
+<span id="cb18-3"><a href=""></a>}</span>
+<span id="cb18-4"><a href=""></a></span>
+<span id="cb18-5"><a href=""></a><span class="fu">paste_words</span>(<span class="st">"R"</span>, <span class="st">"for"</span>, <span class="st">"data"</span>, <span class="st">"science"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "R for data science"</code></pre>
+</div>
+</div>
+</section>
+<section id="作用域scope" class="slide level2">
+<h2>作用域（scope）</h2>
+<p>函数内创建的对象默认是局部对象。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>x <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb20-2"><a href=""></a></span>
+<span id="cb20-3"><a href=""></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb20-4"><a href=""></a>  y <span class="ot">&lt;-</span> x <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb20-5"><a href=""></a>  y</span>
+<span id="cb20-6"><a href=""></a>}</span>
+<span id="cb20-7"><a href=""></a></span>
+<span id="cb20-8"><a href=""></a><span class="fu">f</span>(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 11</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10</code></pre>
+</div>
+</div>
+</section>
+<section id="匿名函数与管道" class="slide level2">
+<h2>匿名函数与管道</h2>
+<p>匿名函数通常用于临时计算。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a>nums <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb24-2"><a href=""></a></span>
+<span id="cb24-3"><a href=""></a>nums <span class="sc">|&gt;</span></span>
+<span id="cb24-4"><a href=""></a>  (\(x) x<span class="sc">^</span><span class="dv">2</span>)()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  1  4  9 16</code></pre>
+</div>
+</div>
+<blockquote>
+<p>从这一页开始，后续 tidyverse 代码都以 <code>|&gt;</code> 管道为主。</p>
+</blockquote>
+</section></section>
+<section>
+<section id="tidyverse-概览" class="title-slide slide level1 center">
+<h1>tidyverse 概览</h1>
+
+</section>
+<section id="什么是-tidyverse" class="slide level2">
+<h2>什么是 tidyverse？</h2>
+<p>tidyverse 是一组风格统一的数据科学包。</p>
+<ul>
+<li class="fragment">统一的数据结构（tibble）</li>
+<li class="fragment">统一的语法（动词 + 管道）</li>
+<li class="fragment">强调“整洁数据”（tidy data）</li>
+</ul>
+</section>
+<section id="核心包" class="slide level2">
+<h2>核心包</h2>
+<ul>
+<li class="fragment"><code>ggplot2</code>：数据可视化</li>
+<li class="fragment"><code>dplyr</code>：数据转换</li>
+<li class="fragment"><code>tidyr</code>：数据整理</li>
+<li class="fragment"><code>readr</code>：数据导入</li>
+<li class="fragment"><code>tibble</code>、<code>stringr</code>、<code>forcats</code>、<code>purrr</code></li>
+</ul>
+</section>
+<section id="本讲主数据flights" class="slide level2">
+<h2>本讲主数据：<code>flights</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a>flights</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 336,776 × 19
+    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+ 1  2013     1     1      517            515         2      830            819
+ 2  2013     1     1      533            529         4      850            830
+ 3  2013     1     1      542            540         2      923            850
+ 4  2013     1     1      544            545        -1     1004           1022
+ 5  2013     1     1      554            600        -6      812            837
+ 6  2013     1     1      554            558        -4      740            728
+ 7  2013     1     1      555            600        -5      913            854
+ 8  2013     1     1      557            600        -3      709            723
+ 9  2013     1     1      557            600        -3      838            846
+10  2013     1     1      558            600        -2      753            745
+# ℹ 336,766 more rows
+# ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a><span class="fu">glimpse</span>(flights)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 336,776
+Columns: 19
+$ year           &lt;int&gt; 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2…
+$ month          &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ day            &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ dep_time       &lt;int&gt; 517, 533, 542, 544, 554, 554, 555, 557, 557, 558, 558, …
+$ sched_dep_time &lt;int&gt; 515, 529, 540, 545, 600, 558, 600, 600, 600, 600, 600, …
+$ dep_delay      &lt;dbl&gt; 2, 4, 2, -1, -6, -4, -5, -3, -3, -2, -2, -2, -2, -2, -1…
+$ arr_time       &lt;int&gt; 830, 850, 923, 1004, 812, 740, 913, 709, 838, 753, 849,…
+$ sched_arr_time &lt;int&gt; 819, 830, 850, 1022, 837, 728, 854, 723, 846, 745, 851,…
+$ arr_delay      &lt;dbl&gt; 11, 20, 33, -18, -25, 12, 19, -14, -8, 8, -2, -3, 7, -1…
+$ carrier        &lt;chr&gt; "UA", "UA", "AA", "B6", "DL", "UA", "B6", "EV", "B6", "…
+$ flight         &lt;int&gt; 1545, 1714, 1141, 725, 461, 1696, 507, 5708, 79, 301, 4…
+$ tailnum        &lt;chr&gt; "N14228", "N24211", "N619AA", "N804JB", "N668DN", "N394…
+$ origin         &lt;chr&gt; "EWR", "LGA", "JFK", "JFK", "LGA", "EWR", "EWR", "LGA",…
+$ dest           &lt;chr&gt; "IAH", "IAH", "MIA", "BQN", "ATL", "ORD", "FLL", "IAD",…
+$ air_time       &lt;dbl&gt; 227, 227, 160, 183, 116, 150, 158, 53, 140, 138, 149, 1…
+$ distance       &lt;dbl&gt; 1400, 1416, 1089, 1576, 762, 719, 1065, 229, 944, 733, …
+$ hour           &lt;dbl&gt; 5, 5, 5, 5, 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 6, 6, 6…
+$ minute         &lt;dbl&gt; 15, 29, 40, 45, 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0…
+$ time_hour      &lt;dttm&gt; 2013-01-01 05:00:00, 2013-01-01 05:00:00, 2013-01-01 0…</code></pre>
+</div>
+</div>
+<blockquote>
+<p>数据来自 <code>nycflights13</code>：2013 年纽约三机场的航班记录。</p>
+</blockquote>
+</section></section>
+<section>
+<section id="数据可视化ggplot2" class="title-slide slide level1 center">
+<h1>1. 数据可视化（ggplot2）</h1>
+
+</section>
+<section id="语法框架" class="slide level2">
+<h2>语法框架</h2>
+<p><code>ggplot2</code> 的核心思想：</p>
+<p><span class="math display">\[
+\text{plot} = \text{data} + \text{aesthetics} + \text{geoms}
+\]</span></p>
+<p>最小结构：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a><span class="fu">ggplot</span>(<span class="at">data =</span> ..., <span class="fu">aes</span>(<span class="at">x =</span> ..., <span class="at">y =</span> ...)) <span class="sc">+</span></span>
+<span id="cb30-2"><a href=""></a>  <span class="fu">geom_...</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="散点图1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">散点图（1）</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb31-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay, <span class="at">y =</span> arr_delay))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-12-1.png" width="960" class="r-stretch"></section>
+<section id="散点图2" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">散点图（2）</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb32-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay, <span class="at">y =</span> arr_delay)) <span class="sc">+</span></span>
+<span id="cb32-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section>
+<section id="散点图3" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">散点图（3）</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb33-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay, <span class="at">y =</span> arr_delay, <span class="at">color =</span> origin)) <span class="sc">+</span></span>
+<span id="cb33-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb33-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">labs</span>(</span>
+<span id="cb33-4" class="hljs-ln-code"><a href=""></a>    <span class="at">title =</span> <span class="st">"出发延误与到达延误"</span>,</span>
+<span id="cb33-5" class="hljs-ln-code"><a href=""></a>    <span class="at">x =</span> <span class="st">"出发延误（分钟）"</span>,</span>
+<span id="cb33-6" class="hljs-ln-code"><a href=""></a>    <span class="at">y =</span> <span class="st">"到达延误（分钟）"</span>,</span>
+<span id="cb33-7" class="hljs-ln-code"><a href=""></a>    <span class="at">color =</span> <span class="st">"机场"</span></span>
+<span id="cb33-8" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-14-1.png" width="960" class="r-stretch"></section>
+<section id="直方图" class="slide level2">
+<h2>直方图</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay)) <span class="sc">+</span></span>
+<span id="cb34-2"><a href=""></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">10</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb34-3"><a href=""></a>  <span class="fu">labs</span>(</span>
+<span id="cb34-4"><a href=""></a>    <span class="at">title =</span> <span class="st">"出发延误分布"</span>,</span>
+<span id="cb34-5"><a href=""></a>    <span class="at">x =</span> <span class="st">"出发延误（分钟）"</span>,</span>
+<span id="cb34-6"><a href=""></a>    <span class="at">y =</span> <span class="st">"频数"</span></span>
+<span id="cb34-7"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-15-1.png" width="960" class="r-stretch"></section>
+<section id="条形图" class="slide level2">
+<h2>条形图</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> carrier)) <span class="sc">+</span></span>
+<span id="cb35-2"><a href=""></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"tomato"</span>) <span class="sc">+</span></span>
+<span id="cb35-3"><a href=""></a>  <span class="fu">labs</span>(</span>
+<span id="cb35-4"><a href=""></a>    <span class="at">title =</span> <span class="st">"不同航空公司航班数量"</span>,</span>
+<span id="cb35-5"><a href=""></a>    <span class="at">x =</span> <span class="st">"航空公司"</span>,</span>
+<span id="cb35-6"><a href=""></a>    <span class="at">y =</span> <span class="st">"航班数量"</span></span>
+<span id="cb35-7"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"></section>
+<section id="箱线图" class="slide level2">
+<h2>箱线图</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> origin, <span class="at">y =</span> dep_delay, <span class="at">fill =</span> origin)) <span class="sc">+</span></span>
+<span id="cb36-2"><a href=""></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb36-3"><a href=""></a>  <span class="fu">labs</span>(</span>
+<span id="cb36-4"><a href=""></a>    <span class="at">title =</span> <span class="st">"不同机场的出发延误分布"</span>,</span>
+<span id="cb36-5"><a href=""></a>    <span class="at">x =</span> <span class="st">"机场"</span>,</span>
+<span id="cb36-6"><a href=""></a>    <span class="at">y =</span> <span class="st">"出发延误（分钟）"</span></span>
+<span id="cb36-7"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-17-1.png" width="960" class="r-stretch"></section>
+<section id="分面facet" class="slide level2">
+<h2>分面（facet）</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay, <span class="at">y =</span> arr_delay)) <span class="sc">+</span></span>
+<span id="cb37-2"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">color =</span> <span class="st">"#2C7FB8"</span>) <span class="sc">+</span></span>
+<span id="cb37-3"><a href=""></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> origin)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-18-1.png" width="960" class="r-stretch"></section>
+<section id="常用美化" class="slide level2">
+<h2>常用美化</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay)) <span class="sc">+</span></span>
+<span id="cb38-2"><a href=""></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">10</span>, <span class="at">fill =</span> <span class="st">"#41B6C4"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb38-3"><a href=""></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"出发延误分布"</span>) <span class="sc">+</span></span>
+<span id="cb38-4"><a href=""></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
+<section id="小结ggplot2" class="slide level2">
+<h2>小结：ggplot2</h2>
+<ul>
+<li class="fragment">先确定数据和变量映射（<code>aes()</code>）</li>
+<li class="fragment">再添加几何对象（<code>geom_*()</code>）</li>
+<li class="fragment">最后补充标签、分面和主题</li>
+</ul>
+<blockquote>
+<p>探索：把 <code>origin</code> 映射到 <code>shape</code>，图会怎样变化？</p>
+</blockquote>
+</section></section>
+<section>
+<section id="数据转换dplyr" class="title-slide slide level1 center">
+<h1>2. 数据转换（dplyr）</h1>
+
+</section>
+<section id="常用动词" class="slide level2">
+<h2>常用动词</h2>
+<ul>
+<li class="fragment"><code>filter()</code>：筛选行</li>
+<li class="fragment"><code>select()</code>：选择列</li>
+<li class="fragment"><code>mutate()</code>：新增/修改列</li>
+<li class="fragment"><code>arrange()</code>：排序</li>
+<li class="fragment"><code>summarise()</code>：汇总</li>
+</ul>
+</section>
+<section id="filter-筛选航班" class="slide level2">
+<h2><code>filter()</code> 筛选航班</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb39-2"><a href=""></a>  <span class="fu">filter</span>(month <span class="sc">==</span> <span class="dv">1</span>, day <span class="sc">==</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 842 × 19
+    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+ 1  2013     1     1      517            515         2      830            819
+ 2  2013     1     1      533            529         4      850            830
+ 3  2013     1     1      542            540         2      923            850
+ 4  2013     1     1      544            545        -1     1004           1022
+ 5  2013     1     1      554            600        -6      812            837
+ 6  2013     1     1      554            558        -4      740            728
+ 7  2013     1     1      555            600        -5      913            854
+ 8  2013     1     1      557            600        -3      709            723
+ 9  2013     1     1      557            600        -3      838            846
+10  2013     1     1      558            600        -2      753            745
+# ℹ 832 more rows
+# ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="select-选择变量" class="slide level2">
+<h2><code>select()</code> 选择变量</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb41-2"><a href=""></a>  <span class="fu">select</span>(year<span class="sc">:</span>day, dep_delay, arr_delay, carrier)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 336,776 × 6
+    year month   day dep_delay arr_delay carrier
+   &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;  
+ 1  2013     1     1         2        11 UA     
+ 2  2013     1     1         4        20 UA     
+ 3  2013     1     1         2        33 AA     
+ 4  2013     1     1        -1       -18 B6     
+ 5  2013     1     1        -6       -25 DL     
+ 6  2013     1     1        -4        12 UA     
+ 7  2013     1     1        -5        19 B6     
+ 8  2013     1     1        -3       -14 EV     
+ 9  2013     1     1        -3        -8 B6     
+10  2013     1     1        -2         8 AA     
+# ℹ 336,766 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="mutate-新建变量" class="slide level2">
+<h2><code>mutate()</code> 新建变量</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a href=""></a>  <span class="fu">mutate</span>(</span>
+<span id="cb43-3"><a href=""></a>    <span class="at">gain =</span> dep_delay <span class="sc">-</span> arr_delay,</span>
+<span id="cb43-4"><a href=""></a>    <span class="at">speed =</span> distance <span class="sc">/</span> air_time <span class="sc">*</span> <span class="dv">60</span></span>
+<span id="cb43-5"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb43-6"><a href=""></a>  <span class="fu">select</span>(dep_delay, arr_delay, gain, distance, air_time, speed)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 336,776 × 6
+   dep_delay arr_delay  gain distance air_time speed
+       &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+ 1         2        11    -9     1400      227  370.
+ 2         4        20   -16     1416      227  374.
+ 3         2        33   -31     1089      160  408.
+ 4        -1       -18    17     1576      183  517.
+ 5        -6       -25    19      762      116  394.
+ 6        -4        12   -16      719      150  288.
+ 7        -5        19   -24     1065      158  404.
+ 8        -3       -14    11      229       53  259.
+ 9        -3        -8     5      944      140  405.
+10        -2         8   -10      733      138  319.
+# ℹ 336,766 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="arrange-排序" class="slide level2">
+<h2><code>arrange()</code> 排序</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb45-2"><a href=""></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(dep_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb45-3"><a href=""></a>  <span class="fu">select</span>(year<span class="sc">:</span>day, carrier, flight, dep_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 336,776 × 6
+    year month   day carrier flight dep_delay
+   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;int&gt;     &lt;dbl&gt;
+ 1  2013     1     9 HA          51      1301
+ 2  2013     6    15 MQ        3535      1137
+ 3  2013     1    10 MQ        3695      1126
+ 4  2013     9    20 AA         177      1014
+ 5  2013     7    22 MQ        3075      1005
+ 6  2013     4    10 DL        2391       960
+ 7  2013     3    17 DL        2119       911
+ 8  2013     6    27 DL        2007       899
+ 9  2013     7    22 DL        2047       898
+10  2013    12     5 AA         172       896
+# ℹ 336,766 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="summarise-汇总" class="slide level2">
+<h2><code>summarise()</code> 汇总</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb47-2"><a href=""></a>  <span class="fu">summarise</span>(</span>
+<span id="cb47-3"><a href=""></a>    <span class="at">mean_dep_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb47-4"><a href=""></a>    <span class="at">mean_arr_delay =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb47-5"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  mean_dep_delay mean_arr_delay
+           &lt;dbl&gt;          &lt;dbl&gt;
+1           12.6           6.90</code></pre>
+</div>
+</div>
+</section>
+<section id="分组汇总.by" class="slide level2">
+<h2>分组汇总：<code>.by</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb49-2"><a href=""></a>  <span class="fu">summarise</span>(</span>
+<span id="cb49-3"><a href=""></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
+<span id="cb49-4"><a href=""></a>    <span class="at">mean_dep_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb49-5"><a href=""></a>    <span class="at">.by =</span> carrier</span>
+<span id="cb49-6"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb49-7"><a href=""></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_dep_delay))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 16 × 3
+   carrier     n mean_dep_delay
+   &lt;chr&gt;   &lt;int&gt;          &lt;dbl&gt;
+ 1 F9        685          20.2 
+ 2 EV      54173          20.0 
+ 3 YV        601          19.0 
+ 4 FL       3260          18.7 
+ 5 WN      12275          17.7 
+ 6 9E      18460          16.7 
+ 7 B6      54635          13.0 
+ 8 VX       5162          12.9 
+ 9 OO         32          12.6 
+10 UA      58665          12.1 
+11 MQ      26397          10.6 
+12 DL      48110           9.26
+13 AA      32729           8.59
+14 AS        714           5.80
+15 HA        342           4.90
+16 US      20536           3.78</code></pre>
+</div>
+</div>
+</section>
+<section id="多列操作across" class="slide level2">
+<h2>多列操作：<code>across()</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb51-2"><a href=""></a>  <span class="fu">summarise</span>(</span>
+<span id="cb51-3"><a href=""></a>    <span class="fu">across</span>(<span class="fu">c</span>(dep_delay, arr_delay), <span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb51-4"><a href=""></a>    <span class="at">.by =</span> origin</span>
+<span id="cb51-5"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  origin dep_delay arr_delay
+  &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+1 EWR         15.1      9.11
+2 LGA         10.3      5.78
+3 JFK         12.1      5.55</code></pre>
+</div>
+</div>
+</section>
+<section id="连接数据" class="slide level2">
+<h2>连接数据</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb53-2"><a href=""></a>  <span class="fu">left_join</span>(airlines, <span class="fu">join_by</span>(carrier)) <span class="sc">|&gt;</span></span>
+<span id="cb53-3"><a href=""></a>  <span class="fu">select</span>(carrier, name, dep_delay, arr_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 336,776 × 4
+   carrier name                     dep_delay arr_delay
+   &lt;chr&gt;   &lt;chr&gt;                        &lt;dbl&gt;     &lt;dbl&gt;
+ 1 UA      United Air Lines Inc.            2        11
+ 2 UA      United Air Lines Inc.            4        20
+ 3 AA      American Airlines Inc.           2        33
+ 4 B6      JetBlue Airways                 -1       -18
+ 5 DL      Delta Air Lines Inc.            -6       -25
+ 6 UA      United Air Lines Inc.           -4        12
+ 7 B6      JetBlue Airways                 -5        19
+ 8 EV      ExpressJet Airlines Inc.        -3       -14
+ 9 B6      JetBlue Airways                 -3        -8
+10 AA      American Airlines Inc.          -2         8
+# ℹ 336,766 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="管道链式写法" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">管道链式写法</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb55-1" class="hljs-ln-code"><a href=""></a>flights</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 336,776 × 19
+    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+ 1  2013     1     1      517            515         2      830            819
+ 2  2013     1     1      533            529         4      850            830
+ 3  2013     1     1      542            540         2      923            850
+ 4  2013     1     1      544            545        -1     1004           1022
+ 5  2013     1     1      554            600        -6      812            837
+ 6  2013     1     1      554            558        -4      740            728
+ 7  2013     1     1      555            600        -5      913            854
+ 8  2013     1     1      557            600        -3      709            723
+ 9  2013     1     1      557            600        -3      838            846
+10  2013     1     1      558            600        -2      753            745
+# ℹ 336,766 more rows
+# ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="管道链式写法-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">管道链式写法</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb57-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb57-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">gain =</span> dep_delay <span class="sc">-</span> arr_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 336,776 × 20
+    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+ 1  2013     1     1      517            515         2      830            819
+ 2  2013     1     1      533            529         4      850            830
+ 3  2013     1     1      542            540         2      923            850
+ 4  2013     1     1      544            545        -1     1004           1022
+ 5  2013     1     1      554            600        -6      812            837
+ 6  2013     1     1      554            558        -4      740            728
+ 7  2013     1     1      555            600        -5      913            854
+ 8  2013     1     1      557            600        -3      709            723
+ 9  2013     1     1      557            600        -3      838            846
+10  2013     1     1      558            600        -2      753            745
+# ℹ 336,766 more rows
+# ℹ 12 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, gain &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="管道链式写法-2" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">管道链式写法</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb59-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb59-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">gain =</span> dep_delay <span class="sc">-</span> arr_delay) <span class="sc">|&gt;</span></span>
+<span id="cb59-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">summarise</span>(</span>
+<span id="cb59-4" class="hljs-ln-code"><a href=""></a>    <span class="at">mean_gain =</span> <span class="fu">mean</span>(gain, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb59-5" class="hljs-ln-code"><a href=""></a>    <span class="at">.by =</span> carrier</span>
+<span id="cb59-6" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 16 × 2
+   carrier mean_gain
+   &lt;chr&gt;       &lt;dbl&gt;
+ 1 UA          8.46 
+ 2 AA          8.20 
+ 3 B6          3.51 
+ 4 DL          7.58 
+ 5 EV          4.04 
+ 6 MQ         -0.329
+ 7 US          1.62 
+ 8 WN          8.01 
+ 9 VX         11.0  
+10 FL         -1.51 
+11 AS         15.8  
+12 9E          9.06 
+13 F9         -1.72 
+14 HA         11.8  
+15 YV          3.34 
+16 OO          0.655</code></pre>
+</div>
+</div>
+</section>
+<section id="管道链式写法-3" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">管道链式写法</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb61-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb61-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">gain =</span> dep_delay <span class="sc">-</span> arr_delay) <span class="sc">|&gt;</span></span>
+<span id="cb61-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">summarise</span>(</span>
+<span id="cb61-4" class="hljs-ln-code"><a href=""></a>    <span class="at">mean_gain =</span> <span class="fu">mean</span>(gain, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb61-5" class="hljs-ln-code"><a href=""></a>    <span class="at">.by =</span> carrier</span>
+<span id="cb61-6" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb61-7" class="hljs-ln-code"><a href=""></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_gain))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 16 × 2
+   carrier mean_gain
+   &lt;chr&gt;       &lt;dbl&gt;
+ 1 AS         15.8  
+ 2 HA         11.8  
+ 3 VX         11.0  
+ 4 9E          9.06 
+ 5 UA          8.46 
+ 6 AA          8.20 
+ 7 WN          8.01 
+ 8 DL          7.58 
+ 9 EV          4.04 
+10 B6          3.51 
+11 YV          3.34 
+12 US          1.62 
+13 OO          0.655
+14 MQ         -0.329
+15 FL         -1.51 
+16 F9         -1.72 </code></pre>
+</div>
+</div>
+<blockquote>
+<p>探索：把最后的 <code>arrange(desc(mean_gain))</code> 改成 <code>arrange(mean_gain)</code> 会发生什么？</p>
+</blockquote>
+</section></section>
+<section>
+<section id="数据整理tidyr" class="title-slide slide level1 center">
+<h1>3. 数据整理（tidyr）</h1>
+
+</section>
+<section id="什么是-tidy-data" class="slide level2">
+<h2>什么是 tidy data？</h2>
+<p>整洁数据的三个规则：</p>
+<ul>
+<li class="fragment">每个变量一列</li>
+<li class="fragment">每个观测一行</li>
+<li class="fragment">每个单元格一个值</li>
+</ul>
+</section>
+<section id="who2典型非整洁示例" class="slide level2">
+<h2><code>who2</code>：典型“非整洁”示例</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href=""></a>who2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7,240 × 58
+   country      year sp_m_014 sp_m_1524 sp_m_2534 sp_m_3544 sp_m_4554 sp_m_5564
+   &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1 Afghanistan  1980       NA        NA        NA        NA        NA        NA
+ 2 Afghanistan  1981       NA        NA        NA        NA        NA        NA
+ 3 Afghanistan  1982       NA        NA        NA        NA        NA        NA
+ 4 Afghanistan  1983       NA        NA        NA        NA        NA        NA
+ 5 Afghanistan  1984       NA        NA        NA        NA        NA        NA
+ 6 Afghanistan  1985       NA        NA        NA        NA        NA        NA
+ 7 Afghanistan  1986       NA        NA        NA        NA        NA        NA
+ 8 Afghanistan  1987       NA        NA        NA        NA        NA        NA
+ 9 Afghanistan  1988       NA        NA        NA        NA        NA        NA
+10 Afghanistan  1989       NA        NA        NA        NA        NA        NA
+# ℹ 7,230 more rows
+# ℹ 50 more variables: sp_m_65 &lt;dbl&gt;, sp_f_014 &lt;dbl&gt;, sp_f_1524 &lt;dbl&gt;,
+#   sp_f_2534 &lt;dbl&gt;, sp_f_3544 &lt;dbl&gt;, sp_f_4554 &lt;dbl&gt;, sp_f_5564 &lt;dbl&gt;,
+#   sp_f_65 &lt;dbl&gt;, sn_m_014 &lt;dbl&gt;, sn_m_1524 &lt;dbl&gt;, sn_m_2534 &lt;dbl&gt;,
+#   sn_m_3544 &lt;dbl&gt;, sn_m_4554 &lt;dbl&gt;, sn_m_5564 &lt;dbl&gt;, sn_m_65 &lt;dbl&gt;,
+#   sn_f_014 &lt;dbl&gt;, sn_f_1524 &lt;dbl&gt;, sn_f_2534 &lt;dbl&gt;, sn_f_3544 &lt;dbl&gt;,
+#   sn_f_4554 &lt;dbl&gt;, sn_f_5564 &lt;dbl&gt;, sn_f_65 &lt;dbl&gt;, ep_m_014 &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+<blockquote>
+<p><code>who2</code> 中很多列名同时编码了多个变量（年龄、性别、病例类型）。</p>
+</blockquote>
+</section>
+<section id="pivot_longer" class="slide level2">
+<h2><code>pivot_longer()</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href=""></a>who2 <span class="sc">|&gt;</span></span>
+<span id="cb65-2"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb65-3"><a href=""></a>    <span class="at">cols =</span> <span class="sc">!</span><span class="fu">c</span>(country, year),</span>
+<span id="cb65-4"><a href=""></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"diagnosis"</span>,  <span class="st">"sex"</span>,<span class="st">"age"</span>),</span>
+<span id="cb65-5"><a href=""></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
+<span id="cb65-6"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"count"</span></span>
+<span id="cb65-7"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 405,440 × 6
+   country      year diagnosis sex   age   count
+   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+ 1 Afghanistan  1980 sp        m     014      NA
+ 2 Afghanistan  1980 sp        m     1524     NA
+ 3 Afghanistan  1980 sp        m     2534     NA
+ 4 Afghanistan  1980 sp        m     3544     NA
+ 5 Afghanistan  1980 sp        m     4554     NA
+ 6 Afghanistan  1980 sp        m     5564     NA
+ 7 Afghanistan  1980 sp        m     65       NA
+ 8 Afghanistan  1980 sp        f     014      NA
+ 9 Afghanistan  1980 sp        f     1524     NA
+10 Afghanistan  1980 sp        f     2534     NA
+# ℹ 405,430 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_wider" class="slide level2">
+<h2><code>pivot_wider()</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb67-2"><a href=""></a>  <span class="fu">summarise</span>(<span class="at">mean_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.by =</span> <span class="fu">c</span>(origin, month)) <span class="sc">|&gt;</span></span>
+<span id="cb67-3"><a href=""></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> origin, <span class="at">values_from =</span> mean_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 4
+   month   EWR   LGA   JFK
+   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1     1 14.9   5.64  8.62
+ 2    10  8.64  5.31  4.59
+ 3    11  6.72  4.77  4.68
+ 4    12 21.0  13.6  14.8 
+ 5     2 13.1   6.96 11.8 
+ 6     3 18.1  10.2  10.7 
+ 7     4 17.4  11.5  12.2 
+ 8     5 15.4  10.6  12.5 
+ 9     6 22.5  19.3  20.5 
+10     7 22.0  19.0  23.8 
+11     8 13.5  11.2  12.9 
+12     9  7.29  6.21  6.64</code></pre>
+</div>
+</div>
+</section>
+<section id="拆分列separate_wider_delim" class="slide level2">
+<h2>拆分列：<code>separate_wider_delim()</code></h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb69-2"><a href=""></a>  <span class="fu">select</span>(time_hour) <span class="sc">|&gt;</span></span>
+<span id="cb69-3"><a href=""></a>  <span class="fu">separate_wider_delim</span>(</span>
+<span id="cb69-4"><a href=""></a>    <span class="at">cols =</span> time_hour,</span>
+<span id="cb69-5"><a href=""></a>    <span class="at">delim =</span> <span class="st">" "</span>,</span>
+<span id="cb69-6"><a href=""></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"date"</span>, <span class="st">"hour"</span>)</span>
+<span id="cb69-7"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 336,776 × 2
+   date       hour    
+   &lt;chr&gt;      &lt;chr&gt;   
+ 1 2013-01-01 05:00:00
+ 2 2013-01-01 05:00:00
+ 3 2013-01-01 05:00:00
+ 4 2013-01-01 05:00:00
+ 5 2013-01-01 06:00:00
+ 6 2013-01-01 05:00:00
+ 7 2013-01-01 06:00:00
+ 8 2013-01-01 06:00:00
+ 9 2013-01-01 06:00:00
+10 2013-01-01 06:00:00
+# ℹ 336,766 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="缺失值处理" class="slide level2">
+<h2>缺失值处理</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb71-2"><a href=""></a>  <span class="fu">select</span>(dep_time, dep_delay, arr_time, arr_delay) <span class="sc">|&gt;</span></span>
+<span id="cb71-3"><a href=""></a>  <span class="fu">drop_na</span>(dep_delay, arr_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 327,346 × 4
+   dep_time dep_delay arr_time arr_delay
+      &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+ 1      517         2      830        11
+ 2      533         4      850        20
+ 3      542         2      923        33
+ 4      544        -1     1004       -18
+ 5      554        -6      812       -25
+ 6      554        -4      740        12
+ 7      555        -5      913        19
+ 8      557        -3      709       -14
+ 9      557        -3      838        -8
+10      558        -2      753         8
+# ℹ 327,336 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href=""></a><span class="fu">tibble</span>(<span class="at">id =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>), <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="st">"B"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb73-2"><a href=""></a>  <span class="fu">fill</span>(group)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 2
+     id group
+  &lt;dbl&gt; &lt;chr&gt;
+1     1 A    
+2     2 A    
+3     3 A    
+4     4 B    </code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="数据导入readr" class="title-slide slide level1 center">
+<h1>4. 数据导入（readr）</h1>
+
+</section>
+<section id="写出-csv" class="slide level2">
+<h2>写出 CSV</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb75-2"><a href=""></a>  <span class="fu">select</span>(year<span class="sc">:</span>day, carrier, flight, dep_delay, arr_delay) <span class="sc">|&gt;</span></span>
+<span id="cb75-3"><a href=""></a>  <span class="fu">write_csv</span>(<span class="st">"data/flights_subset.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="读取-csv" class="slide level2">
+<h2>读取 CSV</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href=""></a>flights_csv <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/flights_subset.csv"</span>)</span>
+<span id="cb76-2"><a href=""></a><span class="fu">glimpse</span>(flights_csv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 336,776
+Columns: 7
+$ year      &lt;dbl&gt; 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, …
+$ month     &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+$ day       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+$ carrier   &lt;chr&gt; "UA", "UA", "AA", "B6", "DL", "UA", "B6", "EV", "B6", "AA", …
+$ flight    &lt;dbl&gt; 1545, 1714, 1141, 725, 461, 1696, 507, 5708, 79, 301, 49, 71…
+$ dep_delay &lt;dbl&gt; 2, 4, 2, -1, -6, -4, -5, -3, -3, -2, -2, -2, -2, -2, -1, 0, …
+$ arr_delay &lt;dbl&gt; 11, 20, 33, -18, -25, 12, 19, -14, -8, 8, -2, -3, 7, -14, 31…</code></pre>
+</div>
+</div>
+</section>
+<section id="列类型控制" class="slide level2">
+<h2>列类型控制</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href=""></a><span class="fu">read_csv</span>(</span>
+<span id="cb78-2"><a href=""></a>  <span class="st">"data/flights_subset.csv"</span>,</span>
+<span id="cb78-3"><a href=""></a>  <span class="at">col_types =</span> <span class="fu">cols</span>(</span>
+<span id="cb78-4"><a href=""></a>    <span class="at">year =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb78-5"><a href=""></a>    <span class="at">month =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb78-6"><a href=""></a>    <span class="at">day =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb78-7"><a href=""></a>    <span class="at">dep_delay =</span> <span class="fu">col_double</span>(),</span>
+<span id="cb78-8"><a href=""></a>    <span class="at">arr_delay =</span> <span class="fu">col_double</span>()</span>
+<span id="cb78-9"><a href=""></a>  )</span>
+<span id="cb78-10"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 336,776 × 7
+    year month   day carrier flight dep_delay arr_delay
+   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1  2013     1     1 UA        1545         2        11
+ 2  2013     1     1 UA        1714         4        20
+ 3  2013     1     1 AA        1141         2        33
+ 4  2013     1     1 B6         725        -1       -18
+ 5  2013     1     1 DL         461        -6       -25
+ 6  2013     1     1 UA        1696        -4        12
+ 7  2013     1     1 B6         507        -5        19
+ 8  2013     1     1 EV        5708        -3       -14
+ 9  2013     1     1 B6          79        -3        -8
+10  2013     1     1 AA         301        -2         8
+# ℹ 336,766 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="其它常见导入函数" class="slide level2">
+<h2>其它常见导入函数</h2>
+<ul>
+<li class="fragment"><code>read_tsv()</code>：读取制表符分隔文件</li>
+<li class="fragment"><code>read_delim()</code>：读取自定义分隔符文件</li>
+<li class="fragment"><code>read_lines()</code>：读取文本行</li>
+</ul>
+<blockquote>
+<p>若读取 Excel 文件，可使用 <code>readxl::read_excel()</code>。</p>
+</blockquote>
+</section></section>
+<section>
+<section id="课堂作业" class="title-slide slide level1 center">
+<h1>课堂作业</h1>
+
+</section>
+<section id="作业1" class="slide level2">
+<h2>作业1</h2>
+<p>基于 <code>nycflights13::flights</code> 完成以下任务：</p>
+<ol type="1">
+<li>使用 <code>ggplot2</code> 画一张图，展示你关心的延误特征。</li>
+<li>使用 <code>dplyr</code> 完成一次“筛选 + 新变量 + 汇总”的管道分析。</li>
+<li>使用 <code>tidyr</code> 把一个汇总结果做一次 <code>pivot_wider()</code> 或 <code>pivot_longer()</code>。</li>
+<li>将结果保存为 <code>csv</code> 文件，并在下周提交 <code>qmd + html</code>。</li>
+</ol>
+</section></section>
+<section id="参考资料" class="title-slide slide level1 center">
+<h1>参考资料</h1>
+<ul>
+<li class="fragment">Wickham et al.&nbsp;<em>R for Data Science</em> (2nd edition)</li>
+<li class="fragment"><a href="https://r4ds.hadley.nz/">https://r4ds.hadley.nz/</a></li>
+<li class="fragment"><a href="https://www.tidyverse.org/">https://www.tidyverse.org/</a></li>
+</ul>
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="images/JMU_logo.jpg" class="slide-logo"></p>
+<div class="footer footer-default">
+<p><a href="https://github.com/YiXiangqi/Graduate_statistics_course">https://github.com/YiXiangqi/Graduate_statistics_course</a></p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="talk02_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="talk02_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="talk02_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="talk02_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="talk02_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="talk02_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="talk02_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="talk02_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="talk02_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="talk02_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="talk02_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': true,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":false},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

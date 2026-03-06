@@ -11,8 +11,6 @@ format:
     logo: images/JMU_logo.jpg
     css: styles.css
     footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
-resources:
-  - demo.pdf
 ---
 
 # 课程介绍
