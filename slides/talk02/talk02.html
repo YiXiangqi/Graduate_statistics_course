@@ -197,7 +197,7 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">高等数据统计分析</h1>
-  <p class="subtitle">第二讲 Tidyverse</p>
+  <p class="subtitle">第二讲 函数基本用法和Tidyverse</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -208,36 +208,31 @@
 </div>
 
 </section>
-<section>
-<section id="第二讲函数与-tidyverse" class="title-slide slide level1 center">
-<h1>第二讲：函数与 tidyverse</h1>
-
-</section>
-<section id="本讲目标" class="slide level2">
-<h2>本讲目标</h2>
+<section id="主要目标" class="slide level2">
+<h2>主要目标</h2>
 <ul>
 <li class="fragment">熟悉函数的基本用法与自定义函数</li>
-<li class="fragment">掌握 tidyverse 的核心工作流</li>
-<li class="fragment">能完成 4 类常见任务：
+<li class="fragment">认识数据分析的基本工作流程</li>
+<li class="fragment">使用<code>tidyverse</code>完成4类常见任务：
 <ol type="1">
-<li class="fragment">数据可视化（ggplot2）</li>
-<li class="fragment">数据转换（dplyr）</li>
-<li class="fragment">数据整理（tidyr）</li>
-<li class="fragment">数据导入（readr）</li>
+<li class="fragment">数据可视化（<code>ggplot2</code>）</li>
+<li class="fragment">数据转换（<code>dplyr</code>）</li>
+<li class="fragment">数据整理（<code>tidyr</code>）</li>
+<li class="fragment">数据读写（<code>readr</code>）</li>
 </ol></li>
 </ul>
-</section></section>
+</section>
 <section>
 <section id="函数" class="title-slide slide level1 center">
 <h1>函数</h1>
 
 </section>
-<section id="函数-1" class="slide level2">
-<h2>函数</h2>
+<section id="函数的功能" class="slide level2">
+<h2>函数的功能</h2>
 <ul>
-<li>函数是执行特定任务的代码块</li>
-<li>使用函数时，需键入函数名并在其后的括号中提供参数（argument）</li>
-<li>R 中有许多内置函数，也可以自定义函数</li>
+<li>接受输入参数（arguments）</li>
+<li>执行特定的计算或操作</li>
+<li>返回结果</li>
 </ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>die <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>)</span>
@@ -251,9 +246,22 @@
 </div>
 </div>
 </section>
+<section id="函数的组成" class="slide level2">
+<h2>函数的组成</h2>
+<blockquote>
+
+<ul>
+<li>函数也是对象（object）</li>
+<li>函数由3部分组成：参数（arguments）、函数体（body）和环境（environment）</li>
+</ul>
+
+</blockquote>
+</section>
 <section id="函数参数" class="slide level2">
 <h2>函数参数</h2>
-<p>函数参数可以是原始数据、R 对象、或其它函数的输出值。</p>
+<ul>
+<li>函数参数可以是原始数据、R 对象、或其它函数的输出值。</li>
+</ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="fu">round</span>(<span class="fu">mean</span>(die), <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -263,6 +271,12 @@
 <blockquote>
 <p>函数嵌套时，内层函数先执行，结果作为外层函数参数。</p>
 </blockquote>
+</section>
+<section id="函数参数-1" class="slide level2">
+<h2>函数参数</h2>
+<ul>
+<li>参数传递时，可按照位置（positional）或名称（named）传递。</li>
+</ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">round</span>(<span class="fl">3.14159</span>, <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -276,7 +290,9 @@
 </section>
 <section id="查看函数参数" class="slide level2">
 <h2>查看函数参数</h2>
-<p><code>args()</code> 可以查看函数参数列表和默认值。</p>
+<ul>
+<li><code>args()</code> 可以查看函数参数列表和默认值。</li>
+</ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">args</span>(round)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -284,6 +300,9 @@
 NULL</code></pre>
 </div>
 </div>
+<ul>
+<li><code>...</code> 参数用于接收不定数量参数。</li>
+</ul>
 <blockquote>
 <p>需要了解某一函数细节，可用 <code>?round</code> 或 <code>help(round)</code>。</p>
 </blockquote>
@@ -295,10 +314,11 @@ NULL</code></pre>
 <span id="cb13-2"><a href=""></a>  <span class="co"># 函数体</span></span>
 <span id="cb13-3"><a href=""></a>  <span class="fu">return</span>(result)</span>
 <span id="cb13-4"><a href=""></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>示例：</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a>add <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">y =</span> <span class="dv">0</span>) {</span>
 <span id="cb14-2"><a href=""></a>  result <span class="ot">&lt;-</span> x <span class="sc">+</span> y</span>
-<span id="cb14-3"><a href=""></a>  <span class="fu">return</span>(result)</span>
+<span id="cb14-3"><a href=""></a>  <span class="fu">return</span>(result) <span class="co"># 可以省略，R会自动返回最后一个表达式的值</span></span>
 <span id="cb14-4"><a href=""></a>}</span>
 <span id="cb14-5"><a href=""></a></span>
 <span id="cb14-6"><a href=""></a><span class="fu">add</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -311,15 +331,21 @@ NULL</code></pre>
 </div>
 </div>
 </section>
-<section id="参数dots" class="slide level2">
-<h2><code>...</code> 参数（dots）</h2>
+<section id="参数用法dots" class="slide level2">
+<h2><code>...</code> 参数用法（dots）</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1 2 2 5 6 7</code></pre>
+</div>
+</div>
 <p><code>...</code> 用于接收不定数量参数。</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a>paste_words <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
-<span id="cb18-2"><a href=""></a>  <span class="fu">paste</span>(..., <span class="at">sep =</span> <span class="st">" "</span>)</span>
-<span id="cb18-3"><a href=""></a>}</span>
-<span id="cb18-4"><a href=""></a></span>
-<span id="cb18-5"><a href=""></a><span class="fu">paste_words</span>(<span class="st">"R"</span>, <span class="st">"for"</span>, <span class="st">"data"</span>, <span class="st">"science"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>paste_words <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
+<span id="cb20-2"><a href=""></a>  <span class="fu">paste</span>(..., <span class="at">sep =</span> <span class="st">" "</span>)</span>
+<span id="cb20-3"><a href=""></a>}</span>
+<span id="cb20-4"><a href=""></a></span>
+<span id="cb20-5"><a href=""></a><span class="fu">paste_words</span>(<span class="st">"R"</span>, <span class="st">"for"</span>, <span class="st">"data"</span>, <span class="st">"science"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "R for data science"</code></pre>
 </div>
@@ -329,466 +355,613 @@ NULL</code></pre>
 <h2>作用域（scope）</h2>
 <p>函数内创建的对象默认是局部对象。</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>x <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb20-2"><a href=""></a></span>
-<span id="cb20-3"><a href=""></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb20-4"><a href=""></a>  y <span class="ot">&lt;-</span> x <span class="sc">+</span> <span class="dv">1</span></span>
-<span id="cb20-5"><a href=""></a>  y</span>
-<span id="cb20-6"><a href=""></a>}</span>
-<span id="cb20-7"><a href=""></a></span>
-<span id="cb20-8"><a href=""></a><span class="fu">f</span>(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>x <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb22-2"><a href=""></a></span>
+<span id="cb22-3"><a href=""></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb22-4"><a href=""></a>  y <span class="ot">&lt;-</span> x <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb22-5"><a href=""></a>  y</span>
+<span id="cb22-6"><a href=""></a>}</span>
+<span id="cb22-7"><a href=""></a></span>
+<span id="cb22-8"><a href=""></a><span class="fu">f</span>(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 11</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a>x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 10</code></pre>
 </div>
 </div>
 </section>
-<section id="匿名函数与管道" class="slide level2">
-<h2>匿名函数与管道</h2>
+<section id="匿名函数" class="slide level2">
+<h2>匿名函数</h2>
 <p>匿名函数通常用于临时计算。</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a>nums <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
-<span id="cb24-2"><a href=""></a></span>
-<span id="cb24-3"><a href=""></a>nums <span class="sc">|&gt;</span></span>
-<span id="cb24-4"><a href=""></a>  (\(x) x<span class="sc">^</span><span class="dv">2</span>)()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a>nums <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb26-2"><a href=""></a>(<span class="cf">function</span>(x) x<span class="sc">^</span><span class="dv">2</span>)(nums)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  1  4  9 16</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a>(\(x) x<span class="sc">^</span><span class="dv">2</span>)(nums)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1]  1  4  9 16</code></pre>
 </div>
 </div>
-<blockquote>
-<p>从这一页开始，后续 tidyverse 代码都以 <code>|&gt;</code> 管道为主。</p>
-</blockquote>
 </section></section>
 <section>
-<section id="tidyverse-概览" class="title-slide slide level1 center">
-<h1>tidyverse 概览</h1>
+<section id="使用tidyverse进行数据分析" class="title-slide slide level1 center">
+<h1>使用<code>tidyverse</code>进行数据分析</h1>
 
 </section>
-<section id="什么是-tidyverse" class="slide level2">
-<h2>什么是 tidyverse？</h2>
-<p>tidyverse 是一组风格统一的数据科学包。</p>
+<section id="数据分析的基本流程" class="slide level2">
+<h2>数据分析的基本流程</h2>
+<p>基本流程（workflow）： <img data-src="images/base_workflow.png"></p>
+<p><span style="display: block; text-align: right; font-family: 'Times New Roman', serif; font-size: 0.6em;"><a href="https://r4ds.hadley.nz/diagrams/data-science/base.png">来源：R4DS by Hadley Wickham</a></span></p>
+</section>
+<section id="tidyverse概览" class="slide level2">
+<h2><code>tidyverse</code>概览</h2>
+<p><code>tidyverse</code>是一组风格统一的数据科学包，核心包包括：</p>
 <ul>
-<li class="fragment">统一的数据结构（tibble）</li>
-<li class="fragment">统一的语法（动词 + 管道）</li>
-<li class="fragment">强调“整洁数据”（tidy data）</li>
+<li class="fragment"><code>ggplot2</code>：数据可视化(visulization)</li>
+<li class="fragment"><code>dplyr</code>：数据转换(transformation)</li>
+<li class="fragment"><code>tidyr</code>：数据整理(tidying)</li>
+<li class="fragment"><code>readr</code>：数据读写(reading and writing)</li>
+<li class="fragment"><code>tibble</code>：现代化数据框(data frames)</li>
+<li class="fragment"><code>stringr</code>、<code>forcats</code>、<code>purrr</code> …</li>
 </ul>
 </section>
-<section id="核心包" class="slide level2">
-<h2>核心包</h2>
+<section id="程序包的安装与载入" class="slide level2">
+<h2>程序包的安装与载入</h2>
 <ul>
-<li class="fragment"><code>ggplot2</code>：数据可视化</li>
-<li class="fragment"><code>dplyr</code>：数据转换</li>
-<li class="fragment"><code>tidyr</code>：数据整理</li>
-<li class="fragment"><code>readr</code>：数据导入</li>
-<li class="fragment"><code>tibble</code>、<code>stringr</code>、<code>forcats</code>、<code>purrr</code></li>
+<li>安装：<code>install.packages("tidyverse")</code></li>
+<li>载入：<code>library(tidyverse)</code></li>
 </ul>
 </section>
-<section id="本讲主数据flights" class="slide level2">
-<h2>本讲主数据：<code>flights</code></h2>
+<section id="tidyverse概览-1" class="slide level2">
+<h2><code>tidyverse</code>概览</h2>
+<p><code>library(tidyverse)</code>统一载入：</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a>flights</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.6
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.1     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.2
+✔ purrr     1.2.0     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+</div>
+</section>
+<section id="tibble和data.frame" class="slide level2">
+<h2><code>tibble</code>和<code>data.frame</code></h2>
+<p>tibble(<code>tbl_df</code>)是对数据框（<code>data.frame</code>）的拓展：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href=""></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x_10 =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>, <span class="st">`</span><span class="at">3_y</span><span class="st">`</span> <span class="ot">=</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>]); <span class="fu">class</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 336,776 × 19
-    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
-   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
- 1  2013     1     1      517            515         2      830            819
- 2  2013     1     1      533            529         4      850            830
- 3  2013     1     1      542            540         2      923            850
- 4  2013     1     1      544            545        -1     1004           1022
- 5  2013     1     1      554            600        -6      812            837
- 6  2013     1     1      554            558        -4      740            728
- 7  2013     1     1      555            600        -5      913            854
- 8  2013     1     1      557            600        -3      709            723
- 9  2013     1     1      557            600        -3      838            846
-10  2013     1     1      558            600        -2      753            745
-# ℹ 336,766 more rows
+<pre><code>[1] "data.frame"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a>df_tibble <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x_10 =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>, <span class="st">`</span><span class="at">3_y</span><span class="st">`</span> <span class="ot">=</span> letters[<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>]); <span class="fu">class</span>(df_tibble)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "tbl_df"     "tbl"        "data.frame"</code></pre>
+</div>
+</div>
+<p>tibble核心理念是“少做事、多抱怨”,例如：</p>
+<ul>
+<li>不会偷偷改变量名或变量类型(<code>names(df)</code>vs.<code>names(df_tibble)</code>)。</li>
+<li>不支持模糊匹配列名(比较<code>df$x</code>和<code>df_tibble$x</code>)。</li>
+<li>当引用不存在的变量时，会明确报错，而非悄悄继续。</li>
+<li>打印显示更友好。</li>
+</ul>
+</section></section>
+<section>
+<section id="数据可视化ggplot2" class="title-slide slide level1 center">
+<h1>数据可视化（ggplot2）</h1>
+<blockquote>
+<p>“The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey</p>
+</blockquote>
+</section>
+<section id="penguins数据集" class="slide level2">
+<h2><code>penguins</code>数据集</h2>
+<p><code>palmerpenguins</code>包中的<code>penguins</code>数据集包含了南极企鹅的生物测量数据：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href=""></a><span class="fu">library</span>(palmerpenguins)</span>
+<span id="cb36-2"><a href=""></a><span class="fu">head</span>(penguins)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 8
+  species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+  &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;       &lt;int&gt;
+1 Adelie  Torgersen           39.1          18.7               181        3750
+2 Adelie  Torgersen           39.5          17.4               186        3800
+3 Adelie  Torgersen           40.3          18                 195        3250
+4 Adelie  Torgersen           NA            NA                  NA          NA
+5 Adelie  Torgersen           36.7          19.3               193        3450
+6 Adelie  Torgersen           39.3          20.6               190        3650
+# ℹ 2 more variables: sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href=""></a><span class="fu">library</span>(ggthemes) <span class="co"># 提供更多绘图主题风格</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="本节目标" class="slide level2">
+<h2>本节目标</h2>
+
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section>
+<section id="创建ggplot对象" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">创建<code>ggplot</code>对象</h2>
+<ul>
+<li><code>ggplot()</code>开始绘图，先定义一个绘图对象，之后逐层添加图层。</li>
+<li><code>ggplot()</code> 的第一个参数是用于绘图的数据集。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb39-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(<span class="at">data =</span> penguins)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="创建ggplot对象-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">创建<code>ggplot</code>对象</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb40-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(<span class="at">data =</span> penguins)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="添加变量映射" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">添加变量映射</h2>
+<ul>
+<li><code>ggplot()</code> 函数中的 <code>mapping</code> 参数用于定义数据集中变量如何映射到图形的视觉属性（美学映射）。</li>
+<li><code>mapping</code>参数总是在 <code>aes()</code> 函数中设置，而 <code>aes()</code>的<code>x</code>和<code>y</code>参数用于指定映射到x轴和y轴的变量。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb41-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb41-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb41-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g)</span>
+<span id="cb41-4" class="hljs-ln-code"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="添加变量映射-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">添加变量映射</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb42-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb42-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb42-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g)</span>
+<span id="cb42-4" class="hljs-ln-code"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="添加几何对象geom" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">添加几何对象(geom)</h2>
+<ul>
+<li>定义几何对象(geom)，它决定了数据在图中如何被表示。</li>
+<li>几何对象通过以<code>geom_</code>开头的函数提供,每个函数对应一种不同的图层类型, 例如:
+<ul>
+<li>条形图：<code>geom_bar()</code></li>
+<li>折线图：<code>geom_line()</code></li>
+<li>散点图：<code>geom_point()</code></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb43-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb43-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb43-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g)</span>
+<span id="cb43-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb43-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="添加几何对象geom-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">添加几何对象(geom)</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb44-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb44-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb44-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g)</span>
+<span id="cb44-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb44-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values or values outside the scale range
+(`geom_point()`).</code></pre>
+</div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="添加美学映射" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">添加美学映射</h2>
+<ul>
+<li>美学映射(aesthetic mapping)是指将数据变量映射到图形的视觉属性，如颜色、形状、大小等。</li>
+<li>通过在<code>aes()</code>函数中指定这些属性，可以让图形更具信息量和可读性。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb46-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb46-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb46-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g, <span class="at">color =</span> species)</span>
+<span id="cb46-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb46-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="添加美学映射-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">添加美学映射</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb47-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb47-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb47-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g, <span class="at">color =</span> species)</span>
+<span id="cb47-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb47-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="添加平滑曲线图层" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">添加平滑曲线图层</h2>
+<ul>
+<li><code>geom_smooth()</code> 用于添加平滑曲线，常用于显示数据的趋势。</li>
+<li><code>method</code>参数指定平滑方法，如<code>lm</code>表示线性模型。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb48-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb48-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb48-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g, <span class="at">color =</span> species)</span>
+<span id="cb48-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb48-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb48-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="添加平滑曲线图层-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">添加平滑曲线图层</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb49-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb49-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb49-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g, <span class="at">color =</span> species)</span>
+<span id="cb49-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb49-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb49-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-23-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="作用范围全局与局部" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">作用范围：全局与局部</h2>
+<ul>
+<li>全局：在<code>ggplot()</code>中定义，适用于所有图层。</li>
+<li>局部：在特定图层中定义，仅适用于该图层。</li>
+</ul>
+<p>全局mapping：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb50-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb50-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb50-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g, <span class="at">color =</span> species)</span>
+<span id="cb50-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb50-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb50-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="作用范围全局与局部-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">作用范围：全局与局部</h2>
+<ul>
+<li>全局：在<code>ggplot()</code>中定义，适用于所有图层。</li>
+<li>局部：在特定图层中定义，仅适用于该图层。</li>
+</ul>
+<p>局部mapping：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb51-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb51-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb51-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g)</span>
+<span id="cb51-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb51-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb51-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="作用范围全局与局部-2" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">作用范围：全局与局部</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb52-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb52-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb52-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g)</span>
+<span id="cb52-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb52-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">color =</span> species)) <span class="sc">+</span></span>
+<span id="cb52-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-26-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="更多参数控制图形外观" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">更多参数控制图形外观</h2>
+<p>几何对象函数（如<code>geom_point()</code>）还接受其他参数，用于控制图形的外观，如形状（<code>shape</code>）、大小（<code>size</code>）、颜色（<code>color</code>）、透明度（<code>alpha</code>）等。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb53-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb53-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb53-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g)</span>
+<span id="cb53-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb53-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">color =</span> species, <span class="at">shape =</span> species)) <span class="sc">+</span></span>
+<span id="cb53-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="更多参数控制图形外观-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">更多参数控制图形外观</h2>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb54-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb54-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb54-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g)</span>
+<span id="cb54-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb54-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">color =</span> species, <span class="at">shape =</span> species)) <span class="sc">+</span></span>
+<span id="cb54-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-28-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="添加标签" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">添加标签</h2>
+<p><code>labs()</code> 用于添加标题、轴标签和图例标题。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb55-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb55-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb55-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g)</span>
+<span id="cb55-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb55-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> species, <span class="at">shape =</span> species)) <span class="sc">+</span></span>
+<span id="cb55-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span></span>
+<span id="cb55-7" class="hljs-ln-code"><a href=""></a>  <span class="fu">labs</span>(</span>
+<span id="cb55-8" class="hljs-ln-code"><a href=""></a>    <span class="at">title =</span> <span class="st">"Body mass and flipper length"</span>,</span>
+<span id="cb55-9" class="hljs-ln-code"><a href=""></a>    <span class="at">subtitle =</span> <span class="st">"Dimensions for Adelie, Chinstrap, and Gentoo Penguins"</span>,</span>
+<span id="cb55-10" class="hljs-ln-code"><a href=""></a>    <span class="at">x =</span> <span class="st">"Flipper length (mm)"</span>, <span class="at">y =</span> <span class="st">"Body mass (g)"</span>,</span>
+<span id="cb55-11" class="hljs-ln-code"><a href=""></a>    <span class="at">color =</span> <span class="st">"Species"</span>, <span class="at">shape =</span> <span class="st">"Species"</span></span>
+<span id="cb55-12" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="添加标签-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">添加标签</h2>
+
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-30-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="外观调整" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">外观调整</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb56-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(</span>
+<span id="cb56-2" class="hljs-ln-code"><a href=""></a>  <span class="at">data =</span> penguins,</span>
+<span id="cb56-3" class="hljs-ln-code"><a href=""></a>  <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> flipper_length_mm, <span class="at">y =</span> body_mass_g)</span>
+<span id="cb56-4" class="hljs-ln-code"><a href=""></a>) <span class="sc">+</span></span>
+<span id="cb56-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> species, <span class="at">shape =</span> species)) <span class="sc">+</span></span>
+<span id="cb56-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span></span>
+<span id="cb56-7" class="hljs-ln-code"><a href=""></a>  <span class="fu">labs</span>(</span>
+<span id="cb56-8" class="hljs-ln-code"><a href=""></a>    <span class="at">title =</span> <span class="st">"Body mass and flipper length"</span>,</span>
+<span id="cb56-9" class="hljs-ln-code"><a href=""></a>    <span class="at">subtitle =</span> <span class="st">"Dimensions for Adelie, Chinstrap, and Gentoo Penguins"</span>,</span>
+<span id="cb56-10" class="hljs-ln-code"><a href=""></a>    <span class="at">x =</span> <span class="st">"Flipper length (mm)"</span>, <span class="at">y =</span> <span class="st">"Body mass (g)"</span>,</span>
+<span id="cb56-11" class="hljs-ln-code"><a href=""></a>    <span class="at">color =</span> <span class="st">"Species"</span>, <span class="at">shape =</span> <span class="st">"Species"</span></span>
+<span id="cb56-12" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">+</span></span>
+<span id="cb56-13" class="hljs-ln-code"><a href=""></a>  <span class="fu">scale_color_colorblind</span>() <span class="co"># 使用色盲友好调色板，来自ggthemes包</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="外观调整-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">外观调整</h2>
+
+<img data-src="talk02_files/figure-revealjs/unnamed-chunk-32-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section></section>
+<section>
+<section id="数据转换data-transformation" class="title-slide slide level1 center">
+<h1>数据转换（Data Transformation）</h1>
+
+</section>
+<section id="flights数据集" class="slide level2">
+<h2><code>flights</code>数据集</h2>
+<p><code>nycflights13</code>包中的<code>flights</code>数据集，包含了2013年纽约市三大机场的所有航班信息：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href=""></a><span class="fu">library</span>(nycflights13)</span>
+<span id="cb57-2"><a href=""></a><span class="fu">head</span>(flights)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 19
+   year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+  &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+1  2013     1     1      517            515         2      830            819
+2  2013     1     1      533            529         4      850            830
+3  2013     1     1      542            540         2      923            850
+4  2013     1     1      544            545        -1     1004           1022
+5  2013     1     1      554            600        -6      812            837
+6  2013     1     1      554            558        -4      740            728
 # ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
 #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
 #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
 </div>
 </div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a><span class="fu">glimpse</span>(flights)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 336,776
-Columns: 19
-$ year           &lt;int&gt; 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2…
-$ month          &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-$ day            &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-$ dep_time       &lt;int&gt; 517, 533, 542, 544, 554, 554, 555, 557, 557, 558, 558, …
-$ sched_dep_time &lt;int&gt; 515, 529, 540, 545, 600, 558, 600, 600, 600, 600, 600, …
-$ dep_delay      &lt;dbl&gt; 2, 4, 2, -1, -6, -4, -5, -3, -3, -2, -2, -2, -2, -2, -1…
-$ arr_time       &lt;int&gt; 830, 850, 923, 1004, 812, 740, 913, 709, 838, 753, 849,…
-$ sched_arr_time &lt;int&gt; 819, 830, 850, 1022, 837, 728, 854, 723, 846, 745, 851,…
-$ arr_delay      &lt;dbl&gt; 11, 20, 33, -18, -25, 12, 19, -14, -8, 8, -2, -3, 7, -1…
-$ carrier        &lt;chr&gt; "UA", "UA", "AA", "B6", "DL", "UA", "B6", "EV", "B6", "…
-$ flight         &lt;int&gt; 1545, 1714, 1141, 725, 461, 1696, 507, 5708, 79, 301, 4…
-$ tailnum        &lt;chr&gt; "N14228", "N24211", "N619AA", "N804JB", "N668DN", "N394…
-$ origin         &lt;chr&gt; "EWR", "LGA", "JFK", "JFK", "LGA", "EWR", "EWR", "LGA",…
-$ dest           &lt;chr&gt; "IAH", "IAH", "MIA", "BQN", "ATL", "ORD", "FLL", "IAD",…
-$ air_time       &lt;dbl&gt; 227, 227, 160, 183, 116, 150, 158, 53, 140, 138, 149, 1…
-$ distance       &lt;dbl&gt; 1400, 1416, 1089, 1576, 762, 719, 1065, 229, 944, 733, …
-$ hour           &lt;dbl&gt; 5, 5, 5, 5, 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 6, 6, 6…
-$ minute         &lt;dbl&gt; 15, 29, 40, 45, 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0…
-$ time_hour      &lt;dttm&gt; 2013-01-01 05:00:00, 2013-01-01 05:00:00, 2013-01-01 0…</code></pre>
-</div>
-</div>
-<blockquote>
-<p>数据来自 <code>nycflights13</code>：2013 年纽约三机场的航班记录。</p>
-</blockquote>
-</section></section>
-<section>
-<section id="数据可视化ggplot2" class="title-slide slide level1 center">
-<h1>1. 数据可视化（ggplot2）</h1>
-
 </section>
-<section id="语法框架" class="slide level2">
-<h2>语法框架</h2>
-<p><code>ggplot2</code> 的核心思想：</p>
-<p><span class="math display">\[
-\text{plot} = \text{data} + \text{aesthetics} + \text{geoms}
-\]</span></p>
-<p>最小结构：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a><span class="fu">ggplot</span>(<span class="at">data =</span> ..., <span class="fu">aes</span>(<span class="at">x =</span> ..., <span class="at">y =</span> ...)) <span class="sc">+</span></span>
-<span id="cb30-2"><a href=""></a>  <span class="fu">geom_...</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="散点图1" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title">散点图（1）</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb31-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay, <span class="at">y =</span> arr_delay))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="talk02_files/figure-revealjs/unnamed-chunk-12-1.png" width="960" class="r-stretch"></section>
-<section id="散点图2" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title">散点图（2）</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb32-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay, <span class="at">y =</span> arr_delay)) <span class="sc">+</span></span>
-<span id="cb32-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="talk02_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section>
-<section id="散点图3" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title">散点图（3）</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb33-1" class="hljs-ln-code"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay, <span class="at">y =</span> arr_delay, <span class="at">color =</span> origin)) <span class="sc">+</span></span>
-<span id="cb33-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb33-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">labs</span>(</span>
-<span id="cb33-4" class="hljs-ln-code"><a href=""></a>    <span class="at">title =</span> <span class="st">"出发延误与到达延误"</span>,</span>
-<span id="cb33-5" class="hljs-ln-code"><a href=""></a>    <span class="at">x =</span> <span class="st">"出发延误（分钟）"</span>,</span>
-<span id="cb33-6" class="hljs-ln-code"><a href=""></a>    <span class="at">y =</span> <span class="st">"到达延误（分钟）"</span>,</span>
-<span id="cb33-7" class="hljs-ln-code"><a href=""></a>    <span class="at">color =</span> <span class="st">"机场"</span></span>
-<span id="cb33-8" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="talk02_files/figure-revealjs/unnamed-chunk-14-1.png" width="960" class="r-stretch"></section>
-<section id="直方图" class="slide level2">
-<h2>直方图</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay)) <span class="sc">+</span></span>
-<span id="cb34-2"><a href=""></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">10</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb34-3"><a href=""></a>  <span class="fu">labs</span>(</span>
-<span id="cb34-4"><a href=""></a>    <span class="at">title =</span> <span class="st">"出发延误分布"</span>,</span>
-<span id="cb34-5"><a href=""></a>    <span class="at">x =</span> <span class="st">"出发延误（分钟）"</span>,</span>
-<span id="cb34-6"><a href=""></a>    <span class="at">y =</span> <span class="st">"频数"</span></span>
-<span id="cb34-7"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="talk02_files/figure-revealjs/unnamed-chunk-15-1.png" width="960" class="r-stretch"></section>
-<section id="条形图" class="slide level2">
-<h2>条形图</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> carrier)) <span class="sc">+</span></span>
-<span id="cb35-2"><a href=""></a>  <span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"tomato"</span>) <span class="sc">+</span></span>
-<span id="cb35-3"><a href=""></a>  <span class="fu">labs</span>(</span>
-<span id="cb35-4"><a href=""></a>    <span class="at">title =</span> <span class="st">"不同航空公司航班数量"</span>,</span>
-<span id="cb35-5"><a href=""></a>    <span class="at">x =</span> <span class="st">"航空公司"</span>,</span>
-<span id="cb35-6"><a href=""></a>    <span class="at">y =</span> <span class="st">"航班数量"</span></span>
-<span id="cb35-7"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="talk02_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"></section>
-<section id="箱线图" class="slide level2">
-<h2>箱线图</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> origin, <span class="at">y =</span> dep_delay, <span class="at">fill =</span> origin)) <span class="sc">+</span></span>
-<span id="cb36-2"><a href=""></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb36-3"><a href=""></a>  <span class="fu">labs</span>(</span>
-<span id="cb36-4"><a href=""></a>    <span class="at">title =</span> <span class="st">"不同机场的出发延误分布"</span>,</span>
-<span id="cb36-5"><a href=""></a>    <span class="at">x =</span> <span class="st">"机场"</span>,</span>
-<span id="cb36-6"><a href=""></a>    <span class="at">y =</span> <span class="st">"出发延误（分钟）"</span></span>
-<span id="cb36-7"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="talk02_files/figure-revealjs/unnamed-chunk-17-1.png" width="960" class="r-stretch"></section>
-<section id="分面facet" class="slide level2">
-<h2>分面（facet）</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay, <span class="at">y =</span> arr_delay)) <span class="sc">+</span></span>
-<span id="cb37-2"><a href=""></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.15</span>, <span class="at">color =</span> <span class="st">"#2C7FB8"</span>) <span class="sc">+</span></span>
-<span id="cb37-3"><a href=""></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> origin)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="talk02_files/figure-revealjs/unnamed-chunk-18-1.png" width="960" class="r-stretch"></section>
-<section id="常用美化" class="slide level2">
-<h2>常用美化</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href=""></a><span class="fu">ggplot</span>(flights, <span class="fu">aes</span>(<span class="at">x =</span> dep_delay)) <span class="sc">+</span></span>
-<span id="cb38-2"><a href=""></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">10</span>, <span class="at">fill =</span> <span class="st">"#41B6C4"</span>, <span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb38-3"><a href=""></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"出发延误分布"</span>) <span class="sc">+</span></span>
-<span id="cb38-4"><a href=""></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="talk02_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
-<section id="小结ggplot2" class="slide level2">
-<h2>小结：ggplot2</h2>
-<ul>
-<li class="fragment">先确定数据和变量映射（<code>aes()</code>）</li>
-<li class="fragment">再添加几何对象（<code>geom_*()</code>）</li>
-<li class="fragment">最后补充标签、分面和主题</li>
-</ul>
-<blockquote>
-<p>探索：把 <code>origin</code> 映射到 <code>shape</code>，图会怎样变化？</p>
-</blockquote>
-</section></section>
-<section>
-<section id="数据转换dplyr" class="title-slide slide level1 center">
-<h1>2. 数据转换（dplyr）</h1>
-
-</section>
-<section id="常用动词" class="slide level2">
-<h2>常用动词</h2>
+<section id="核心函数" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">核心函数</h2>
+<p>用<code>dplyr</code>包中的函数进行数据转换操作，核心函数包括：</p>
 <ul>
 <li class="fragment"><code>filter()</code>：筛选行</li>
 <li class="fragment"><code>select()</code>：选择列</li>
 <li class="fragment"><code>mutate()</code>：新增/修改列</li>
-<li class="fragment"><code>arrange()</code>：排序</li>
-<li class="fragment"><code>summarise()</code>：汇总</li>
+<li class="fragment"><code>group_by</code>与<code>summarise()</code>：分组与汇总</li>
 </ul>
 </section>
-<section id="filter-筛选航班" class="slide level2">
-<h2><code>filter()</code> 筛选航班</h2>
+<section id="核心函数-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">核心函数</h2>
+<p>用<code>dplyr</code>包中的函数进行数据转换操作，核心函数包括：</p>
+<ul>
+<li><code>filter()</code>：筛选行</li>
+<li><code>select()</code>：选择列</li>
+<li><code>mutate()</code>：新增/修改列</li>
+<li><code>group_by</code>与<code>summarise()</code>：分组与汇总</li>
+</ul>
+<blockquote>
+<p>共同点：第一个参数是一个数据框，返回一个新的数据框。</p>
+</blockquote>
+</section>
+<section id="管道符号" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">管道符号</h2>
+<ul>
+<li><code>|&gt;</code> 是<code>R 4.1.0</code>引入的原生管道操作符，用于将一个对象传递给下一个函数作为第一个参数。</li>
+</ul>
+</section>
+<section id="管道符号-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">管道符号</h2>
+<ul>
+<li><code>|&gt;</code> 是<code>R 4.1.0</code>引入的原生管道操作符，用于将一个对象传递给下一个函数作为第一个参数。</li>
+<li><code>x |&gt; f()</code> 等价于 <code>f(x)</code>， <code>x |&gt; f(y) |&gt; g(z)</code> 等价于 <code>g(f(x, y), z)</code>。</li>
+</ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb39-2"><a href=""></a>  <span class="fu">filter</span>(month <span class="sc">==</span> <span class="dv">1</span>, day <span class="sc">==</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href=""></a>vec <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.44</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="fl">5.9</span>)</span>
+<span id="cb59-2"><a href=""></a>vec <span class="sc">|&gt;</span> <span class="fu">mean</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 842 × 19
+<pre><code>[1] 3.268</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href=""></a>vec <span class="sc">|&gt;</span> <span class="fu">mean</span>() <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.27</code></pre>
+</div>
+</div>
+<blockquote>
+<p><code>%&gt;%</code>是<code>magrittr</code>包中的管道操作符，功能类似于 <code>|&gt;</code>。 <code>tidyverse</code>依赖于<code>magrittr</code>，因此在使用<code>tidyverse</code>时也可以使用<code>%&gt;%</code>。</p>
+</blockquote>
+</section>
+<section id="filter-筛选行" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>filter()</code> 筛选行</h2>
+<p><code>filter()</code>根据列的取值筛选出行。第一参数是数据框，后续参数通常是逻辑表达式，返回满足条件行组成的新数据框。</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb63-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb63-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">filter</span>(dep_delay <span class="sc">&gt;</span> <span class="dv">60</span>) <span class="co"># 筛选出所有起飞延误超过60分钟的航班</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 26,581 × 19
     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
- 1  2013     1     1      517            515         2      830            819
- 2  2013     1     1      533            529         4      850            830
- 3  2013     1     1      542            540         2      923            850
- 4  2013     1     1      544            545        -1     1004           1022
- 5  2013     1     1      554            600        -6      812            837
- 6  2013     1     1      554            558        -4      740            728
- 7  2013     1     1      555            600        -5      913            854
- 8  2013     1     1      557            600        -3      709            723
- 9  2013     1     1      557            600        -3      838            846
-10  2013     1     1      558            600        -2      753            745
-# ℹ 832 more rows
+ 1  2013     1     1      811            630       101     1047            830
+ 2  2013     1     1      826            715        71     1136           1045
+ 3  2013     1     1      848           1835       853     1001           1950
+ 4  2013     1     1      957            733       144     1056            853
+ 5  2013     1     1     1114            900       134     1447           1222
+ 6  2013     1     1     1120            944        96     1331           1213
+ 7  2013     1     1     1301           1150        71     1518           1345
+ 8  2013     1     1     1337           1220        77     1649           1531
+ 9  2013     1     1     1400           1250        70     1645           1502
+10  2013     1     1     1505           1310       115     1638           1431
+# ℹ 26,571 more rows
 # ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
 #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
 #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
 </div>
 </div>
 </section>
-<section id="select-选择变量" class="slide level2">
-<h2><code>select()</code> 选择变量</h2>
+<section id="filter-筛选行-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>filter()</code> 筛选行</h2>
+<p><code>filter()</code>根据列的取值筛选出行。第一参数是数据框，后续参数通常是逻辑表达式，返回满足条件行组成的新数据框。</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb41-2"><a href=""></a>  <span class="fu">select</span>(year<span class="sc">:</span>day, dep_delay, arr_delay, carrier)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 336,776 × 6
-    year month   day dep_delay arr_delay carrier
-   &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;  
- 1  2013     1     1         2        11 UA     
- 2  2013     1     1         4        20 UA     
- 3  2013     1     1         2        33 AA     
- 4  2013     1     1        -1       -18 B6     
- 5  2013     1     1        -6       -25 DL     
- 6  2013     1     1        -4        12 UA     
- 7  2013     1     1        -5        19 B6     
- 8  2013     1     1        -3       -14 EV     
- 9  2013     1     1        -3        -8 B6     
-10  2013     1     1        -2         8 AA     
-# ℹ 336,766 more rows</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb65-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb65-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">filter</span>(month <span class="sc">==</span> <span class="dv">1</span>) <span class="co"># 筛选出所有起飞延误超过60分钟的航班</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<blockquote>
+<p>注意：<code>=</code>是赋值运算符，<code>==</code>才是比较运算符。</p>
+</blockquote>
+</section>
+<section id="练习1filter使用" class="slide level2">
+<h2>练习1：<code>filter()</code>使用</h2>
+<ul>
+<li>筛选出1月1日的航班(<code>month</code>和<code>day</code>)</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb66-2"><a href=""></a>  <span class="fu">filter</span>(month <span class="sc">==</span> <span class="dv">1</span>, day <span class="sc">==</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<ul>
+<li>筛选出1月和2月的航班</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href=""></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb67-2"><a href=""></a>  <span class="fu">filter</span>(month <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> month <span class="sc">==</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb68-2"><a href=""></a>  <span class="fu">filter</span>(month <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<ul>
+<li>起飞延误，到达未延误航班（<code>dep_delay</code> 和 <code>arr_delay</code>）</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb69-2"><a href=""></a>  <span class="fu">filter</span>(dep_delay <span class="sc">&gt;</span> <span class="dv">0</span>, arr_delay <span class="sc">&lt;=</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 </section>
-<section id="mutate-新建变量" class="slide level2">
-<h2><code>mutate()</code> 新建变量</h2>
+<section id="select-选择列" class="slide level2">
+<h2><code>select()</code> 选择列</h2>
+<p><code>select()</code>根据列名选择列。</p>
+<ul>
+<li>根据列名选择列：</li>
+</ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb43-2"><a href=""></a>  <span class="fu">mutate</span>(</span>
-<span id="cb43-3"><a href=""></a>    <span class="at">gain =</span> dep_delay <span class="sc">-</span> arr_delay,</span>
-<span id="cb43-4"><a href=""></a>    <span class="at">speed =</span> distance <span class="sc">/</span> air_time <span class="sc">*</span> <span class="dv">60</span></span>
-<span id="cb43-5"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb43-6"><a href=""></a>  <span class="fu">select</span>(dep_delay, arr_delay, gain, distance, air_time, speed)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 336,776 × 6
-   dep_delay arr_delay  gain distance air_time speed
-       &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
- 1         2        11    -9     1400      227  370.
- 2         4        20   -16     1416      227  374.
- 3         2        33   -31     1089      160  408.
- 4        -1       -18    17     1576      183  517.
- 5        -6       -25    19      762      116  394.
- 6        -4        12   -16      719      150  288.
- 7        -5        19   -24     1065      158  404.
- 8        -3       -14    11      229       53  259.
- 9        -3        -8     5      944      140  405.
-10        -2         8   -10      733      138  319.
-# ℹ 336,766 more rows</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb70-2"><a href=""></a>  <span class="fu">select</span>(year, month, day, dep_delay, arr_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<ul>
+<li>选择两列间的所有列：</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb71-2"><a href=""></a>  <span class="fu">select</span>(year<span class="sc">:</span>arr_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>选择特定列之外的所有列：</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb72-2"><a href=""></a>  <span class="fu">select</span>(<span class="sc">!</span><span class="fu">c</span>(year, month))</span>
+<span id="cb72-3"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb72-4"><a href=""></a>  <span class="fu">select</span>(<span class="sc">!</span>year<span class="sc">:</span>dep_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="arrange-排序" class="slide level2">
-<h2><code>arrange()</code> 排序</h2>
+<section id="select-进阶" class="slide level2">
+<h2><code>select()</code> 进阶</h2>
+<ul>
+<li>选择所有为字符型向量的列</li>
+</ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb45-2"><a href=""></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(dep_delay)) <span class="sc">|&gt;</span></span>
-<span id="cb45-3"><a href=""></a>  <span class="fu">select</span>(year<span class="sc">:</span>day, carrier, flight, dep_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 336,776 × 6
-    year month   day carrier flight dep_delay
-   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;int&gt;     &lt;dbl&gt;
- 1  2013     1     9 HA          51      1301
- 2  2013     6    15 MQ        3535      1137
- 3  2013     1    10 MQ        3695      1126
- 4  2013     9    20 AA         177      1014
- 5  2013     7    22 MQ        3075      1005
- 6  2013     4    10 DL        2391       960
- 7  2013     3    17 DL        2119       911
- 8  2013     6    27 DL        2007       899
- 9  2013     7    22 DL        2047       898
-10  2013    12     5 AA         172       896
-# ℹ 336,766 more rows</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href=""></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb73-2"><a href=""></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.character))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<ul>
+<li>选择包含特定字符串的列</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb74-2"><a href=""></a>  <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"delay"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>选择特定字符开头的列</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb75-2"><a href=""></a>  <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"dep"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="summarise-汇总" class="slide level2">
-<h2><code>summarise()</code> 汇总</h2>
+<section id="练习2管道符号使用" class="slide level2">
+<h2>练习2：管道符号使用</h2>
+<ul>
+<li>筛选出到达延误时间最长的10个航班</li>
+</ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb47-2"><a href=""></a>  <span class="fu">summarise</span>(</span>
-<span id="cb47-3"><a href=""></a>    <span class="at">mean_dep_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb47-4"><a href=""></a>    <span class="at">mean_arr_delay =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb47-5"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 × 2
-  mean_dep_delay mean_arr_delay
-           &lt;dbl&gt;          &lt;dbl&gt;
-1           12.6           6.90</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb76-2"><a href=""></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(arr_delay)) <span class="sc">|&gt;</span></span>
+<span id="cb76-3"><a href=""></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<ul>
+<li>筛选出1月和2月的航班，并选择<code>year</code>、<code>month</code>、<code>day</code>、<code>dep_delay</code>和<code>arr_delay</code>列：</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb77-2"><a href=""></a>  <span class="fu">filter</span>(month <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb77-3"><a href=""></a>  <span class="fu">select</span>(year, month, day, dep_delay, arr_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 </div>
 </section>
-<section id="分组汇总.by" class="slide level2">
-<h2>分组汇总：<code>.by</code></h2>
+<section id="mutate新增修改列" class="slide level2">
+<h2><code>mutate()</code>新增/修改列</h2>
+<ul>
+<li>新增列：起飞延误时间（小时）</li>
+</ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb49-2"><a href=""></a>  <span class="fu">summarise</span>(</span>
-<span id="cb49-3"><a href=""></a>    <span class="at">n =</span> <span class="fu">n</span>(),</span>
-<span id="cb49-4"><a href=""></a>    <span class="at">mean_dep_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb49-5"><a href=""></a>    <span class="at">.by =</span> carrier</span>
-<span id="cb49-6"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb49-7"><a href=""></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_dep_delay))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 16 × 3
-   carrier     n mean_dep_delay
-   &lt;chr&gt;   &lt;int&gt;          &lt;dbl&gt;
- 1 F9        685          20.2 
- 2 EV      54173          20.0 
- 3 YV        601          19.0 
- 4 FL       3260          18.7 
- 5 WN      12275          17.7 
- 6 9E      18460          16.7 
- 7 B6      54635          13.0 
- 8 VX       5162          12.9 
- 9 OO         32          12.6 
-10 UA      58665          12.1 
-11 MQ      26397          10.6 
-12 DL      48110           9.26
-13 AA      32729           8.59
-14 AS        714           5.80
-15 HA        342           4.90
-16 US      20536           3.78</code></pre>
-</div>
-</div>
-</section>
-<section id="多列操作across" class="slide level2">
-<h2>多列操作：<code>across()</code></h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb51-2"><a href=""></a>  <span class="fu">summarise</span>(</span>
-<span id="cb51-3"><a href=""></a>    <span class="fu">across</span>(<span class="fu">c</span>(dep_delay, arr_delay), <span class="sc">~</span> <span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)),</span>
-<span id="cb51-4"><a href=""></a>    <span class="at">.by =</span> origin</span>
-<span id="cb51-5"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 3
-  origin dep_delay arr_delay
-  &lt;chr&gt;      &lt;dbl&gt;     &lt;dbl&gt;
-1 EWR         15.1      9.11
-2 LGA         10.3      5.78
-3 JFK         12.1      5.55</code></pre>
-</div>
-</div>
-</section>
-<section id="连接数据" class="slide level2">
-<h2>连接数据</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb53-2"><a href=""></a>  <span class="fu">left_join</span>(airlines, <span class="fu">join_by</span>(carrier)) <span class="sc">|&gt;</span></span>
-<span id="cb53-3"><a href=""></a>  <span class="fu">select</span>(carrier, name, dep_delay, arr_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 336,776 × 4
-   carrier name                     dep_delay arr_delay
-   &lt;chr&gt;   &lt;chr&gt;                        &lt;dbl&gt;     &lt;dbl&gt;
- 1 UA      United Air Lines Inc.            2        11
- 2 UA      United Air Lines Inc.            4        20
- 3 AA      American Airlines Inc.           2        33
- 4 B6      JetBlue Airways                 -1       -18
- 5 DL      Delta Air Lines Inc.            -6       -25
- 6 UA      United Air Lines Inc.           -4        12
- 7 B6      JetBlue Airways                 -5        19
- 8 EV      ExpressJet Airlines Inc.        -3       -14
- 9 B6      JetBlue Airways                 -3        -8
-10 AA      American Airlines Inc.          -2         8
-# ℹ 336,766 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="管道链式写法" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title">管道链式写法</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb55-1" class="hljs-ln-code"><a href=""></a>flights</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 336,776 × 19
-    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
-   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
- 1  2013     1     1      517            515         2      830            819
- 2  2013     1     1      533            529         4      850            830
- 3  2013     1     1      542            540         2      923            850
- 4  2013     1     1      544            545        -1     1004           1022
- 5  2013     1     1      554            600        -6      812            837
- 6  2013     1     1      554            558        -4      740            728
- 7  2013     1     1      555            600        -5      913            854
- 8  2013     1     1      557            600        -3      709            723
- 9  2013     1     1      557            600        -3      838            846
-10  2013     1     1      558            600        -2      753            745
-# ℹ 336,766 more rows
-# ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
-#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
-#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
-</div>
-</div>
-</section>
-<section id="管道链式写法-1" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title">管道链式写法</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb57-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb57-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">gain =</span> dep_delay <span class="sc">-</span> arr_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href=""></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb78-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">dep_delay_hour =</span> dep_delay <span class="sc">/</span> <span class="dv">60</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 336,776 × 20
     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
@@ -806,96 +979,523 @@ $ time_hour      &lt;dttm&gt; 2013-01-01 05:00:00, 2013-01-01 05:00:00, 2013-01-
 # ℹ 336,766 more rows
 # ℹ 12 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
 #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
-#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, gain &lt;dbl&gt;</code></pre>
+#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, dep_delay_hour &lt;dbl&gt;</code></pre>
 </div>
 </div>
 </section>
-<section id="管道链式写法-2" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title">管道链式写法</h2>
+<section id="mutate新增修改列-1" class="slide level2">
+<h2><code>mutate()</code>新增/修改列</h2>
+<ul>
+<li>新列默认在最后一列位置，<code>.after</code>或<code>.before</code>参数调整。</li>
+</ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb59-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb59-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">gain =</span> dep_delay <span class="sc">-</span> arr_delay) <span class="sc">|&gt;</span></span>
-<span id="cb59-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">summarise</span>(</span>
-<span id="cb59-4" class="hljs-ln-code"><a href=""></a>    <span class="at">mean_gain =</span> <span class="fu">mean</span>(gain, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb59-5" class="hljs-ln-code"><a href=""></a>    <span class="at">.by =</span> carrier</span>
-<span id="cb59-6" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href=""></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb80-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">dep_delay_hour =</span> dep_delay <span class="sc">/</span> <span class="dv">60</span>, <span class="at">.after =</span> dep_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>新增多个列，保留使用到的列</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb81-2"><a href=""></a>  <span class="fu">mutate</span>(</span>
+<span id="cb81-3"><a href=""></a>    <span class="at">gain =</span> dep_delay <span class="sc">-</span> arr_delay,</span>
+<span id="cb81-4"><a href=""></a>    <span class="at">speed_per_min =</span> distance <span class="sc">/</span> air_time,</span>
+<span id="cb81-5"><a href=""></a>    <span class="at">speed_per_hour =</span> speed_per_min <span class="sc">*</span> <span class="dv">60</span>,</span>
+<span id="cb81-6"><a href=""></a>    <span class="at">.keep =</span> <span class="st">"used"</span> </span>
+<span id="cb81-7"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>修改列：将<code>dep_delay</code>转换为小时</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb82"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href=""></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb82-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">dep_delay =</span> dep_delay <span class="sc">/</span> <span class="dv">60</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="练习3" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">练习3</h2>
+<ul>
+<li>飞往LAX的航班中速度最快的10个航班，保留起飞日期、出发地、目的地，飞行距离，飞行时间和速度列。</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb83"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb83-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb83-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">filter</span>(dest <span class="sc">==</span> <span class="st">"LAX"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb83-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">speed_per_min =</span> distance <span class="sc">/</span> air_time) <span class="sc">|&gt;</span></span>
+<span id="cb83-4" class="hljs-ln-code"><a href=""></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(speed_per_min)) <span class="sc">|&gt;</span></span>
+<span id="cb83-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span></span>
+<span id="cb83-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">select</span>(year, month, day, origin, dest, distance, air_time, speed_per_min)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 16 × 2
-   carrier mean_gain
-   &lt;chr&gt;       &lt;dbl&gt;
- 1 UA          8.46 
- 2 AA          8.20 
- 3 B6          3.51 
- 4 DL          7.58 
- 5 EV          4.04 
- 6 MQ         -0.329
- 7 US          1.62 
- 8 WN          8.01 
- 9 VX         11.0  
-10 FL         -1.51 
-11 AS         15.8  
-12 9E          9.06 
-13 F9         -1.72 
-14 HA         11.8  
-15 YV          3.34 
-16 OO          0.655</code></pre>
+<pre><code># A tibble: 10 × 8
+    year month   day origin dest  distance air_time speed_per_min
+   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;    &lt;dbl&gt;         &lt;dbl&gt;
+ 1  2013     9     6 JFK    LAX       2475      275          9   
+ 2  2013     7    12 JFK    LAX       2475      277          8.94
+ 3  2013     8    27 JFK    LAX       2475      279          8.87
+ 4  2013     7    15 JFK    LAX       2475      280          8.84
+ 5  2013     3     1 JFK    LAX       2475      281          8.81
+ 6  2013     7    19 JFK    LAX       2475      281          8.81
+ 7  2013     8    25 JFK    LAX       2475      281          8.81
+ 8  2013     7     1 EWR    LAX       2454      279          8.80
+ 9  2013     7    13 JFK    LAX       2475      282          8.78
+10  2013     7    13 JFK    LAX       2475      282          8.78</code></pre>
 </div>
 </div>
 </section>
-<section id="管道链式写法-3" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title">管道链式写法</h2>
+<section id="练习3-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">练习3</h2>
+<ul>
+<li>飞往洛杉矶（LAX）的航班中飞行速度最快的10个航班，保留起飞日期、出发地、目的地，飞行距离，飞行时间和速度列。</li>
+</ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb61-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb61-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">gain =</span> dep_delay <span class="sc">-</span> arr_delay) <span class="sc">|&gt;</span></span>
-<span id="cb61-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">summarise</span>(</span>
-<span id="cb61-4" class="hljs-ln-code"><a href=""></a>    <span class="at">mean_gain =</span> <span class="fu">mean</span>(gain, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb61-5" class="hljs-ln-code"><a href=""></a>    <span class="at">.by =</span> carrier</span>
-<span id="cb61-6" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb61-7" class="hljs-ln-code"><a href=""></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_gain))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb85"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb85-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span></span>
+<span id="cb85-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">filter</span>(dest <span class="sc">==</span> <span class="st">"LAX"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb85-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">speed_per_min =</span> distance <span class="sc">/</span> air_time) <span class="sc">|&gt;</span></span>
+<span id="cb85-4" class="hljs-ln-code"><a href=""></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(speed_per_min)) <span class="sc">|&gt;</span></span>
+<span id="cb85-5" class="hljs-ln-code"><a href=""></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">10</span>) <span class="sc">|&gt;</span></span>
+<span id="cb85-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">select</span>(year, month, day, origin, dest, distance, air_time, speed_per_min)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="group_by与summarise分组汇总" class="slide level2">
+<h2><code>group_by()</code>与<code>summarise()</code>分组汇总</h2>
+<ul>
+<li><code>group_by()</code>将数据框按一个或多个变量分组。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb86"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href=""></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb86-2"><a href=""></a>  <span class="fu">group_by</span>(month)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 16 × 2
-   carrier mean_gain
-   &lt;chr&gt;       &lt;dbl&gt;
- 1 AS         15.8  
- 2 HA         11.8  
- 3 VX         11.0  
- 4 9E          9.06 
- 5 UA          8.46 
- 6 AA          8.20 
- 7 WN          8.01 
- 8 DL          7.58 
- 9 EV          4.04 
-10 B6          3.51 
-11 YV          3.34 
-12 US          1.62 
-13 OO          0.655
-14 MQ         -0.329
-15 FL         -1.51 
-16 F9         -1.72 </code></pre>
+<pre><code># A tibble: 336,776 × 19
+# Groups:   month [12]
+    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+ 1  2013     1     1      517            515         2      830            819
+ 2  2013     1     1      533            529         4      850            830
+ 3  2013     1     1      542            540         2      923            850
+ 4  2013     1     1      544            545        -1     1004           1022
+ 5  2013     1     1      554            600        -6      812            837
+ 6  2013     1     1      554            558        -4      740            728
+ 7  2013     1     1      555            600        -5      913            854
+ 8  2013     1     1      557            600        -3      709            723
+ 9  2013     1     1      557            600        -3      838            846
+10  2013     1     1      558            600        -2      753            745
+# ℹ 336,766 more rows
+# ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
 </div>
 </div>
-<blockquote>
-<p>探索：把最后的 <code>arrange(desc(mean_gain))</code> 改成 <code>arrange(mean_gain)</code> 会发生什么？</p>
-</blockquote>
+</section>
+<section id="group_by与summarise分组汇总-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>group_by()</code>与<code>summarise()</code>分组汇总</h2>
+<ul>
+<li><code>summarise()</code>对分组数据进行汇总计算。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb88"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb88-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb88-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">group_by</span>(month) <span class="sc">|&gt;</span> </span>
+<span id="cb88-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">summarize</span>(</span>
+<span id="cb88-4" class="hljs-ln-code"><a href=""></a>    <span class="at">avg_delay =</span> <span class="fu">mean</span>(dep_delay)</span>
+<span id="cb88-5" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 2
+   month avg_delay
+   &lt;int&gt;     &lt;dbl&gt;
+ 1     1        NA
+ 2     2        NA
+ 3     3        NA
+ 4     4        NA
+ 5     5        NA
+ 6     6        NA
+ 7     7        NA
+ 8     8        NA
+ 9     9        NA
+10    10        NA
+11    11        NA
+12    12        NA</code></pre>
+</div>
+</div>
+</section>
+<section id="group_by与summarise分组汇总-2" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>group_by()</code>与<code>summarise()</code>分组汇总</h2>
+<ul>
+<li><code>summarise()</code>对分组数据进行汇总计算。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb90"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb90-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb90-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">group_by</span>(month) <span class="sc">|&gt;</span> </span>
+<span id="cb90-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">summarize</span>(</span>
+<span id="cb90-4" class="hljs-ln-code"><a href=""></a>    <span class="at">avg_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb90-5" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 2
+   month avg_delay
+   &lt;int&gt;     &lt;dbl&gt;
+ 1     1     10.0 
+ 2     2     10.8 
+ 3     3     13.2 
+ 4     4     13.9 
+ 5     5     13.0 
+ 6     6     20.8 
+ 7     7     21.7 
+ 8     8     12.6 
+ 9     9      6.72
+10    10      6.24
+11    11      5.44
+12    12     16.6 </code></pre>
+</div>
+</div>
+</section>
+<section id="group_by与summarise分组汇总-3" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>group_by()</code>与<code>summarise()</code>分组汇总</h2>
+<ul>
+<li><code>summarise()</code>对分组数据进行汇总计算。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb92"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb92-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span> </span>
+<span id="cb92-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">group_by</span>(month) <span class="sc">|&gt;</span> </span>
+<span id="cb92-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">summarize</span>(</span>
+<span id="cb92-4" class="hljs-ln-code"><a href=""></a>    <span class="at">avg_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb92-5" class="hljs-ln-code"><a href=""></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb92-6" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 3
+   month avg_delay     n
+   &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;
+ 1     1     10.0  27004
+ 2     2     10.8  24951
+ 3     3     13.2  28834
+ 4     4     13.9  28330
+ 5     5     13.0  28796
+ 6     6     20.8  28243
+ 7     7     21.7  29425
+ 8     8     12.6  29327
+ 9     9      6.72 27574
+10    10      6.24 28889
+11    11      5.44 27268
+12    12     16.6  28135</code></pre>
+</div>
+</div>
+</section>
+<section id="group_by与summarise分组汇总-4" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>group_by()</code>与<code>summarise()</code>分组汇总</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb94"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb94-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span>  </span>
+<span id="cb94-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">group_by</span>(year, month, day)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 336,776 × 19
+# Groups:   year, month, day [365]
+    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+ 1  2013     1     1      517            515         2      830            819
+ 2  2013     1     1      533            529         4      850            830
+ 3  2013     1     1      542            540         2      923            850
+ 4  2013     1     1      544            545        -1     1004           1022
+ 5  2013     1     1      554            600        -6      812            837
+ 6  2013     1     1      554            558        -4      740            728
+ 7  2013     1     1      555            600        -5      913            854
+ 8  2013     1     1      557            600        -3      709            723
+ 9  2013     1     1      557            600        -3      838            846
+10  2013     1     1      558            600        -2      753            745
+# ℹ 336,766 more rows
+# ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="group_by与summarise分组汇总-5" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>group_by()</code>与<code>summarise()</code>分组汇总</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb96-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span>  </span>
+<span id="cb96-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">group_by</span>(year, month, day) <span class="sc">|&gt;</span></span>
+<span id="cb96-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">summarize</span>(</span>
+<span id="cb96-4" class="hljs-ln-code"><a href=""></a>    <span class="at">avg_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb96-5" class="hljs-ln-code"><a href=""></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb96-6" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 365 × 5
+# Groups:   year, month [12]
+    year month   day avg_delay     n
+   &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;
+ 1  2013     1     1     11.5    842
+ 2  2013     1     2     13.9    943
+ 3  2013     1     3     11.0    914
+ 4  2013     1     4      8.95   915
+ 5  2013     1     5      5.73   720
+ 6  2013     1     6      7.15   832
+ 7  2013     1     7      5.42   933
+ 8  2013     1     8      2.55   899
+ 9  2013     1     9      2.28   902
+10  2013     1    10      2.84   932
+# ℹ 355 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="ungroup解除分组" class="slide level2">
+<h2>ungroup()解除分组</h2>
+<ul>
+<li><code>ungroup()</code>用于解除分组，返回一个未分组的数据框。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href=""></a>flights <span class="sc">|&gt;</span>  </span>
+<span id="cb98-2"><a href=""></a>  <span class="fu">group_by</span>(year, month, day) <span class="sc">|&gt;</span></span>
+<span id="cb98-3"><a href=""></a>  <span class="fu">summarize</span>(</span>
+<span id="cb98-4"><a href=""></a>    <span class="at">avg_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb98-5"><a href=""></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb98-6"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb98-7"><a href=""></a>  <span class="fu">ungroup</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 365 × 5
+    year month   day avg_delay     n
+   &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;int&gt;
+ 1  2013     1     1     11.5    842
+ 2  2013     1     2     13.9    943
+ 3  2013     1     3     11.0    914
+ 4  2013     1     4      8.95   915
+ 5  2013     1     5      5.73   720
+ 6  2013     1     6      7.15   832
+ 7  2013     1     7      5.42   933
+ 8  2013     1     8      2.55   899
+ 9  2013     1     9      2.28   902
+10  2013     1    10      2.84   932
+# ℹ 355 more rows</code></pre>
+</div>
+</div>
 </section></section>
 <section>
-<section id="数据整理tidyr" class="title-slide slide level1 center">
-<h1>3. 数据整理（tidyr）</h1>
-
+<section id="数据整理data-tidying" class="title-slide slide level1 center">
+<h1>数据整理(Data tidying)</h1>
+<blockquote>
+<p>“幸福的家庭都是相似的，不幸的家庭各有各的不幸。”<br>
+— 列夫·托尔斯泰</p>
+</blockquote>
+<blockquote>
+<p>“Tidy datasets are all alike, but every messy dataset is messy in its own way.”<br>
+— Hadley Wickham</p>
+</blockquote>
 </section>
-<section id="什么是-tidy-data" class="slide level2">
-<h2>什么是 tidy data？</h2>
-<p>整洁数据的三个规则：</p>
+<section id="什么是tidy-data" class="slide level2">
+<h2>什么是tidy data?</h2>
+<ol type="1">
+<li>每个变量一列，每列一个变量</li>
+<li>每个观测一行，每行一个观测</li>
+<li>每个值一个单元格，每个单元格一个值 <img data-src="images/tidy-1.png"> <span style="display: block; text-align: right; font-family: 'Times New Roman', serif; font-size: 0.6em; margin-top: -0.6em;"><a href="https://r4ds.hadley.nz/images/tidy-1.png">来源：R4DS by Hadley Wickham</a></span></li>
+</ol>
+</section>
+<section id="tidyr包" class="slide level2">
+<h2><code>tidyr</code>包</h2>
+<p><code>tidyr</code>包提供了一系列函数用于数据整理，核心函数包括：</p>
 <ul>
-<li class="fragment">每个变量一列</li>
-<li class="fragment">每个观测一行</li>
-<li class="fragment">每个单元格一个值</li>
+<li><code>pivot_longer()</code>：宽数据转长数据</li>
+<li><code>pivot_wider()</code>：长数据转宽数据</li>
+<li><code>separate()</code>：拆分列</li>
+<li><code>unite()</code>：合并列</li>
+<li><code>drop_na()</code>：删除缺失值</li>
+<li><code>replace_na()</code>：替换缺失值</li>
+<li>…</li>
 </ul>
 </section>
-<section id="who2典型非整洁示例" class="slide level2">
-<h2><code>who2</code>：典型“非整洁”示例</h2>
+<section id="pivot_longer宽数据转长数据" class="slide level2">
+<h2><code>pivot_longer()</code>宽数据转长数据</h2>
+<p>宽数据：</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href=""></a>who2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 317 × 79
+  artist  track date.entered   wk1   wk2   wk3   wk4   wk5   wk6   wk7
+  &lt;chr&gt;   &lt;chr&gt; &lt;date&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 2 Pac   Baby… 2000-02-26      87    82    72    77    87    94    99
+2 2Ge+her The … 2000-09-02      91    87    92    NA    NA    NA    NA
+3 3 Door… Kryp… 2000-04-08      81    70    68    67    66    57    54
+# ℹ 314 more rows
+# ℹ 69 more variables: wk8 &lt;dbl&gt;, wk9 &lt;dbl&gt;, wk10 &lt;dbl&gt;, wk11 &lt;dbl&gt;,
+#   wk12 &lt;dbl&gt;, wk13 &lt;dbl&gt;, wk14 &lt;dbl&gt;, wk15 &lt;dbl&gt;, wk16 &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+<p>长数据：</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 24,092 × 5
+  artist track                   date.entered week   rank
+  &lt;chr&gt;  &lt;chr&gt;                   &lt;date&gt;       &lt;chr&gt; &lt;dbl&gt;
+1 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk1      87
+2 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk2      82
+3 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk3      72
+# ℹ 24,089 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_longer用法" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>用法</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb102-1" class="hljs-ln-code"><a href=""></a>billboard <span class="sc">|&gt;</span></span>
+<span id="cb102-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb102-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"wk"</span>), <span class="co"># `!c(artist, track, date.entered)`</span></span>
+<span id="cb102-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="st">"week"</span>,</span>
+<span id="cb102-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"rank"</span></span>
+<span id="cb102-6" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb102-7" class="hljs-ln-code"><a href=""></a>  <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 24,092 × 5
+  artist track                   date.entered week   rank
+  &lt;chr&gt;  &lt;chr&gt;                   &lt;date&gt;       &lt;chr&gt; &lt;dbl&gt;
+1 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk1      87
+2 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk2      82
+3 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk3      72
+# ℹ 24,089 more rows</code></pre>
+</div>
+</div>
+<ul>
+<li><code>cols</code>：需要被转换的列，<code>select()</code>相同的语法选择列。</li>
+<li><code>names_to</code>：指定“原列名”保存成的新变量名。</li>
+<li><code>values_to</code>：指定“单元格中的值”保存成的新变量名。</li>
+</ul>
+</section>
+<section id="pivot_longer用法-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>用法</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 24,092 × 5
+   artist track                   date.entered week   rank
+   &lt;chr&gt;  &lt;chr&gt;                   &lt;date&gt;       &lt;chr&gt; &lt;dbl&gt;
+ 1 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk1      87
+ 2 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk2      82
+ 3 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk3      72
+ 4 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk4      77
+ 5 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk5      87
+ 6 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk6      94
+ 7 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk7      99
+ 8 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk8      NA
+ 9 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk9      NA
+10 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk10     NA
+# ℹ 24,082 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_longer用法-2" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>用法</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb105"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb105-1" class="hljs-ln-code"><a href=""></a>billboard <span class="sc">|&gt;</span> </span>
+<span id="cb105-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb105-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"wk"</span>), </span>
+<span id="cb105-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="st">"week"</span>, </span>
+<span id="cb105-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"rank"</span>,</span>
+<span id="cb105-6" class="hljs-ln-code"><a href=""></a>    <span class="at">values_drop_na =</span> <span class="cn">TRUE</span></span>
+<span id="cb105-7" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5,307 × 5
+   artist  track                   date.entered week   rank
+   &lt;chr&gt;   &lt;chr&gt;                   &lt;date&gt;       &lt;chr&gt; &lt;dbl&gt;
+ 1 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk1      87
+ 2 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk2      82
+ 3 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk3      72
+ 4 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk4      77
+ 5 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk5      87
+ 6 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk6      94
+ 7 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk7      99
+ 8 2Ge+her The Hardest Part Of ... 2000-09-02   wk1      91
+ 9 2Ge+her The Hardest Part Of ... 2000-09-02   wk2      87
+10 2Ge+her The Hardest Part Of ... 2000-09-02   wk3      92
+# ℹ 5,297 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_longer用法-3" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>用法</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb107"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb107-1" class="hljs-ln-code"><a href=""></a>billboard <span class="sc">|&gt;</span></span>
+<span id="cb107-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb107-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"wk"</span>),</span>
+<span id="cb107-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="st">"week"</span>,</span>
+<span id="cb107-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"rank"</span>,</span>
+<span id="cb107-6" class="hljs-ln-code"><a href=""></a>    <span class="at">values_drop_na =</span> <span class="cn">TRUE</span></span>
+<span id="cb107-7" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb107-8" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">week =</span> <span class="fu">parse_number</span>(week))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5,307 × 5
+   artist  track                   date.entered  week  rank
+   &lt;chr&gt;   &lt;chr&gt;                   &lt;date&gt;       &lt;dbl&gt; &lt;dbl&gt;
+ 1 2 Pac   Baby Don't Cry (Keep... 2000-02-26       1    87
+ 2 2 Pac   Baby Don't Cry (Keep... 2000-02-26       2    82
+ 3 2 Pac   Baby Don't Cry (Keep... 2000-02-26       3    72
+ 4 2 Pac   Baby Don't Cry (Keep... 2000-02-26       4    77
+ 5 2 Pac   Baby Don't Cry (Keep... 2000-02-26       5    87
+ 6 2 Pac   Baby Don't Cry (Keep... 2000-02-26       6    94
+ 7 2 Pac   Baby Don't Cry (Keep... 2000-02-26       7    99
+ 8 2Ge+her The Hardest Part Of ... 2000-09-02       1    91
+ 9 2Ge+her The Hardest Part Of ... 2000-09-02       2    87
+10 2Ge+her The Hardest Part Of ... 2000-09-02       3    92
+# ℹ 5,297 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_longer的作用方式" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>的作用方式</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<h3 id="宽格式">宽格式</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href=""></a>df <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb109-2"><a href=""></a>  <span class="sc">~</span>id,  <span class="sc">~</span>bp1, <span class="sc">~</span>bp2,</span>
+<span id="cb109-3"><a href=""></a>   <span class="st">"A"</span>,  <span class="dv">100</span>,  <span class="dv">120</span>,</span>
+<span id="cb109-4"><a href=""></a>   <span class="st">"B"</span>,  <span class="dv">140</span>,  <span class="dv">115</span>,</span>
+<span id="cb109-5"><a href=""></a>   <span class="st">"C"</span>,  <span class="dv">120</span>,  <span class="dv">125</span></span>
+<span id="cb109-6"><a href=""></a>)</span>
+<span id="cb109-7"><a href=""></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  id      bp1   bp2
+  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 A       100   120
+2 B       140   115
+3 C       120   125</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<h3 id="长格式">长格式</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href=""></a>df <span class="sc">|&gt;</span> </span>
+<span id="cb111-2"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb111-3"><a href=""></a>    <span class="at">cols =</span> bp1<span class="sc">:</span>bp2,</span>
+<span id="cb111-4"><a href=""></a>    <span class="at">names_to =</span> <span class="st">"measurement"</span>,</span>
+<span id="cb111-5"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb111-6"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  id    measurement value
+  &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;
+1 A     bp1           100
+2 A     bp2           120
+3 B     bp1           140
+4 B     bp2           115
+5 C     bp1           120
+6 C     bp2           125</code></pre>
+</div>
+</div>
+</div></div>
+</section>
+<section id="pivot_longer的作用方式-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>的作用方式</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb113-1" class="hljs-ln-code"><a href=""></a>df <span class="sc">|&gt;</span> </span>
+<span id="cb113-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb113-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> bp1<span class="sc">:</span>bp2,</span>
+<span id="cb113-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="st">"measurement"</span>,</span>
+<span id="cb113-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb113-6" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><img data-src="images/wide-long.png" style="width:70.0%"> <span style="display: block; text-align: right; font-family: 'Times New Roman', serif; font-size: 0.4em;"><a href="https://r4ds.hadley.nz/diagrams/tidy-data/variables.png">来源：R4DS by Hadley Wickham</a></span></p>
+</section>
+<section id="pivot_longer进阶用法" class="slide level2">
+<h2><code>pivot_longer()</code>进阶用法</h2>
+<p><code>who2</code>数据集包含了世界卫生组织（WHO）关于结核病的数据</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb114"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href=""></a>who2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 7,240 × 58
    country      year sp_m_014 sp_m_1524 sp_m_2534 sp_m_3544 sp_m_4554 sp_m_5564
@@ -919,225 +1519,444 @@ $ time_hour      &lt;dttm&gt; 2013-01-01 05:00:00, 2013-01-01 05:00:00, 2013-01-
 #   sn_f_4554 &lt;dbl&gt;, sn_f_5564 &lt;dbl&gt;, sn_f_65 &lt;dbl&gt;, ep_m_014 &lt;dbl&gt;, …</code></pre>
 </div>
 </div>
-<blockquote>
-<p><code>who2</code> 中很多列名同时编码了多个变量（年龄、性别、病例类型）。</p>
-</blockquote>
 </section>
-<section id="pivot_longer" class="slide level2">
-<h2><code>pivot_longer()</code></h2>
+<section id="pivot_longer进阶用法-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>进阶用法</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href=""></a>who2 <span class="sc">|&gt;</span></span>
-<span id="cb65-2"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb65-3"><a href=""></a>    <span class="at">cols =</span> <span class="sc">!</span><span class="fu">c</span>(country, year),</span>
-<span id="cb65-4"><a href=""></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"diagnosis"</span>,  <span class="st">"sex"</span>,<span class="st">"age"</span>),</span>
-<span id="cb65-5"><a href=""></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
-<span id="cb65-6"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"count"</span></span>
-<span id="cb65-7"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb116-1" class="hljs-ln-code"><a href=""></a>who2 <span class="sc">|&gt;</span> </span>
+<span id="cb116-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb116-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="sc">!</span>(country<span class="sc">:</span>year),</span>
+<span id="cb116-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"diagnosis"</span>, <span class="st">"gender"</span>, <span class="st">"age"</span>), </span>
+<span id="cb116-5" class="hljs-ln-code"><a href=""></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
+<span id="cb116-6" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"count"</span></span>
+<span id="cb116-7" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 405,440 × 6
-   country      year diagnosis sex   age   count
-   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
- 1 Afghanistan  1980 sp        m     014      NA
- 2 Afghanistan  1980 sp        m     1524     NA
- 3 Afghanistan  1980 sp        m     2534     NA
- 4 Afghanistan  1980 sp        m     3544     NA
- 5 Afghanistan  1980 sp        m     4554     NA
- 6 Afghanistan  1980 sp        m     5564     NA
- 7 Afghanistan  1980 sp        m     65       NA
- 8 Afghanistan  1980 sp        f     014      NA
- 9 Afghanistan  1980 sp        f     1524     NA
-10 Afghanistan  1980 sp        f     2534     NA
+   country      year diagnosis gender age   count
+   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt;
+ 1 Afghanistan  1980 sp        m      014      NA
+ 2 Afghanistan  1980 sp        m      1524     NA
+ 3 Afghanistan  1980 sp        m      2534     NA
+ 4 Afghanistan  1980 sp        m      3544     NA
+ 5 Afghanistan  1980 sp        m      4554     NA
+ 6 Afghanistan  1980 sp        m      5564     NA
+ 7 Afghanistan  1980 sp        m      65       NA
+ 8 Afghanistan  1980 sp        f      014      NA
+ 9 Afghanistan  1980 sp        f      1524     NA
+10 Afghanistan  1980 sp        f      2534     NA
 # ℹ 405,430 more rows</code></pre>
 </div>
 </div>
 </section>
-<section id="pivot_wider" class="slide level2">
-<h2><code>pivot_wider()</code></h2>
+<section id="seperate拆分列" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>seperate()</code>拆分列</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb67-2"><a href=""></a>  <span class="fu">summarise</span>(<span class="at">mean_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.by =</span> <span class="fu">c</span>(origin, month)) <span class="sc">|&gt;</span></span>
-<span id="cb67-3"><a href=""></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> origin, <span class="at">values_from =</span> mean_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb118-1" class="hljs-ln-code"><a href=""></a>who2 <span class="sc">|&gt;</span> </span>
+<span id="cb118-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb118-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="sc">!</span>(country<span class="sc">:</span>year),</span>
+<span id="cb118-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"diagnosis_gender_age"</span>), </span>
+<span id="cb118-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"count"</span></span>
+<span id="cb118-6" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 12 × 4
-   month   EWR   LGA   JFK
-   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1     1 14.9   5.64  8.62
- 2    10  8.64  5.31  4.59
- 3    11  6.72  4.77  4.68
- 4    12 21.0  13.6  14.8 
- 5     2 13.1   6.96 11.8 
- 6     3 18.1  10.2  10.7 
- 7     4 17.4  11.5  12.2 
- 8     5 15.4  10.6  12.5 
- 9     6 22.5  19.3  20.5 
-10     7 22.0  19.0  23.8 
-11     8 13.5  11.2  12.9 
-12     9  7.29  6.21  6.64</code></pre>
+<pre><code># A tibble: 405,440 × 4
+   country      year diagnosis_gender_age count
+   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt;
+ 1 Afghanistan  1980 sp_m_014                NA
+ 2 Afghanistan  1980 sp_m_1524               NA
+ 3 Afghanistan  1980 sp_m_2534               NA
+ 4 Afghanistan  1980 sp_m_3544               NA
+ 5 Afghanistan  1980 sp_m_4554               NA
+ 6 Afghanistan  1980 sp_m_5564               NA
+ 7 Afghanistan  1980 sp_m_65                 NA
+ 8 Afghanistan  1980 sp_f_014                NA
+ 9 Afghanistan  1980 sp_f_1524               NA
+10 Afghanistan  1980 sp_f_2534               NA
+# ℹ 405,430 more rows</code></pre>
 </div>
 </div>
 </section>
-<section id="拆分列separate_wider_delim" class="slide level2">
-<h2>拆分列：<code>separate_wider_delim()</code></h2>
+<section id="seperate拆分列-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>seperate()</code>拆分列</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb69-2"><a href=""></a>  <span class="fu">select</span>(time_hour) <span class="sc">|&gt;</span></span>
-<span id="cb69-3"><a href=""></a>  <span class="fu">separate_wider_delim</span>(</span>
-<span id="cb69-4"><a href=""></a>    <span class="at">cols =</span> time_hour,</span>
-<span id="cb69-5"><a href=""></a>    <span class="at">delim =</span> <span class="st">" "</span>,</span>
-<span id="cb69-6"><a href=""></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"date"</span>, <span class="st">"hour"</span>)</span>
-<span id="cb69-7"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb120"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb120-1" class="hljs-ln-code"><a href=""></a>who2 <span class="sc">|&gt;</span></span>
+<span id="cb120-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb120-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="sc">!</span>(country<span class="sc">:</span>year),</span>
+<span id="cb120-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"diagnosis_gender_age"</span>),</span>
+<span id="cb120-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"count"</span></span>
+<span id="cb120-6" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb120-7" class="hljs-ln-code"><a href=""></a>  <span class="fu">separate</span>(</span>
+<span id="cb120-8" class="hljs-ln-code"><a href=""></a>    <span class="at">col =</span> diagnosis_gender_age,</span>
+<span id="cb120-9" class="hljs-ln-code"><a href=""></a>    <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"diagnosis"</span>, <span class="st">"gender"</span>, <span class="st">"age"</span>),</span>
+<span id="cb120-10" class="hljs-ln-code"><a href=""></a>    <span class="at">sep =</span> <span class="st">"_"</span></span>
+<span id="cb120-11" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 336,776 × 2
-   date       hour    
-   &lt;chr&gt;      &lt;chr&gt;   
- 1 2013-01-01 05:00:00
- 2 2013-01-01 05:00:00
- 3 2013-01-01 05:00:00
- 4 2013-01-01 05:00:00
- 5 2013-01-01 06:00:00
- 6 2013-01-01 05:00:00
- 7 2013-01-01 06:00:00
- 8 2013-01-01 06:00:00
- 9 2013-01-01 06:00:00
-10 2013-01-01 06:00:00
-# ℹ 336,766 more rows</code></pre>
+<pre><code># A tibble: 405,440 × 6
+   country      year diagnosis gender age   count
+   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt;
+ 1 Afghanistan  1980 sp        m      014      NA
+ 2 Afghanistan  1980 sp        m      1524     NA
+ 3 Afghanistan  1980 sp        m      2534     NA
+ 4 Afghanistan  1980 sp        m      3544     NA
+ 5 Afghanistan  1980 sp        m      4554     NA
+ 6 Afghanistan  1980 sp        m      5564     NA
+ 7 Afghanistan  1980 sp        m      65       NA
+ 8 Afghanistan  1980 sp        f      014      NA
+ 9 Afghanistan  1980 sp        f      1524     NA
+10 Afghanistan  1980 sp        f      2534     NA
+# ℹ 405,430 more rows</code></pre>
 </div>
 </div>
 </section>
-<section id="缺失值处理" class="slide level2">
-<h2>缺失值处理</h2>
+<section id="pivot_wider用法" class="slide level2">
+<h2><code>pivot_wider()</code>用法</h2>
+<p><code>fish_encounters</code>数据集记录鱼类洄游信息：</p>
+<ul>
+<li><code>fish</code>:鱼的标记</li>
+<li><code>station</code>: 观测站</li>
+<li><code>seen</code>: 是否被观测到</li>
+</ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb71-2"><a href=""></a>  <span class="fu">select</span>(dep_time, dep_delay, arr_time, arr_delay) <span class="sc">|&gt;</span></span>
-<span id="cb71-3"><a href=""></a>  <span class="fu">drop_na</span>(dep_delay, arr_delay)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb122"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href=""></a>fish_encounters <span class="sc">%&gt;%</span></span>
+<span id="cb122-2"><a href=""></a>  <span class="fu">summary</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 327,346 × 4
-   dep_time dep_delay arr_time arr_delay
-      &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
- 1      517         2      830        11
- 2      533         4      850        20
- 3      542         2      923        33
- 4      544        -1     1004       -18
- 5      554        -6      812       -25
- 6      554        -4      740        12
- 7      555        -5      913        19
- 8      557        -3      709       -14
- 9      557        -3      838        -8
-10      558        -2      753         8
-# ℹ 327,336 more rows</code></pre>
+<pre><code>      fish       station        seen  
+ 4842   :11   Release:19   Min.   :1  
+ 4843   :11   I80_1  :19   1st Qu.:1  
+ 4844   :11   Lisbon :13   Median :1  
+ 4858   :11   Rstr   :12   Mean   :1  
+ 4861   :11   Base_TD:11   3rd Qu.:1  
+ 4857   : 9   BCE    : 8   Max.   :1  
+ (Other):50   (Other):32              </code></pre>
 </div>
 </div>
+</section>
+<section id="pivot_wider用法-1" class="slide level2">
+<h2><code>pivot_wider()</code>用法</h2>
+<h3 id="格式1">格式1</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href=""></a><span class="fu">tibble</span>(<span class="at">id =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>), <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="st">"B"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb73-2"><a href=""></a>  <span class="fu">fill</span>(group)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 2
-     id group
-  &lt;dbl&gt; &lt;chr&gt;
-1     1 A    
-2     2 A    
-3     3 A    
-4     4 B    </code></pre>
+<pre><code># A tibble: 19 × 12
+   fish  Release I80_1 Lisbon  Rstr Base_TD   BCE   BCW  BCE2  BCW2
+   &lt;fct&gt;   &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+ 1 4842        1     1      1     1       1     1     1     1     1
+ 2 4843        1     1      1     1       1     1     1     1     1
+ 3 4844        1     1      1     1       1     1     1     1     1
+ 4 4845        1     1      1     1       1    NA    NA    NA    NA
+ 5 4847        1     1      1    NA      NA    NA    NA    NA    NA
+ 6 4848        1     1      1     1      NA    NA    NA    NA    NA
+ 7 4849        1     1     NA    NA      NA    NA    NA    NA    NA
+ 8 4850        1     1     NA     1       1     1     1    NA    NA
+ 9 4851        1     1     NA    NA      NA    NA    NA    NA    NA
+10 4854        1     1     NA    NA      NA    NA    NA    NA    NA
+11 4855        1     1      1     1       1    NA    NA    NA    NA
+12 4857        1     1      1     1       1     1     1     1     1
+13 4858        1     1      1     1       1     1     1     1     1
+14 4859        1     1      1     1       1    NA    NA    NA    NA
+15 4861        1     1      1     1       1     1     1     1     1
+16 4862        1     1      1     1       1     1     1     1     1
+17 4863        1     1     NA    NA      NA    NA    NA    NA    NA
+18 4864        1     1     NA    NA      NA    NA    NA    NA    NA
+19 4865        1     1      1    NA      NA    NA    NA    NA    NA
+# ℹ 2 more variables: MAE &lt;int&gt;, MAW &lt;int&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_wider用法-2" class="slide level2">
+<h2><code>pivot_wider()</code>用法</h2>
+<h3 id="格式2">格式2</h3>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11 × 20
+   station `4842` `4843` `4844` `4845` `4847` `4848` `4849` `4850`
+   &lt;fct&gt;    &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
+ 1 Release      1      1      1      1      1      1      1      1
+ 2 I80_1        1      1      1      1      1      1      1      1
+ 3 Lisbon       1      1      1      1      1      1     NA     NA
+ 4 Rstr         1      1      1      1     NA      1     NA      1
+ 5 Base_TD      1      1      1      1     NA     NA     NA      1
+ 6 BCE          1      1      1     NA     NA     NA     NA      1
+ 7 BCW          1      1      1     NA     NA     NA     NA      1
+ 8 BCE2         1      1      1     NA     NA     NA     NA     NA
+ 9 BCW2         1      1      1     NA     NA     NA     NA     NA
+10 MAE          1      1      1     NA     NA     NA     NA     NA
+11 MAW          1      1      1     NA     NA     NA     NA     NA
+# ℹ 11 more variables: `4851` &lt;int&gt;, `4854` &lt;int&gt;, `4855` &lt;int&gt;,
+#   `4857` &lt;int&gt;, `4858` &lt;int&gt;, `4859` &lt;int&gt;, `4861` &lt;int&gt;,
+#   `4862` &lt;int&gt;, `4863` &lt;int&gt;, `4864` &lt;int&gt;, `4865` &lt;int&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_wider用法-3" class="slide level2">
+<h2><code>pivot_wider()</code>用法</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb126"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a href=""></a>fish_encounters <span class="sc">|&gt;</span></span>
+<span id="cb126-2"><a href=""></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb126-3"><a href=""></a>    <span class="at">names_from =</span> station,</span>
+<span id="cb126-4"><a href=""></a>    <span class="at">values_from =</span> seen</span>
+<span id="cb126-5"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb126-6"><a href=""></a>  <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">70</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 19 × 12
+   fish  Release I80_1 Lisbon  Rstr Base_TD   BCE   BCW  BCE2  BCW2
+   &lt;fct&gt;   &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+ 1 4842        1     1      1     1       1     1     1     1     1
+ 2 4843        1     1      1     1       1     1     1     1     1
+ 3 4844        1     1      1     1       1     1     1     1     1
+ 4 4845        1     1      1     1       1    NA    NA    NA    NA
+ 5 4847        1     1      1    NA      NA    NA    NA    NA    NA
+ 6 4848        1     1      1     1      NA    NA    NA    NA    NA
+ 7 4849        1     1     NA    NA      NA    NA    NA    NA    NA
+ 8 4850        1     1     NA     1       1     1     1    NA    NA
+ 9 4851        1     1     NA    NA      NA    NA    NA    NA    NA
+10 4854        1     1     NA    NA      NA    NA    NA    NA    NA
+11 4855        1     1      1     1       1    NA    NA    NA    NA
+12 4857        1     1      1     1       1     1     1     1     1
+13 4858        1     1      1     1       1     1     1     1     1
+14 4859        1     1      1     1       1    NA    NA    NA    NA
+15 4861        1     1      1     1       1     1     1     1     1
+16 4862        1     1      1     1       1     1     1     1     1
+17 4863        1     1     NA    NA      NA    NA    NA    NA    NA
+18 4864        1     1     NA    NA      NA    NA    NA    NA    NA
+19 4865        1     1      1    NA      NA    NA    NA    NA    NA
+# ℹ 2 more variables: MAE &lt;int&gt;, MAW &lt;int&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_wider用法-4" class="slide level2">
+<h2><code>pivot_wider()</code>用法</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb128"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href=""></a>fish_encounters <span class="sc">|&gt;</span></span>
+<span id="cb128-2"><a href=""></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb128-3"><a href=""></a>    <span class="at">names_from =</span> station,</span>
+<span id="cb128-4"><a href=""></a>    <span class="at">values_from =</span> seen,</span>
+<span id="cb128-5"><a href=""></a>    <span class="at">values_fill =</span> <span class="dv">0</span></span>
+<span id="cb128-6"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb128-7"><a href=""></a>  <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">70</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 19 × 12
+   fish  Release I80_1 Lisbon  Rstr Base_TD   BCE   BCW  BCE2  BCW2
+   &lt;fct&gt;   &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+ 1 4842        1     1      1     1       1     1     1     1     1
+ 2 4843        1     1      1     1       1     1     1     1     1
+ 3 4844        1     1      1     1       1     1     1     1     1
+ 4 4845        1     1      1     1       1     0     0     0     0
+ 5 4847        1     1      1     0       0     0     0     0     0
+ 6 4848        1     1      1     1       0     0     0     0     0
+ 7 4849        1     1      0     0       0     0     0     0     0
+ 8 4850        1     1      0     1       1     1     1     0     0
+ 9 4851        1     1      0     0       0     0     0     0     0
+10 4854        1     1      0     0       0     0     0     0     0
+11 4855        1     1      1     1       1     0     0     0     0
+12 4857        1     1      1     1       1     1     1     1     1
+13 4858        1     1      1     1       1     1     1     1     1
+14 4859        1     1      1     1       1     0     0     0     0
+15 4861        1     1      1     1       1     1     1     1     1
+16 4862        1     1      1     1       1     1     1     1     1
+17 4863        1     1      0     0       0     0     0     0     0
+18 4864        1     1      0     0       0     0     0     0     0
+19 4865        1     1      1     0       0     0     0     0     0
+# ℹ 2 more variables: MAE &lt;int&gt;, MAW &lt;int&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="练习4pivot_wider用法" class="slide level2">
+<h2>练习4:<code>pivot_wider()</code>用法</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb130"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href=""></a>fish_encounters <span class="sc">|&gt;</span></span>
+<span id="cb130-2"><a href=""></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb130-3"><a href=""></a>    <span class="at">names_from =</span> fish,</span>
+<span id="cb130-4"><a href=""></a>    <span class="at">values_from =</span> seen</span>
+<span id="cb130-5"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb130-6"><a href=""></a>  <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">70</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11 × 20
+   station `4842` `4843` `4844` `4845` `4847` `4848` `4849` `4850`
+   &lt;fct&gt;    &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
+ 1 Release      1      1      1      1      1      1      1      1
+ 2 I80_1        1      1      1      1      1      1      1      1
+ 3 Lisbon       1      1      1      1      1      1     NA     NA
+ 4 Rstr         1      1      1      1     NA      1     NA      1
+ 5 Base_TD      1      1      1      1     NA     NA     NA      1
+ 6 BCE          1      1      1     NA     NA     NA     NA      1
+ 7 BCW          1      1      1     NA     NA     NA     NA      1
+ 8 BCE2         1      1      1     NA     NA     NA     NA     NA
+ 9 BCW2         1      1      1     NA     NA     NA     NA     NA
+10 MAE          1      1      1     NA     NA     NA     NA     NA
+11 MAW          1      1      1     NA     NA     NA     NA     NA
+# ℹ 11 more variables: `4851` &lt;int&gt;, `4854` &lt;int&gt;, `4855` &lt;int&gt;,
+#   `4857` &lt;int&gt;, `4858` &lt;int&gt;, `4859` &lt;int&gt;, `4861` &lt;int&gt;,
+#   `4862` &lt;int&gt;, `4863` &lt;int&gt;, `4864` &lt;int&gt;, `4865` &lt;int&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_wider进阶用法" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>pivot_wider()</code>进阶用法</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb132"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb132-1" class="hljs-ln-code"><a href=""></a>us_rent_income </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 104 × 5
+   GEOID NAME       variable estimate   moe
+   &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
+ 1 01    Alabama    income      24476   136
+ 2 01    Alabama    rent          747     3
+ 3 02    Alaska     income      32940   508
+ 4 02    Alaska     rent         1200    13
+ 5 04    Arizona    income      27517   148
+ 6 04    Arizona    rent          972     4
+ 7 05    Arkansas   income      23789   165
+ 8 05    Arkansas   rent          709     5
+ 9 06    California income      29454   109
+10 06    California rent         1358     3
+# ℹ 94 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_wider进阶用法-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>pivot_wider()</code>进阶用法</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb134"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb134-1" class="hljs-ln-code"><a href=""></a>us_rent_income <span class="sc">|&gt;</span></span>
+<span id="cb134-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb134-3" class="hljs-ln-code"><a href=""></a>    <span class="at">names_from =</span> variable,</span>
+<span id="cb134-4" class="hljs-ln-code"><a href=""></a>    <span class="at">values_from =</span> <span class="fu">c</span>(estimate, moe)</span>
+<span id="cb134-5" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb134-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">70</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 52 × 6
+   GEOID NAME        estimate_income estimate_rent moe_income moe_rent
+   &lt;chr&gt; &lt;chr&gt;                 &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;
+ 1 01    Alabama               24476           747        136        3
+ 2 02    Alaska                32940          1200        508       13
+ 3 04    Arizona               27517           972        148        4
+ 4 05    Arkansas              23789           709        165        5
+ 5 06    California            29454          1358        109        3
+ 6 08    Colorado              32401          1125        109        5
+ 7 09    Connecticut           35326          1123        195        5
+ 8 10    Delaware              31560          1076        247       10
+ 9 11    District o…           43198          1424        681       17
+10 12    Florida               25952          1077         70        3
+# ℹ 42 more rows</code></pre>
 </div>
 </div>
 </section></section>
 <section>
-<section id="数据导入readr" class="title-slide slide level1 center">
-<h1>4. 数据导入（readr）</h1>
+<section id="数据读写" class="title-slide slide level1 center">
+<h1>数据读写</h1>
 
 </section>
-<section id="写出-csv" class="slide level2">
-<h2>写出 CSV</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb75-2"><a href=""></a>  <span class="fu">select</span>(year<span class="sc">:</span>day, carrier, flight, dep_delay, arr_delay) <span class="sc">|&gt;</span></span>
-<span id="cb75-3"><a href=""></a>  <span class="fu">write_csv</span>(<span class="st">"data/flights_subset.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="读取-csv" class="slide level2">
-<h2>读取 CSV</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb76"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href=""></a>flights_csv <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/flights_subset.csv"</span>)</span>
-<span id="cb76-2"><a href=""></a><span class="fu">glimpse</span>(flights_csv)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Rows: 336,776
-Columns: 7
-$ year      &lt;dbl&gt; 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, …
-$ month     &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
-$ day       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
-$ carrier   &lt;chr&gt; "UA", "UA", "AA", "B6", "DL", "UA", "B6", "EV", "B6", "AA", …
-$ flight    &lt;dbl&gt; 1545, 1714, 1141, 725, 461, 1696, 507, 5708, 79, 301, 49, 71…
-$ dep_delay &lt;dbl&gt; 2, 4, 2, -1, -6, -4, -5, -3, -3, -2, -2, -2, -2, -2, -1, 0, …
-$ arr_delay &lt;dbl&gt; 11, 20, 33, -18, -25, 12, 19, -14, -8, 8, -2, -3, 7, -14, 31…</code></pre>
-</div>
-</div>
-</section>
-<section id="列类型控制" class="slide level2">
-<h2>列类型控制</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href=""></a><span class="fu">read_csv</span>(</span>
-<span id="cb78-2"><a href=""></a>  <span class="st">"data/flights_subset.csv"</span>,</span>
-<span id="cb78-3"><a href=""></a>  <span class="at">col_types =</span> <span class="fu">cols</span>(</span>
-<span id="cb78-4"><a href=""></a>    <span class="at">year =</span> <span class="fu">col_integer</span>(),</span>
-<span id="cb78-5"><a href=""></a>    <span class="at">month =</span> <span class="fu">col_integer</span>(),</span>
-<span id="cb78-6"><a href=""></a>    <span class="at">day =</span> <span class="fu">col_integer</span>(),</span>
-<span id="cb78-7"><a href=""></a>    <span class="at">dep_delay =</span> <span class="fu">col_double</span>(),</span>
-<span id="cb78-8"><a href=""></a>    <span class="at">arr_delay =</span> <span class="fu">col_double</span>()</span>
-<span id="cb78-9"><a href=""></a>  )</span>
-<span id="cb78-10"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 336,776 × 7
-    year month   day carrier flight dep_delay arr_delay
-   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
- 1  2013     1     1 UA        1545         2        11
- 2  2013     1     1 UA        1714         4        20
- 3  2013     1     1 AA        1141         2        33
- 4  2013     1     1 B6         725        -1       -18
- 5  2013     1     1 DL         461        -6       -25
- 6  2013     1     1 UA        1696        -4        12
- 7  2013     1     1 B6         507        -5        19
- 8  2013     1     1 EV        5708        -3       -14
- 9  2013     1     1 B6          79        -3        -8
-10  2013     1     1 AA         301        -2         8
-# ℹ 336,766 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="其它常见导入函数" class="slide level2">
-<h2>其它常见导入函数</h2>
+<section id="readr包" class="slide level2">
+<h2><code>readr</code>包</h2>
+<p><code>readr</code>包提供了一系列函数用于数据读写，核心函数包括：</p>
 <ul>
-<li class="fragment"><code>read_tsv()</code>：读取制表符分隔文件</li>
-<li class="fragment"><code>read_delim()</code>：读取自定义分隔符文件</li>
-<li class="fragment"><code>read_lines()</code>：读取文本行</li>
+<li><code>read_csv()</code>：读取CSV文件</li>
+<li><code>read_tsv()</code>：读取制表符分隔的文件</li>
+<li><code>read_delim()</code>：读取任意分隔符的文件</li>
+<li><code>read_table()</code>：读取空格分隔的文件</li>
+<li><code>write_csv()</code>：写入CSV文件</li>
+<li><code>write_rds()</code>：写入RDS文件</li>
+<li>…</li>
 </ul>
-<blockquote>
-<p>若读取 Excel 文件，可使用 <code>readxl::read_excel()</code>。</p>
-</blockquote>
-</section></section>
-<section>
-<section id="课堂作业" class="title-slide slide level1 center">
-<h1>课堂作业</h1>
-
 </section>
-<section id="作业1" class="slide level2">
-<h2>作业1</h2>
-<p>基于 <code>nycflights13::flights</code> 完成以下任务：</p>
-<ol type="1">
-<li>使用 <code>ggplot2</code> 画一张图，展示你关心的延误特征。</li>
-<li>使用 <code>dplyr</code> 完成一次“筛选 + 新变量 + 汇总”的管道分析。</li>
-<li>使用 <code>tidyr</code> 把一个汇总结果做一次 <code>pivot_wider()</code> 或 <code>pivot_longer()</code>。</li>
-<li>将结果保存为 <code>csv</code> 文件，并在下周提交 <code>qmd + html</code>。</li>
-</ol>
-</section></section>
-<section id="参考资料" class="title-slide slide level1 center">
-<h1>参考资料</h1>
+<section id="read_csv读取csv文件" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>read_csv()</code>读取CSV文件</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb136"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb136-1" class="hljs-ln-code"><a href=""></a>students <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/students.csv"</span>)</span>
+<span id="cb136-2" class="hljs-ln-code"><a href=""></a>students</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  `Student ID` `Full Name`      favourite.food     mealPlan            AGE  
+         &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;chr&gt;               &lt;chr&gt;
+1            1 Sunil Huffmann   Strawberry yoghurt Lunch only          4    
+2            2 Barclay Lynn     French fries       Lunch only          5    
+3            3 Jayendra Lyne    N/A                Breakfast and lunch 7    
+4            4 Leon Rossini     Anchovies          Lunch only          &lt;NA&gt; 
+5            5 Chidiegwu Dunkel Pizza              Breakfast and lunch five 
+6            6 Güvenç Attila    Ice cream          Lunch only          6    </code></pre>
+</div>
+</div>
+</section>
+<section id="read_csv读取csv文件-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>read_csv()</code>读取CSV文件</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb138"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb138-1" class="hljs-ln-code"><a href=""></a>students <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/students.csv"</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"N/A"</span>, <span class="st">""</span>))</span>
+<span id="cb138-2" class="hljs-ln-code"><a href=""></a>students</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  `Student ID` `Full Name`      favourite.food     mealPlan            AGE  
+         &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;chr&gt;               &lt;chr&gt;
+1            1 Sunil Huffmann   Strawberry yoghurt Lunch only          4    
+2            2 Barclay Lynn     French fries       Lunch only          5    
+3            3 Jayendra Lyne    &lt;NA&gt;               Breakfast and lunch 7    
+4            4 Leon Rossini     Anchovies          Lunch only          &lt;NA&gt; 
+5            5 Chidiegwu Dunkel Pizza              Breakfast and lunch five 
+6            6 Güvenç Attila    Ice cream          Lunch only          6    </code></pre>
+</div>
+</div>
+</section>
+<section id="read_csv读取csv文件-2" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>read_csv()</code>读取CSV文件</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb140"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb140-1" class="hljs-ln-code"><a href=""></a>students <span class="ot">&lt;-</span></span>
+<span id="cb140-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">read_csv</span>(<span class="st">"data/students.csv"</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"N/A"</span>, <span class="st">""</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb140-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">rename</span>(</span>
+<span id="cb140-4" class="hljs-ln-code"><a href=""></a>    <span class="at">student_id =</span> <span class="st">`</span><span class="at">Student ID</span><span class="st">`</span>,</span>
+<span id="cb140-5" class="hljs-ln-code"><a href=""></a>    <span class="at">full_name =</span> <span class="st">`</span><span class="at">Full Name</span><span class="st">`</span></span>
+<span id="cb140-6" class="hljs-ln-code"><a href=""></a>  )</span>
+<span id="cb140-7" class="hljs-ln-code"><a href=""></a>students</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  student_id full_name        favourite.food     mealPlan            AGE  
+       &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;chr&gt;               &lt;chr&gt;
+1          1 Sunil Huffmann   Strawberry yoghurt Lunch only          4    
+2          2 Barclay Lynn     French fries       Lunch only          5    
+3          3 Jayendra Lyne    &lt;NA&gt;               Breakfast and lunch 7    
+4          4 Leon Rossini     Anchovies          Lunch only          &lt;NA&gt; 
+5          5 Chidiegwu Dunkel Pizza              Breakfast and lunch five 
+6          6 Güvenç Attila    Ice cream          Lunch only          6    </code></pre>
+</div>
+</div>
+</section>
+<section id="read_csv读取csv文件-3" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title"><code>read_csv()</code>读取CSV文件</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb142"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb142-1" class="hljs-ln-code"><a href=""></a>students <span class="ot">&lt;-</span> </span>
+<span id="cb142-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">read_csv</span>(<span class="st">"data/students.csv"</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"N/A"</span>, <span class="st">""</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb142-3" class="hljs-ln-code"><a href=""></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">|&gt;</span></span>
+<span id="cb142-4" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(</span>
+<span id="cb142-5" class="hljs-ln-code"><a href=""></a>    <span class="at">meal_plan =</span> <span class="fu">factor</span>(meal_plan),</span>
+<span id="cb142-6" class="hljs-ln-code"><a href=""></a>    <span class="at">age =</span> <span class="fu">parse_number</span>(<span class="fu">if_else</span>(age <span class="sc">==</span> <span class="st">"five"</span>, <span class="st">"5"</span>, age))</span>
+<span id="cb142-7" class="hljs-ln-code"><a href=""></a>  )</span>
+<span id="cb142-8" class="hljs-ln-code"><a href=""></a>students</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  student_id full_name        favourite_food     meal_plan             age
+       &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;fct&gt;               &lt;dbl&gt;
+1          1 Sunil Huffmann   Strawberry yoghurt Lunch only              4
+2          2 Barclay Lynn     French fries       Lunch only              5
+3          3 Jayendra Lyne    &lt;NA&gt;               Breakfast and lunch     7
+4          4 Leon Rossini     Anchovies          Lunch only             NA
+5          5 Chidiegwu Dunkel Pizza              Breakfast and lunch     5
+6          6 Güvenç Attila    Ice cream          Lunch only              6</code></pre>
+</div>
+</div>
+</section>
+<section id="探索" class="slide level2">
+<h2>探索</h2>
 <ul>
-<li class="fragment">Wickham et al.&nbsp;<em>R for Data Science</em> (2nd edition)</li>
-<li class="fragment"><a href="https://r4ds.hadley.nz/">https://r4ds.hadley.nz/</a></li>
-<li class="fragment"><a href="https://www.tidyverse.org/">https://www.tidyverse.org/</a></li>
+<li><code>read_*</code>如何控制列的类型？</li>
+<li>如何读取多个文件？</li>
+<li>如何写入文件？</li>
 </ul>
 
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="images/JMU_logo.jpg" class="slide-logo"></p>

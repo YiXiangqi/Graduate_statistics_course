@@ -1,6 +1,6 @@
 ---
 title: "高等数据统计分析"
-subtitle: "第二讲 Tidyverse"
+subtitle: "第二讲 函数基本用法和Tidyverse"
 author: "易湘琦"
 format:
   revealjs: 
@@ -11,34 +11,30 @@ format:
     logo: images/JMU_logo.jpg
     css: styles.css
     footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
+execute:
+  echo: true
+  message: false
 ---
 
-# 第二讲：函数与 tidyverse
-
-## 本讲目标
+## 主要目标
 
 ::: incremental
 - 熟悉函数的基本用法与自定义函数
-- 掌握`tidyverse`的核心工作流
-- 能完成 4 类常见任务：
+- 认识数据分析的基本工作流程
+- 使用``tidyverse``完成4类常见任务：
   1. 数据可视化（`ggplot2`）
   2. 数据转换（`dplyr`）
   3. 数据整理（`tidyr`）
   4. 数据读写（`readr`）
 :::
 
-```{r}
-#| echo: false
-#| warning: false
-library(tidyverse)
-library(nycflights13)
-```
-
 # 函数
 
 ## 函数的功能
 
->函
+- 接受输入参数（arguments）
+- 执行特定的计算或操作
+- 返回结果
 
 ```{r}
 #| echo: true
@@ -47,14 +43,15 @@ mean(die)
 length(die)
 ```
 
-## 函数基础
+## 函数的组成
+>
 - 函数也是对象（object）
 - 函数由3部分组成：参数（arguments）、函数体（body）和环境（environment）
 
 
 ## 函数参数
 
-函数参数可以是原始数据、R 对象、或其它函数的输出值。
+- 函数参数可以是原始数据、R 对象、或其它函数的输出值。
 
 ```{r}
 #| echo: true
@@ -63,6 +60,8 @@ round(mean(die), 2)
 
 > 函数嵌套时，内层函数先执行，结果作为外层函数参数。
 
+## 函数参数
+- 参数传递时，可按照位置（positional）或名称（named）传递。
 ```{r}
 #| echo: true
 round(3.14159, 2)
@@ -71,12 +70,14 @@ round(digits = 2, x = 3.14159)
 
 ## 查看函数参数
 
-`args()` 可以查看函数参数列表和默认值。
+- `args()` 可以查看函数参数列表和默认值。
 
 ```{r}
 #| echo: true
 args(round)
 ```
+
+- `...` 参数用于接收不定数量参数。
 
 > 需要了解某一函数细节，可用 `?round` 或 `help(round)`。
 
@@ -90,20 +91,23 @@ function_name <- function(arg1, arg2 = default_value, ...) {
   return(result)
 }
 ```
-
+示例：
 ```{r}
 #| echo: true
 add <- function(x, y = 0) {
   result <- x + y
-  return(result)
+  return(result) # 可以省略，R会自动返回最后一个表达式的值
 }
 
 add(5)
 add(5, 10)
 ```
 
-## `...` 参数（dots）
+## `...` 参数用法（dots）
 
+```{r}
+c(1, 2, 2, 5, 6, 7)
+```
 `...` 用于接收不定数量参数。
 
 ```{r}
@@ -140,432 +144,957 @@ x
 ```{r}
 #| echo: true
 nums <- c(1, 2, 3, 4)
-
-nums |>
-  (\(x) x^2)()
-
-function(x) x^2(nums)
+(function(x) x^2)(nums)
+(\(x) x^2)(nums)
 ```
 
-> 从这一页开始，后续 tidyverse 代码都以 `|>` 管道为主。
+# 使用`tidyverse`进行数据分析
 
-# tidyverse 概览
+## 数据分析的基本流程
+基本流程（workflow）：
+![](images/base_workflow.png)
 
-## 什么是 tidyverse？
-
-tidyverse 是一组风格统一的数据科学包。
+<span style="display: block; text-align: right; font-family: 'Times New Roman', serif; font-size: 0.6em;"><a href="https://r4ds.hadley.nz/diagrams/data-science/base.png">来源：R4DS by Hadley Wickham</a></span>
+ 
+## `tidyverse`概览
 
 ::: incremental
-- 统一的数据结构（tibble）
-- 统一的语法（动词 + 管道）
-- 强调“整洁数据”（tidy data）
+`tidyverse`是一组风格统一的数据科学包，核心包包括：
+
+- `ggplot2`：数据可视化(visulization)
+- `dplyr`：数据转换(transformation)
+- `tidyr`：数据整理(tidying)
+- `readr`：数据读写(reading and writing)
+- `tibble`：现代化数据框(data frames)
+- `stringr`、`forcats`、`purrr` ...
 :::
 
-## 核心包
+## 程序包的安装与载入
+- 安装：`install.packages("tidyverse")`
+- 载入：`library(tidyverse)`
 
-::: incremental
-- `ggplot2`：数据可视化
-- `dplyr`：数据转换
-- `tidyr`：数据整理
-- `readr`：数据导入
-- `tibble`、`stringr`、`forcats`、`purrr`
-:::
-
-## 本讲主数据：`flights`
+## `tidyverse`概览
+`library(tidyverse)`统一载入：
 
 ```{r}
-#| echo: true
-flights
+#| message: true
+library(tidyverse)
 ```
 
-## `glimpse()` 快速查看数据结构
+## `tibble`和`data.frame`
+tibble(`tbl_df`)是对数据框（`data.frame`）的拓展：
 ```{r}
-#| echo: true
-glimpse(flights)
+df <- data.frame(x_10 = 1:20, `3_y` = letters[1:20]); class(df)
+df_tibble <- tibble(x_10 = 1:20, `3_y` = letters[1:20]); class(df_tibble)
 ```
 
-> 数据来自 `nycflights13`：2013 年纽约三机场的航班记录。
+tibble核心理念是“少做事、多抱怨”,例如：
 
-# 1. 数据可视化（ggplot2）
+- 不会偷偷改变量名或变量类型(`names(df)`vs.`names(df_tibble)`)。
+- 不支持模糊匹配列名(比较`df$x`和`df_tibble$x`)。
+- 当引用不存在的变量时，会明确报错，而非悄悄继续。
+- 打印显示更友好。
 
-## 语法框架
+# 数据可视化（ggplot2）
 
-`ggplot2` 的核心思想：
+> “The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey
 
-$$
-\text{plot} = \text{data} + \text{aesthetics} + \text{geoms}
-$$
-
-最小结构：
-
-```r
-ggplot(data = ..., aes(x = ..., y = ...)) +
-  geom_...()
-```
-
-## 散点图（1） {auto-animate="true"}
-
+## `penguins`数据集
+`palmerpenguins`包中的`penguins`数据集包含了南极企鹅的生物测量数据：
 ```{r}
-#| echo: true
-ggplot(flights, aes(x = dep_delay, y = arr_delay))
+library(palmerpenguins)
+head(penguins)
+library(ggthemes) # 提供更多绘图主题风格
 ```
 
-## 散点图（2） {auto-animate="true"}
+## 本节目标
 
 ```{r}
-#| echo: true
-ggplot(flights, aes(x = dep_delay, y = arr_delay)) +
+#| echo: false
+#| message: false
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(aes(color = species, shape = species)) +
+  geom_smooth(method = "lm") +
+  labs(
+    title = "Body mass and flipper length",
+    subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+    x = "Flipper length (mm)", y = "Body mass (g)",
+    color = "Species", shape = "Species"
+  ) +
+  scale_color_colorblind()
+```
+
+## 创建`ggplot`对象 {auto-animate="true"}
+- `ggplot()`开始绘图，先定义一个绘图对象，之后逐层添加图层。
+- `ggplot()` 的第一个参数是用于绘图的数据集。
+```{r}
+#| fig-show: hide
+ggplot(data = penguins)
+```
+
+## 创建`ggplot`对象 {auto-animate="true"}
+```{r}
+#| fig-align: center
+ggplot(data = penguins)
+```
+
+## 添加变量映射 {auto-animate="true"}
+- `ggplot()` 函数中的 `mapping` 参数用于定义数据集中变量如何映射到图形的视觉属性（美学映射）。
+- `mapping`参数总是在 `aes()` 函数中设置，而 `aes()`的`x`和`y`参数用于指定映射到x轴和y轴的变量。
+
+```{r}
+#| fig-show: hide
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+)
+```
+
+## 添加变量映射 {auto-animate="true"}
+
+```{r}
+#| fig-align: center
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+)
+```
+
+## 添加几何对象(geom) {auto-animate="true"}
+- 定义几何对象(geom)，它决定了数据在图中如何被表示。
+- 几何对象通过以`geom_`开头的函数提供,每个函数对应一种不同的图层类型, 例如:
+  - 条形图：`geom_bar()`
+  - 折线图：`geom_line()`
+  - 散点图：`geom_point()`
+
+```{r}
+#| fig-show: hide
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
   geom_point()
 ```
 
-## 散点图（3） {auto-animate="true"}
+## 添加几何对象(geom) {auto-animate="true"}
 
 ```{r}
-#| echo: true
-ggplot(flights, aes(x = dep_delay, y = arr_delay, color = origin)) +
-  geom_point(alpha = 0.2) +
+#| fig-align: center
+#| warning: true
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point()
+```
+
+## 添加美学映射 {auto-animate="true"}
+- 美学映射(aesthetic mapping)是指将数据变量映射到图形的视觉属性，如颜色、形状、大小等。
+- 通过在`aes()`函数中指定这些属性，可以让图形更具信息量和可读性。
+
+```{r}
+#| fig-show: hide
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = species)
+) +
+  geom_point()
+```
+
+## 添加美学映射 {auto-animate="true"}
+
+```{r}
+#| fig-align: center
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = species)
+) +
+  geom_point()
+```
+
+## 添加平滑曲线图层 {auto-animate="true"}
+- `geom_smooth()` 用于添加平滑曲线，常用于显示数据的趋势。
+- `method`参数指定平滑方法，如`lm`表示线性模型。
+
+```{r}
+#| fig-show: hide
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = species)
+) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+## 添加平滑曲线图层 {auto-animate="true"}
+```{r}
+#| fig-align: center
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = species)
+) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+## 作用范围：全局与局部 {auto-animate="true"}
+- 全局：在`ggplot()`中定义，适用于所有图层。
+- 局部：在特定图层中定义，仅适用于该图层。
+
+全局mapping：
+```{r}
+#| fig-show: hide
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = species)
+) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+## 作用范围：全局与局部 {auto-animate="true"}
+- 全局：在`ggplot()`中定义，适用于所有图层。
+- 局部：在特定图层中定义，仅适用于该图层。
+
+局部mapping：
+```{r}
+#| fig-show: hide
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species)) +
+  geom_smooth(method = "lm")
+```
+
+## 作用范围：全局与局部 {auto-animate="true"}
+
+```{r}
+#| fig-align: center
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species)) +
+  geom_smooth(method = "lm")
+```
+
+## 更多参数控制图形外观 {auto-animate="true"}
+几何对象函数（如`geom_point()`）还接受其他参数，用于控制图形的外观，如形状（`shape`）、大小（`size`）、颜色（`color`）、透明度（`alpha`）等。
+```{r}
+#| fig-show: hide
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species, shape = species)) +
+  geom_smooth(method = "lm")
+```
+
+## 更多参数控制图形外观 {auto-animate="true"}
+```{r}
+#| fig-align: center
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = species, shape = species)) +
+  geom_smooth(method = "lm")
+```
+
+## 添加标签 {auto-animate="true"}
+`labs()` 用于添加标题、轴标签和图例标题。
+
+```{r}
+#| fig-show: hide
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(aes(color = species, shape = species)) +
+  geom_smooth(method = "lm") +
   labs(
-    title = "出发延误与到达延误",
-    x = "出发延误（分钟）",
-    y = "到达延误（分钟）",
-    color = "机场"
+    title = "Body mass and flipper length",
+    subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+    x = "Flipper length (mm)", y = "Body mass (g)",
+    color = "Species", shape = "Species"
   )
 ```
 
-## 直方图
-
+## 添加标签 {auto-animate="true"}
 ```{r}
-#| echo: true
-ggplot(flights, aes(x = dep_delay)) +
-  geom_histogram(binwidth = 10, fill = "steelblue", color = "white") +
+#| echo: false
+#| fig-align: center
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(aes(color = species, shape = species)) +
+  geom_smooth(method = "lm") +
   labs(
-    title = "出发延误分布",
-    x = "出发延误（分钟）",
-    y = "频数"
+    title = "Body mass and flipper length",
+    subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+    x = "Flipper length (mm)", y = "Body mass (g)",
+    color = "Species", shape = "Species"
   )
 ```
 
-## 条形图
-
+## 外观调整 {auto-animate="true"}
 ```{r}
-#| echo: true
-ggplot(flights, aes(x = carrier)) +
-  geom_bar(fill = "tomato") +
+#| fig-show: hide
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(aes(color = species, shape = species)) +
+  geom_smooth(method = "lm") +
   labs(
-    title = "不同航空公司航班数量",
-    x = "航空公司",
-    y = "航班数量"
-  )
+    title = "Body mass and flipper length",
+    subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+    x = "Flipper length (mm)", y = "Body mass (g)",
+    color = "Species", shape = "Species"
+  ) +
+  scale_color_colorblind() # 使用色盲友好调色板，来自ggthemes包
 ```
 
-## 箱线图
-
+## 外观调整 {auto-animate="true"}
 ```{r}
-#| echo: true
-ggplot(flights, aes(x = origin, y = dep_delay, fill = origin)) +
-  geom_boxplot(outlier.alpha = 0.2) +
+#| echo: false
+#| fig-align: center
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(aes(color = species, shape = species)) +
+  geom_smooth(method = "lm") +
   labs(
-    title = "不同机场的出发延误分布",
-    x = "机场",
-    y = "出发延误（分钟）"
-  )
+    title = "Body mass and flipper length",
+    subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+    x = "Flipper length (mm)", y = "Body mass (g)",
+    color = "Species", shape = "Species"
+  ) +
+  scale_color_colorblind() # 使用色盲友好调色板，来自ggthemes包
 ```
 
-## 分面（facet）
+# 数据转换（Data Transformation）
 
+## `flights`数据集
+`nycflights13`包中的`flights`数据集，包含了2013年纽约市三大机场的所有航班信息：
 ```{r}
-#| echo: true
-ggplot(flights, aes(x = dep_delay, y = arr_delay)) +
-  geom_point(alpha = 0.15, color = "#2C7FB8") +
-  facet_wrap(~ origin)
+library(nycflights13)
+head(flights)
 ```
 
-## 常用美化
-
-```{r}
-#| echo: true
-ggplot(flights, aes(x = dep_delay)) +
-  geom_histogram(binwidth = 10, fill = "#41B6C4", color = "white") +
-  labs(title = "出发延误分布") +
-  theme_minimal()
-```
-
-## 小结：ggplot2
-
-::: incremental
-- 先确定数据和变量映射（`aes()`）
-- 再添加几何对象（`geom_*()`）
-- 最后补充标签、分面和主题
-:::
-
-> 探索：把 `origin` 映射到 `shape`，图会怎样变化？
-
-# 2. 数据转换（dplyr）
-
-## 常用动词
+## 核心函数 {auto-animate="true"}
+用`dplyr`包中的函数进行数据转换操作，核心函数包括：
 
 ::: incremental
 - `filter()`：筛选行
 - `select()`：选择列
 - `mutate()`：新增/修改列
-- `arrange()`：排序
-- `summarise()`：汇总
+- `group_by`与`summarise()`：分组与汇总
 :::
 
-## `filter()` 筛选航班
+## 核心函数 {auto-animate="true"}
+用`dplyr`包中的函数进行数据转换操作，核心函数包括：
+
+- `filter()`：筛选行
+- `select()`：选择列
+- `mutate()`：新增/修改列
+- `group_by`与`summarise()`：分组与汇总
+
+> 共同点：第一个参数是一个数据框，返回一个新的数据框。
+
+
+## 管道符号 {auto-animate="true"}
+- `|>` 是`R 4.1.0`引入的原生管道操作符，用于将一个对象传递给下一个函数作为第一个参数。
+
+## 管道符号 {auto-animate="true"}
+- `|>` 是`R 4.1.0`引入的原生管道操作符，用于将一个对象传递给下一个函数作为第一个参数。
+- `x |> f()` 等价于 `f(x)`， `x |> f(y) |> g(z)` 等价于 `g(f(x, y), z)`。
 
 ```{r}
-#| echo: true
+vec <- c(1.44, 2, 3, 4, 5.9)
+vec |> mean()
+vec |> mean() |> round(2)
+```
+
+> `%>%`是`magrittr`包中的管道操作符，功能类似于 `|>`。
+`tidyverse`依赖于`magrittr`，因此在使用`tidyverse`时也可以使用`%>%`。
+
+## `filter()` 筛选行 {auto-animate="true"}
+`filter()`根据列的取值筛选出行。第一参数是数据框，后续参数通常是逻辑表达式，返回满足条件行组成的新数据框。
+```{r}
+flights |>
+  filter(dep_delay > 60) # 筛选出所有起飞延误超过60分钟的航班
+```
+
+
+## `filter()` 筛选行 {auto-animate="true"}
+`filter()`根据列的取值筛选出行。第一参数是数据框，后续参数通常是逻辑表达式，返回满足条件行组成的新数据框。
+```{r}
+#| eval: false
+flights |>
+  filter(month == 1) # 筛选出所有起飞延误超过60分钟的航班
+```
+> 注意：`=`是赋值运算符，`==`才是比较运算符。
+
+## 练习1：`filter()`使用
+- 筛选出1月1日的航班(`month`和`day`)
+```{r}
+#| code-fold: true
+#| eval: false
 flights |>
   filter(month == 1, day == 1)
 ```
 
-## `select()` 选择变量
+- 筛选出1月和2月的航班
 
 ```{r}
-#| echo: true
+#| code-fold: true
+#| eval: false
+flights |> 
+  filter(month == 1 | month == 2)
+```
+```{r}
+#| code-fold: true
+#| eval: false
 flights |>
-  select(year:day, dep_delay, arr_delay, carrier)
+  filter(month %in% c(1, 2))
 ```
 
-## `mutate()` 新建变量
+- 起飞延误，到达未延误航班（`dep_delay` 和 `arr_delay`）
 
 ```{r}
-#| echo: true
+#| code-fold: true
+#| eval: false
+flights |>
+  filter(dep_delay > 0, arr_delay <= 0)
+```
+
+## `select()` 选择列
+`select()`根据列名选择列。
+
+- 根据列名选择列：
+```{r}
+#| eval: false
+flights |>
+  select(year, month, day, dep_delay, arr_delay)
+```
+- 选择两列间的所有列：
+```{r}
+#| eval: false
+flights |>
+  select(year:arr_delay)
+```
+
+- 选择特定列之外的所有列：
+```{r}
+#| eval: false
+flights |>
+  select(!c(year, month))
+flights |>
+  select(!year:dep_delay)
+```
+
+## `select()` 进阶
+
+- 选择所有为字符型向量的列
+```{r}
+#| eval: false
+flights |> 
+  select(where(is.character))
+```
+
+- 选择包含特定字符串的列
+```{r}
+#| eval: false
+flights |>
+  select(contains("delay"))
+```
+- 选择特定字符开头的列
+```{r}
+#| eval: false
+flights |>
+  select(starts_with("dep"))
+```
+
+## 练习2：管道符号使用
+
+- 筛选出到达延误时间最长的10个航班
+```{r}
+#| eval: false
+flights |>
+  arrange(desc(arr_delay)) |>
+  slice_head(n = 10)
+```
+
+- 筛选出1月和2月的航班，并选择`year`、`month`、`day`、`dep_delay`和`arr_delay`列：
+```{r}
+#| eval: false
+#| code-fold: true
+flights |>
+  filter(month %in% c(1, 2)) |>
+  select(year, month, day, dep_delay, arr_delay)
+```
+
+## `mutate()`新增/修改列
+- 新增列：起飞延误时间（小时）
+```{r}
+flights |> 
+  mutate(dep_delay_hour = dep_delay / 60 )
+```
+
+## `mutate()`新增/修改列
+- 新列默认在最后一列位置，`.after`或`.before`参数调整。
+```{r}
+#| eval: false
+flights |> 
+  mutate(dep_delay_hour = dep_delay / 60, .after = dep_delay)
+```
+
+- 新增多个列，保留使用到的列
+```{r}
+#| eval: false
 flights |>
   mutate(
     gain = dep_delay - arr_delay,
-    speed = distance / air_time * 60
-  ) |>
-  select(dep_delay, arr_delay, gain, distance, air_time, speed)
-```
-
-## `arrange()` 排序
-
-```{r}
-#| echo: true
-flights |>
-  arrange(desc(dep_delay)) |>
-  select(year:day, carrier, flight, dep_delay)
-```
-
-## `summarise()` 汇总
-
-```{r}
-#| echo: true
-flights |>
-  summarise(
-    mean_dep_delay = mean(dep_delay, na.rm = TRUE),
-    mean_arr_delay = mean(arr_delay, na.rm = TRUE)
+    speed_per_min = distance / air_time,
+    speed_per_hour = speed_per_min * 60,
+    .keep = "used" 
   )
 ```
 
-## 分组汇总：`.by`
-
+- 修改列：将`dep_delay`转换为小时
 ```{r}
-#| echo: true
-flights |>
-  summarise(
-    n = n(),
-    mean_dep_delay = mean(dep_delay, na.rm = TRUE),
-    .by = carrier
-  ) |>
-  arrange(desc(mean_dep_delay))
+#| eval: false
+flights |> 
+  mutate(dep_delay = dep_delay / 60)
 ```
 
-## 多列操作：`across()`
+## 练习3 {auto-animate="true"}
+- 飞往LAX的航班中速度最快的10个航班，保留起飞日期、出发地、目的地，飞行距离，飞行时间和速度列。
 
 ```{r}
-#| echo: true
+#| code-fold: true
 flights |>
-  summarise(
-    across(c(dep_delay, arr_delay), ~ mean(.x, na.rm = TRUE)),
-    .by = origin
+  filter(dest == "LAX") |>
+  mutate(speed_per_min = distance / air_time) |>
+  arrange(desc(speed_per_min)) |>
+  slice_head(n = 10) |>
+  select(year, month, day, origin, dest, distance, air_time, speed_per_min)
+```
+
+## 练习3 {auto-animate="true"}
+- 飞往洛杉矶（LAX）的航班中飞行速度最快的10个航班，保留起飞日期、出发地、目的地，飞行距离，飞行时间和速度列。
+
+```{r}
+#| eval: false
+#| code-fold: true
+flights |>
+  filter(dest == "LAX") |>
+  mutate(speed_per_min = distance / air_time) |>
+  arrange(desc(speed_per_min)) |>
+  slice_head(n = 10) |>
+  select(year, month, day, origin, dest, distance, air_time, speed_per_min)
+```
+
+## `group_by()`与`summarise()`分组汇总
+- `group_by()`将数据框按一个或多个变量分组。
+
+```{r}
+flights |> 
+  group_by(month)
+```
+
+## `group_by()`与`summarise()`分组汇总 {auto-animate="true"}
+- `summarise()`对分组数据进行汇总计算。
+```{r}
+flights |> 
+  group_by(month) |> 
+  summarize(
+    avg_delay = mean(dep_delay)
   )
 ```
 
-## 连接数据
-
+## `group_by()`与`summarise()`分组汇总 {auto-animate="true"}
+- `summarise()`对分组数据进行汇总计算。
 ```{r}
-#| echo: true
-flights |>
-  left_join(airlines, join_by(carrier)) |>
-  select(carrier, name, dep_delay, arr_delay)
-```
-
-## 管道链式写法 {auto-animate="true"}
-
-```{r}
-#| echo: true
-flights
-```
-
-## 管道链式写法 {auto-animate="true"}
-
-```{r}
-#| echo: true
-flights |>
-  mutate(gain = dep_delay - arr_delay)
-```
-
-## 管道链式写法 {auto-animate="true"}
-
-```{r}
-#| echo: true
-flights |>
-  mutate(gain = dep_delay - arr_delay) |>
-  summarise(
-    mean_gain = mean(gain, na.rm = TRUE),
-    .by = carrier
+flights |> 
+  group_by(month) |> 
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE)
   )
 ```
 
-## 管道链式写法 {auto-animate="true"}
+## `group_by()`与`summarise()`分组汇总 {auto-animate="true"}
+- `summarise()`对分组数据进行汇总计算。
+```{r}
+flights |> 
+  group_by(month) |> 
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE),
+    n = n()
+  )
+```
+
+## `group_by()`与`summarise()`分组汇总 {auto-animate="true"}
+
+```{r}
+flights |>  
+  group_by(year, month, day)
+```
+
+## `group_by()`与`summarise()`分组汇总 {auto-animate="true"}
+
+```{r}
+flights |>  
+  group_by(year, month, day) |>
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE),
+    n = n()
+  )
+```
+
+## ungroup()解除分组
+- `ungroup()`用于解除分组，返回一个未分组的数据框。
+```{r}
+flights |>  
+  group_by(year, month, day) |>
+  summarize(
+    avg_delay = mean(dep_delay, na.rm = TRUE),
+    n = n()
+  ) |>
+  ungroup()
+```
+
+
+# 数据整理(Data tidying)
+>“幸福的家庭都是相似的，不幸的家庭各有各的不幸。”  
+— 列夫·托尔斯泰
+
+> “Tidy datasets are all alike, but every messy dataset is messy in its own way.”  
+— Hadley Wickham
+
+## 什么是tidy data?
+1. 每个变量一列，每列一个变量
+2. 每个观测一行，每行一个观测
+3. 每个值一个单元格，每个单元格一个值
+![](images/tidy-1.png)
+<span style="display: block; text-align: right; font-family: 'Times New Roman', serif; font-size: 0.6em; margin-top: -0.6em;"><a href="https://r4ds.hadley.nz/images/tidy-1.png">来源：R4DS by Hadley Wickham</a></span>
+
+## `tidyr`包
+`tidyr`包提供了一系列函数用于数据整理，核心函数包括：
+
+- `pivot_longer()`：宽数据转长数据
+- `pivot_wider()`：长数据转宽数据
+- `separate()`：拆分列
+- `unite()`：合并列
+- `drop_na()`：删除缺失值
+- `replace_na()`：替换缺失值
+- ...
+
+## `pivot_longer()`宽数据转长数据
+宽数据：
+```{r}
+#| echo: false
+billboard |>
+  print(n = 3, max_footer_lines = 3, width = 70)
+```
+
+长数据：
+```{r}
+#| echo: false
+billboard |> 
+  pivot_longer(
+    cols = starts_with("wk"), 
+    names_to = "week", 
+    values_to = "rank"
+  ) |>
+  print(n = 3)
+```
+
+## `pivot_longer()`用法 {auto-animate="true"}
 
 ```{r}
 #| echo: true
-flights |>
-  mutate(gain = dep_delay - arr_delay) |>
-  summarise(
-    mean_gain = mean(gain, na.rm = TRUE),
-    .by = carrier
+billboard |>
+  pivot_longer(
+    cols = starts_with("wk"), # `!c(artist, track, date.entered)`
+    names_to = "week",
+    values_to = "rank"
   ) |>
-  arrange(desc(mean_gain))
+  print(n = 3)
 ```
 
-> 探索：把最后的 `arrange(desc(mean_gain))` 改成 `arrange(mean_gain)` 会发生什么？
+- `cols`：需要被转换的列，`select()`相同的语法选择列。
+- `names_to`：指定“原列名”保存成的新变量名。
+- `values_to`：指定“单元格中的值”保存成的新变量名。
 
-# 3. 数据整理（tidyr）
+## `pivot_longer()`用法 {auto-animate="true"}
 
-## 什么是 tidy data？
+```{r}
+#| echo: false
+billboard |>
+  pivot_longer(
+    cols = starts_with("wk"), # `!c(artist, track, date.entered)`
+    names_to = "week",
+    values_to = "rank"
+  ) 
+```
 
-整洁数据的三个规则：
+## `pivot_longer()`用法 {auto-animate="true"}
+```{r}
+billboard |> 
+  pivot_longer(
+    cols = starts_with("wk"), 
+    names_to = "week", 
+    values_to = "rank",
+    values_drop_na = TRUE
+  )
+```
 
-::: incremental
-- 每个变量一列
-- 每个观测一行
-- 每个单元格一个值
+## `pivot_longer()`用法 {auto-animate="true"}
+```{r}
+billboard |>
+  pivot_longer(
+    cols = starts_with("wk"),
+    names_to = "week",
+    values_to = "rank",
+    values_drop_na = TRUE
+  ) |>
+  mutate(week = parse_number(week))
+```
+
+## `pivot_longer()`的作用方式 {auto-animate="true"}
+
+::: {.columns}
+::: {.column width="50%"}
+### 宽格式
+
+```{r}
+df <- tribble(
+  ~id,  ~bp1, ~bp2,
+   "A",  100,  120,
+   "B",  140,  115,
+   "C",  120,  125
+)
+df
+```
 :::
 
-## `who2`：典型“非整洁”示例
+::: {.column width="50%"}
+### 长格式
 
 ```{r}
-#| echo: true
+df |> 
+  pivot_longer(
+    cols = bp1:bp2,
+    names_to = "measurement",
+    values_to = "value"
+  )
+```
+:::
+:::
+
+## `pivot_longer()`的作用方式 {auto-animate="true"}
+```{r}
+#| eval: false
+df |> 
+  pivot_longer(
+    cols = bp1:bp2,
+    names_to = "measurement",
+    values_to = "value"
+  )
+```
+![](images/wide-long.png){width=70%}
+<span style="display: block; text-align: right; font-family: 'Times New Roman', serif; font-size: 0.4em;"><a href="https://r4ds.hadley.nz/diagrams/tidy-data/variables.png">来源：R4DS by Hadley Wickham</a></span>
+
+
+## `pivot_longer()`进阶用法
+`who2`数据集包含了世界卫生组织（WHO）关于结核病的数据
+```{r}
 who2
 ```
 
-> `who2` 中很多列名同时编码了多个变量（年龄、性别、病例类型）。
-
-## `pivot_longer()`
-
+## `pivot_longer()`进阶用法 {auto-animate="true"}
 ```{r}
-#| echo: true
-who2 |>
+#| code-fold: true
+who2 |> 
   pivot_longer(
-    cols = !c(country, year),
-    names_to = c("diagnosis",  "sex","age"),
+    cols = !(country:year),
+    names_to = c("diagnosis", "gender", "age"), 
     names_sep = "_",
     values_to = "count"
   )
 ```
 
-## `pivot_wider()`
+## `seperate()`拆分列 {auto-animate="true"}
 
 ```{r}
-#| echo: true
-flights |>
-  summarise(mean_delay = mean(dep_delay, na.rm = TRUE), .by = c(origin, month)) |>
-  pivot_wider(names_from = origin, values_from = mean_delay)
-```
-
-## 拆分列：`separate_wider_delim()`
-
-```{r}
-#| echo: true
-flights |>
-  select(time_hour) |>
-  separate_wider_delim(
-    cols = time_hour,
-    delim = " ",
-    names = c("date", "hour")
+who2 |> 
+  pivot_longer(
+    cols = !(country:year),
+    names_to = c("diagnosis_gender_age"), 
+    values_to = "count"
   )
 ```
 
-## 缺失值处理
+## `seperate()`拆分列 {auto-animate="true"}
 
 ```{r}
-#| echo: true
-flights |>
-  select(dep_time, dep_delay, arr_time, arr_delay) |>
-  drop_na(dep_delay, arr_delay)
-```
-
-```{r}
-#| echo: true
-tibble(id = c(1, 2, 3, 4), group = c("A", NA, NA, "B")) |>
-  fill(group)
-```
-
-# 4. 数据导入（readr）
-
-## 写出 CSV
-
-```{r}
-#| echo: true
-flights |>
-  select(year:day, carrier, flight, dep_delay, arr_delay) |>
-  write_csv("data/flights_subset.csv")
-```
-
-## 读取 CSV
-
-```{r}
-#| echo: true
-flights_csv <- read_csv("data/flights_subset.csv")
-glimpse(flights_csv)
-```
-
-## 列类型控制
-
-```{r}
-#| echo: true
-read_csv(
-  "data/flights_subset.csv",
-  col_types = cols(
-    year = col_integer(),
-    month = col_integer(),
-    day = col_integer(),
-    dep_delay = col_double(),
-    arr_delay = col_double()
+who2 |>
+  pivot_longer(
+    cols = !(country:year),
+    names_to = c("diagnosis_gender_age"),
+    values_to = "count"
+  ) |>
+  separate(
+    col = diagnosis_gender_age,
+    into = c("diagnosis", "gender", "age"),
+    sep = "_"
   )
-)
 ```
 
-## 其它常见导入函数
+## `pivot_wider()`用法
+`fish_encounters`数据集记录鱼类洄游信息：
 
-::: incremental
-- `read_tsv()`：读取制表符分隔文件
-- `read_delim()`：读取自定义分隔符文件
-- `read_lines()`：读取文本行
-:::
+- `fish`:鱼的标记
+- `station`: 观测站
+- `seen`: 是否被观测到
+```{r}
+fish_encounters %>%
+  summary()
+```
 
-> 若读取 Excel 文件，可使用 `readxl::read_excel()`。
+## `pivot_wider()`用法
+### 格式1
 
-# 课堂作业
+```{r}
+#| echo: false
+fish_encounters |>
+  pivot_wider(
+    names_from = station,
+    values_from = seen
+  ) |>
+  print(width = 70)
+```
 
-## 作业1
+## `pivot_wider()`用法
+### 格式2
+```{r}
+#| echo: false
+fish_encounters |>
+  pivot_wider(
+    names_from = fish,
+    values_from = seen
+  ) |>
+  print(width = 70)
+```
 
-基于 `nycflights13::flights` 完成以下任务：
+## `pivot_wider()`用法
+```{r}
+#| echo: true
+fish_encounters |>
+  pivot_wider(
+    names_from = station,
+    values_from = seen
+  ) |>
+  print(width = 70)
+```
 
-1. 使用 `ggplot2` 画一张图，展示你关心的延误特征。
-2. 使用 `dplyr` 完成一次“筛选 + 新变量 + 汇总”的管道分析。
-3. 使用 `tidyr` 把一个汇总结果做一次 `pivot_wider()` 或 `pivot_longer()`。
-4. 将结果保存为 `csv` 文件，并在下周提交 `qmd + html`。
+## `pivot_wider()`用法
+```{r}
+#| echo: true
+fish_encounters |>
+  pivot_wider(
+    names_from = station,
+    values_from = seen,
+    values_fill = 0
+  ) |>
+  print(width = 70)
+```
+## 练习4:`pivot_wider()`用法
+```{r}
+#| code-fold: true
+fish_encounters |>
+  pivot_wider(
+    names_from = fish,
+    values_from = seen
+  ) |>
+  print(width = 70)
+```
 
-# 参考资料
+## `pivot_wider()`进阶用法 {auto-animate="true"}
 
-::: incremental
-- Wickham et al. *R for Data Science* (2nd edition)
-- [https://r4ds.hadley.nz/](https://r4ds.hadley.nz/)
-- [https://www.tidyverse.org/](https://www.tidyverse.org/)
-:::
+```{r}
+us_rent_income 
+```
+
+## `pivot_wider()`进阶用法 {auto-animate="true"}
+
+```{r}
+#| code-fold: true
+us_rent_income |>
+  pivot_wider(
+    names_from = variable,
+    values_from = c(estimate, moe)
+  ) |>
+  print(width = 70)
+```
+
+# 数据读写
+
+## `readr`包
+
+`readr`包提供了一系列函数用于数据读写，核心函数包括：
+
+- `read_csv()`：读取CSV文件
+- `read_tsv()`：读取制表符分隔的文件
+- `read_delim()`：读取任意分隔符的文件
+- `read_table()`：读取空格分隔的文件
+- `write_csv()`：写入CSV文件
+- `write_rds()`：写入RDS文件
+- ...
+
+## `read_csv()`读取CSV文件 {auto-animate="true"}
+```{r}
+students <- read_csv("data/students.csv")
+students
+```
+
+## `read_csv()`读取CSV文件 {auto-animate="true"}
+```{r}
+students <- read_csv("data/students.csv", na = c("N/A", ""))
+students
+```
+
+## `read_csv()`读取CSV文件 {auto-animate="true"}
+```{r}
+students <-
+  read_csv("data/students.csv", na = c("N/A", "")) |>
+  rename(
+    student_id = `Student ID`,
+    full_name = `Full Name`
+  )
+students
+```
+## `read_csv()`读取CSV文件 {auto-animate="true"}
+
+```{r}
+students <- 
+  read_csv("data/students.csv", na = c("N/A", "")) |>
+  janitor::clean_names() |>
+  mutate(
+    meal_plan = factor(meal_plan),
+    age = parse_number(if_else(age == "five", "5", age))
+  )
+students
+```
+
+## 探索
+- `read_*`如何控制列的类型？
+- 如何读取多个文件？
+- 如何写入文件？
