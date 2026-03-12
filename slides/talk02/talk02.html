@@ -197,7 +197,7 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">高等数据统计分析</h1>
-  <p class="subtitle">第二讲 函数基本用法和Tidyverse</p>
+  <p class="subtitle">第二讲 函数基本用法和Tidyverse（1）</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -448,7 +448,7 @@ NULL</code></pre>
 <pre><code>[1] "tbl_df"     "tbl"        "data.frame"</code></pre>
 </div>
 </div>
-<p>tibble核心理念是“少做事、多抱怨”,例如：</p>
+<p>tibble核心理念是“少做事、多抱怨”，例如：</p>
 <ul>
 <li>不会偷偷改变量名或变量类型(<code>names(df)</code>vs.<code>names(df_tibble)</code>)。</li>
 <li>不支持模糊匹配列名(比较<code>df$x</code>和<code>df_tibble$x</code>)。</li>
@@ -716,10 +716,12 @@ NULL</code></pre>
 <span id="cb56-7" class="hljs-ln-code"><a href=""></a>  <span class="fu">labs</span>(</span>
 <span id="cb56-8" class="hljs-ln-code"><a href=""></a>    <span class="at">title =</span> <span class="st">"Body mass and flipper length"</span>,</span>
 <span id="cb56-9" class="hljs-ln-code"><a href=""></a>    <span class="at">subtitle =</span> <span class="st">"Dimensions for Adelie, Chinstrap, and Gentoo Penguins"</span>,</span>
-<span id="cb56-10" class="hljs-ln-code"><a href=""></a>    <span class="at">x =</span> <span class="st">"Flipper length (mm)"</span>, <span class="at">y =</span> <span class="st">"Body mass (g)"</span>,</span>
-<span id="cb56-11" class="hljs-ln-code"><a href=""></a>    <span class="at">color =</span> <span class="st">"Species"</span>, <span class="at">shape =</span> <span class="st">"Species"</span></span>
-<span id="cb56-12" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">+</span></span>
-<span id="cb56-13" class="hljs-ln-code"><a href=""></a>  <span class="fu">scale_color_colorblind</span>() <span class="co"># 使用色盲友好调色板，来自ggthemes包</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb56-10" class="hljs-ln-code"><a href=""></a>    <span class="at">x =</span> <span class="st">"Flipper length (mm)"</span>,</span>
+<span id="cb56-11" class="hljs-ln-code"><a href=""></a>    <span class="at">y =</span> <span class="st">"Body mass (g)"</span>,</span>
+<span id="cb56-12" class="hljs-ln-code"><a href=""></a>    <span class="at">color =</span> <span class="st">"Species"</span>,</span>
+<span id="cb56-13" class="hljs-ln-code"><a href=""></a>    <span class="at">shape =</span> <span class="st">"Species"</span></span>
+<span id="cb56-14" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">+</span></span>
+<span id="cb56-15" class="hljs-ln-code"><a href=""></a>  <span class="fu">scale_color_colorblind</span>() <span class="co"># 使用色盲友好调色板，来自ggthemes包</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="外观调整-1" class="slide level2" data-auto-animate="true">
@@ -776,13 +778,13 @@ NULL</code></pre>
 <p>共同点：第一个参数是一个数据框，返回一个新的数据框。</p>
 </blockquote>
 </section>
-<section id="管道符号" class="slide level2" data-auto-animate="true">
+<section id="管道符号" class="slide level2 smaller" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">管道符号</h2>
 <ul>
 <li><code>|&gt;</code> 是<code>R 4.1.0</code>引入的原生管道操作符，用于将一个对象传递给下一个函数作为第一个参数。</li>
 </ul>
 </section>
-<section id="管道符号-1" class="slide level2" data-auto-animate="true">
+<section id="管道符号-1" class="slide level2 smaller" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">管道符号</h2>
 <ul>
 <li><code>|&gt;</code> 是<code>R 4.1.0</code>引入的原生管道操作符，用于将一个对象传递给下一个函数作为第一个参数。</li>
@@ -835,13 +837,13 @@ NULL</code></pre>
 <p><code>filter()</code>根据列的取值筛选出行。第一参数是数据框，后续参数通常是逻辑表达式，返回满足条件行组成的新数据框。</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb65-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span></span>
-<span id="cb65-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">filter</span>(month <span class="sc">==</span> <span class="dv">1</span>) <span class="co"># 筛选出所有起飞延误超过60分钟的航班</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb65-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">filter</span>(month <span class="sc">==</span> <span class="dv">1</span>) <span class="co"># 筛选出所有1月的航班</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <blockquote>
 <p>注意：<code>=</code>是赋值运算符，<code>==</code>才是比较运算符。</p>
 </blockquote>
 </section>
-<section id="练习1filter使用" class="slide level2">
+<section id="练习1filter使用" class="slide level2 scrollable">
 <h2>练习1：<code>filter()</code>使用</h2>
 <ul>
 <li>筛选出1月1日的航班(<code>month</code>和<code>day</code>)</li>
@@ -983,7 +985,7 @@ NULL</code></pre>
 </div>
 </div>
 </section>
-<section id="mutate新增修改列-1" class="slide level2">
+<section id="mutate新增修改列-1" class="slide level2 scrollable">
 <h2><code>mutate()</code>新增/修改列</h2>
 <ul>
 <li>新列默认在最后一列位置，<code>.after</code>或<code>.before</code>参数调整。</li>
@@ -1012,7 +1014,7 @@ NULL</code></pre>
 <span id="cb82-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">dep_delay =</span> dep_delay <span class="sc">/</span> <span class="dv">60</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="练习3" class="slide level2" data-auto-animate="true">
+<section id="练习3" class="slide level2 scrollable" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">练习3</h2>
 <ul>
 <li>飞往LAX的航班中速度最快的10个航班，保留起飞日期、出发地、目的地，飞行距离，飞行时间和速度列。</li>
@@ -1044,7 +1046,7 @@ NULL</code></pre>
 </div>
 </div>
 </section>
-<section id="练习3-1" class="slide level2" data-auto-animate="true">
+<section id="练习3-1" class="slide level2 scrollable" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">练习3</h2>
 <ul>
 <li>飞往洛杉矶（LAX）的航班中飞行速度最快的10个航班，保留起飞日期、出发地、目的地，飞行距离，飞行时间和速度列。</li>
@@ -1091,7 +1093,7 @@ NULL</code></pre>
 </div>
 </div>
 </section>
-<section id="group_by与summarise分组汇总-1" class="slide level2" data-auto-animate="true">
+<section id="group_by与summarise分组汇总-1" class="slide level2 smaller" data-auto-animate="true">
 <h2 data-id="quarto-animate-title"><code>group_by()</code>与<code>summarise()</code>分组汇总</h2>
 <ul>
 <li><code>summarise()</code>对分组数据进行汇总计算。</li>
@@ -1121,7 +1123,7 @@ NULL</code></pre>
 </div>
 </div>
 </section>
-<section id="group_by与summarise分组汇总-2" class="slide level2" data-auto-animate="true">
+<section id="group_by与summarise分组汇总-2" class="slide level2 smaller" data-auto-animate="true">
 <h2 data-id="quarto-animate-title"><code>group_by()</code>与<code>summarise()</code>分组汇总</h2>
 <ul>
 <li><code>summarise()</code>对分组数据进行汇总计算。</li>
@@ -1151,7 +1153,7 @@ NULL</code></pre>
 </div>
 </div>
 </section>
-<section id="group_by与summarise分组汇总-3" class="slide level2" data-auto-animate="true">
+<section id="group_by与summarise分组汇总-3" class="slide level2 smaller" data-auto-animate="true">
 <h2 data-id="quarto-animate-title"><code>group_by()</code>与<code>summarise()</code>分组汇总</h2>
 <ul>
 <li><code>summarise()</code>对分组数据进行汇总计算。</li>
@@ -1209,7 +1211,7 @@ NULL</code></pre>
 </div>
 </div>
 </section>
-<section id="group_by与summarise分组汇总-5" class="slide level2" data-auto-animate="true">
+<section id="group_by与summarise分组汇总-5" class="slide level2 smaller" data-auto-animate="true">
 <h2 data-id="quarto-animate-title"><code>group_by()</code>与<code>summarise()</code>分组汇总</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb96"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb96-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span>  </span>
@@ -1237,19 +1239,19 @@ NULL</code></pre>
 </div>
 </div>
 </section>
-<section id="ungroup解除分组" class="slide level2">
-<h2>ungroup()解除分组</h2>
+<section id="ungroup解除分组" class="slide level2 smaller" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">ungroup()解除分组</h2>
 <ul>
 <li><code>ungroup()</code>用于解除分组，返回一个未分组的数据框。</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href=""></a>flights <span class="sc">|&gt;</span>  </span>
-<span id="cb98-2"><a href=""></a>  <span class="fu">group_by</span>(year, month, day) <span class="sc">|&gt;</span></span>
-<span id="cb98-3"><a href=""></a>  <span class="fu">summarize</span>(</span>
-<span id="cb98-4"><a href=""></a>    <span class="at">avg_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb98-5"><a href=""></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
-<span id="cb98-6"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb98-7"><a href=""></a>  <span class="fu">ungroup</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb98"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb98-1" class="hljs-ln-code"><a href=""></a>flights <span class="sc">|&gt;</span>  </span>
+<span id="cb98-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">group_by</span>(year, month, day) <span class="sc">|&gt;</span></span>
+<span id="cb98-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">summarize</span>(</span>
+<span id="cb98-4" class="hljs-ln-code"><a href=""></a>    <span class="at">avg_delay =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb98-5" class="hljs-ln-code"><a href=""></a>    <span class="at">n =</span> <span class="fu">n</span>()</span>
+<span id="cb98-6" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb98-7" class="hljs-ln-code"><a href=""></a>  <span class="fu">ungroup</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 365 × 5
     year month   day avg_delay     n
@@ -1267,693 +1269,11 @@ NULL</code></pre>
 # ℹ 355 more rows</code></pre>
 </div>
 </div>
-</section></section>
-<section>
-<section id="数据整理data-tidying" class="title-slide slide level1 center">
-<h1>数据整理(Data tidying)</h1>
-<blockquote>
-<p>“幸福的家庭都是相似的，不幸的家庭各有各的不幸。”<br>
-— 列夫·托尔斯泰</p>
-</blockquote>
-<blockquote>
-<p>“Tidy datasets are all alike, but every messy dataset is messy in its own way.”<br>
-— Hadley Wickham</p>
-</blockquote>
 </section>
-<section id="什么是tidy-data" class="slide level2">
-<h2>什么是tidy data?</h2>
-<ol type="1">
-<li>每个变量一列，每列一个变量</li>
-<li>每个观测一行，每行一个观测</li>
-<li>每个值一个单元格，每个单元格一个值 <img data-src="images/tidy-1.png"> <span style="display: block; text-align: right; font-family: 'Times New Roman', serif; font-size: 0.6em; margin-top: -0.6em;"><a href="https://r4ds.hadley.nz/images/tidy-1.png">来源：R4DS by Hadley Wickham</a></span></li>
-</ol>
-</section>
-<section id="tidyr包" class="slide level2">
-<h2><code>tidyr</code>包</h2>
-<p><code>tidyr</code>包提供了一系列函数用于数据整理，核心函数包括：</p>
+<section id="资料" class="slide level2">
+<h2>资料</h2>
 <ul>
-<li><code>pivot_longer()</code>：宽数据转长数据</li>
-<li><code>pivot_wider()</code>：长数据转宽数据</li>
-<li><code>separate()</code>：拆分列</li>
-<li><code>unite()</code>：合并列</li>
-<li><code>drop_na()</code>：删除缺失值</li>
-<li><code>replace_na()</code>：替换缺失值</li>
-<li>…</li>
-</ul>
-</section>
-<section id="pivot_longer宽数据转长数据" class="slide level2">
-<h2><code>pivot_longer()</code>宽数据转长数据</h2>
-<p>宽数据：</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 317 × 79
-  artist  track date.entered   wk1   wk2   wk3   wk4   wk5   wk6   wk7
-  &lt;chr&gt;   &lt;chr&gt; &lt;date&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 2 Pac   Baby… 2000-02-26      87    82    72    77    87    94    99
-2 2Ge+her The … 2000-09-02      91    87    92    NA    NA    NA    NA
-3 3 Door… Kryp… 2000-04-08      81    70    68    67    66    57    54
-# ℹ 314 more rows
-# ℹ 69 more variables: wk8 &lt;dbl&gt;, wk9 &lt;dbl&gt;, wk10 &lt;dbl&gt;, wk11 &lt;dbl&gt;,
-#   wk12 &lt;dbl&gt;, wk13 &lt;dbl&gt;, wk14 &lt;dbl&gt;, wk15 &lt;dbl&gt;, wk16 &lt;dbl&gt;, …</code></pre>
-</div>
-</div>
-<p>长数据：</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 24,092 × 5
-  artist track                   date.entered week   rank
-  &lt;chr&gt;  &lt;chr&gt;                   &lt;date&gt;       &lt;chr&gt; &lt;dbl&gt;
-1 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk1      87
-2 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk2      82
-3 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk3      72
-# ℹ 24,089 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_longer用法" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>用法</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb102"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb102-1" class="hljs-ln-code"><a href=""></a>billboard <span class="sc">|&gt;</span></span>
-<span id="cb102-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb102-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"wk"</span>), <span class="co"># `!c(artist, track, date.entered)`</span></span>
-<span id="cb102-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="st">"week"</span>,</span>
-<span id="cb102-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"rank"</span></span>
-<span id="cb102-6" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb102-7" class="hljs-ln-code"><a href=""></a>  <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 24,092 × 5
-  artist track                   date.entered week   rank
-  &lt;chr&gt;  &lt;chr&gt;                   &lt;date&gt;       &lt;chr&gt; &lt;dbl&gt;
-1 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk1      87
-2 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk2      82
-3 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk3      72
-# ℹ 24,089 more rows</code></pre>
-</div>
-</div>
-<ul>
-<li><code>cols</code>：需要被转换的列，<code>select()</code>相同的语法选择列。</li>
-<li><code>names_to</code>：指定“原列名”保存成的新变量名。</li>
-<li><code>values_to</code>：指定“单元格中的值”保存成的新变量名。</li>
-</ul>
-</section>
-<section id="pivot_longer用法-1" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>用法</h2>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 24,092 × 5
-   artist track                   date.entered week   rank
-   &lt;chr&gt;  &lt;chr&gt;                   &lt;date&gt;       &lt;chr&gt; &lt;dbl&gt;
- 1 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk1      87
- 2 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk2      82
- 3 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk3      72
- 4 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk4      77
- 5 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk5      87
- 6 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk6      94
- 7 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk7      99
- 8 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk8      NA
- 9 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk9      NA
-10 2 Pac  Baby Don't Cry (Keep... 2000-02-26   wk10     NA
-# ℹ 24,082 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_longer用法-2" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>用法</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb105"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb105-1" class="hljs-ln-code"><a href=""></a>billboard <span class="sc">|&gt;</span> </span>
-<span id="cb105-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb105-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"wk"</span>), </span>
-<span id="cb105-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="st">"week"</span>, </span>
-<span id="cb105-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"rank"</span>,</span>
-<span id="cb105-6" class="hljs-ln-code"><a href=""></a>    <span class="at">values_drop_na =</span> <span class="cn">TRUE</span></span>
-<span id="cb105-7" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5,307 × 5
-   artist  track                   date.entered week   rank
-   &lt;chr&gt;   &lt;chr&gt;                   &lt;date&gt;       &lt;chr&gt; &lt;dbl&gt;
- 1 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk1      87
- 2 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk2      82
- 3 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk3      72
- 4 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk4      77
- 5 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk5      87
- 6 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk6      94
- 7 2 Pac   Baby Don't Cry (Keep... 2000-02-26   wk7      99
- 8 2Ge+her The Hardest Part Of ... 2000-09-02   wk1      91
- 9 2Ge+her The Hardest Part Of ... 2000-09-02   wk2      87
-10 2Ge+her The Hardest Part Of ... 2000-09-02   wk3      92
-# ℹ 5,297 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_longer用法-3" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>用法</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb107"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb107-1" class="hljs-ln-code"><a href=""></a>billboard <span class="sc">|&gt;</span></span>
-<span id="cb107-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb107-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"wk"</span>),</span>
-<span id="cb107-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="st">"week"</span>,</span>
-<span id="cb107-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"rank"</span>,</span>
-<span id="cb107-6" class="hljs-ln-code"><a href=""></a>    <span class="at">values_drop_na =</span> <span class="cn">TRUE</span></span>
-<span id="cb107-7" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb107-8" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">week =</span> <span class="fu">parse_number</span>(week))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5,307 × 5
-   artist  track                   date.entered  week  rank
-   &lt;chr&gt;   &lt;chr&gt;                   &lt;date&gt;       &lt;dbl&gt; &lt;dbl&gt;
- 1 2 Pac   Baby Don't Cry (Keep... 2000-02-26       1    87
- 2 2 Pac   Baby Don't Cry (Keep... 2000-02-26       2    82
- 3 2 Pac   Baby Don't Cry (Keep... 2000-02-26       3    72
- 4 2 Pac   Baby Don't Cry (Keep... 2000-02-26       4    77
- 5 2 Pac   Baby Don't Cry (Keep... 2000-02-26       5    87
- 6 2 Pac   Baby Don't Cry (Keep... 2000-02-26       6    94
- 7 2 Pac   Baby Don't Cry (Keep... 2000-02-26       7    99
- 8 2Ge+her The Hardest Part Of ... 2000-09-02       1    91
- 9 2Ge+her The Hardest Part Of ... 2000-09-02       2    87
-10 2Ge+her The Hardest Part Of ... 2000-09-02       3    92
-# ℹ 5,297 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_longer的作用方式" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>的作用方式</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<h3 id="宽格式">宽格式</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb109"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href=""></a>df <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
-<span id="cb109-2"><a href=""></a>  <span class="sc">~</span>id,  <span class="sc">~</span>bp1, <span class="sc">~</span>bp2,</span>
-<span id="cb109-3"><a href=""></a>   <span class="st">"A"</span>,  <span class="dv">100</span>,  <span class="dv">120</span>,</span>
-<span id="cb109-4"><a href=""></a>   <span class="st">"B"</span>,  <span class="dv">140</span>,  <span class="dv">115</span>,</span>
-<span id="cb109-5"><a href=""></a>   <span class="st">"C"</span>,  <span class="dv">120</span>,  <span class="dv">125</span></span>
-<span id="cb109-6"><a href=""></a>)</span>
-<span id="cb109-7"><a href=""></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 3
-  id      bp1   bp2
-  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 A       100   120
-2 B       140   115
-3 C       120   125</code></pre>
-</div>
-</div>
-</div><div class="column" style="width:50%;">
-<h3 id="长格式">长格式</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb111"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href=""></a>df <span class="sc">|&gt;</span> </span>
-<span id="cb111-2"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb111-3"><a href=""></a>    <span class="at">cols =</span> bp1<span class="sc">:</span>bp2,</span>
-<span id="cb111-4"><a href=""></a>    <span class="at">names_to =</span> <span class="st">"measurement"</span>,</span>
-<span id="cb111-5"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
-<span id="cb111-6"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 3
-  id    measurement value
-  &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;
-1 A     bp1           100
-2 A     bp2           120
-3 B     bp1           140
-4 B     bp2           115
-5 C     bp1           120
-6 C     bp2           125</code></pre>
-</div>
-</div>
-</div></div>
-</section>
-<section id="pivot_longer的作用方式-1" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>的作用方式</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb113"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb113-1" class="hljs-ln-code"><a href=""></a>df <span class="sc">|&gt;</span> </span>
-<span id="cb113-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb113-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> bp1<span class="sc">:</span>bp2,</span>
-<span id="cb113-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="st">"measurement"</span>,</span>
-<span id="cb113-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
-<span id="cb113-6" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p><img data-src="images/wide-long.png" style="width:70.0%"> <span style="display: block; text-align: right; font-family: 'Times New Roman', serif; font-size: 0.4em;"><a href="https://r4ds.hadley.nz/diagrams/tidy-data/variables.png">来源：R4DS by Hadley Wickham</a></span></p>
-</section>
-<section id="pivot_longer进阶用法" class="slide level2">
-<h2><code>pivot_longer()</code>进阶用法</h2>
-<p><code>who2</code>数据集包含了世界卫生组织（WHO）关于结核病的数据</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb114"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href=""></a>who2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 7,240 × 58
-   country      year sp_m_014 sp_m_1524 sp_m_2534 sp_m_3544 sp_m_4554 sp_m_5564
-   &lt;chr&gt;       &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
- 1 Afghanistan  1980       NA        NA        NA        NA        NA        NA
- 2 Afghanistan  1981       NA        NA        NA        NA        NA        NA
- 3 Afghanistan  1982       NA        NA        NA        NA        NA        NA
- 4 Afghanistan  1983       NA        NA        NA        NA        NA        NA
- 5 Afghanistan  1984       NA        NA        NA        NA        NA        NA
- 6 Afghanistan  1985       NA        NA        NA        NA        NA        NA
- 7 Afghanistan  1986       NA        NA        NA        NA        NA        NA
- 8 Afghanistan  1987       NA        NA        NA        NA        NA        NA
- 9 Afghanistan  1988       NA        NA        NA        NA        NA        NA
-10 Afghanistan  1989       NA        NA        NA        NA        NA        NA
-# ℹ 7,230 more rows
-# ℹ 50 more variables: sp_m_65 &lt;dbl&gt;, sp_f_014 &lt;dbl&gt;, sp_f_1524 &lt;dbl&gt;,
-#   sp_f_2534 &lt;dbl&gt;, sp_f_3544 &lt;dbl&gt;, sp_f_4554 &lt;dbl&gt;, sp_f_5564 &lt;dbl&gt;,
-#   sp_f_65 &lt;dbl&gt;, sn_m_014 &lt;dbl&gt;, sn_m_1524 &lt;dbl&gt;, sn_m_2534 &lt;dbl&gt;,
-#   sn_m_3544 &lt;dbl&gt;, sn_m_4554 &lt;dbl&gt;, sn_m_5564 &lt;dbl&gt;, sn_m_65 &lt;dbl&gt;,
-#   sn_f_014 &lt;dbl&gt;, sn_f_1524 &lt;dbl&gt;, sn_f_2534 &lt;dbl&gt;, sn_f_3544 &lt;dbl&gt;,
-#   sn_f_4554 &lt;dbl&gt;, sn_f_5564 &lt;dbl&gt;, sn_f_65 &lt;dbl&gt;, ep_m_014 &lt;dbl&gt;, …</code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_longer进阶用法-1" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>pivot_longer()</code>进阶用法</h2>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb116"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb116-1" class="hljs-ln-code"><a href=""></a>who2 <span class="sc">|&gt;</span> </span>
-<span id="cb116-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb116-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="sc">!</span>(country<span class="sc">:</span>year),</span>
-<span id="cb116-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"diagnosis"</span>, <span class="st">"gender"</span>, <span class="st">"age"</span>), </span>
-<span id="cb116-5" class="hljs-ln-code"><a href=""></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
-<span id="cb116-6" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"count"</span></span>
-<span id="cb116-7" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 405,440 × 6
-   country      year diagnosis gender age   count
-   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt;
- 1 Afghanistan  1980 sp        m      014      NA
- 2 Afghanistan  1980 sp        m      1524     NA
- 3 Afghanistan  1980 sp        m      2534     NA
- 4 Afghanistan  1980 sp        m      3544     NA
- 5 Afghanistan  1980 sp        m      4554     NA
- 6 Afghanistan  1980 sp        m      5564     NA
- 7 Afghanistan  1980 sp        m      65       NA
- 8 Afghanistan  1980 sp        f      014      NA
- 9 Afghanistan  1980 sp        f      1524     NA
-10 Afghanistan  1980 sp        f      2534     NA
-# ℹ 405,430 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="seperate拆分列" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>seperate()</code>拆分列</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb118"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb118-1" class="hljs-ln-code"><a href=""></a>who2 <span class="sc">|&gt;</span> </span>
-<span id="cb118-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb118-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="sc">!</span>(country<span class="sc">:</span>year),</span>
-<span id="cb118-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"diagnosis_gender_age"</span>), </span>
-<span id="cb118-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"count"</span></span>
-<span id="cb118-6" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 405,440 × 4
-   country      year diagnosis_gender_age count
-   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;                &lt;dbl&gt;
- 1 Afghanistan  1980 sp_m_014                NA
- 2 Afghanistan  1980 sp_m_1524               NA
- 3 Afghanistan  1980 sp_m_2534               NA
- 4 Afghanistan  1980 sp_m_3544               NA
- 5 Afghanistan  1980 sp_m_4554               NA
- 6 Afghanistan  1980 sp_m_5564               NA
- 7 Afghanistan  1980 sp_m_65                 NA
- 8 Afghanistan  1980 sp_f_014                NA
- 9 Afghanistan  1980 sp_f_1524               NA
-10 Afghanistan  1980 sp_f_2534               NA
-# ℹ 405,430 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="seperate拆分列-1" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>seperate()</code>拆分列</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb120"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb120-1" class="hljs-ln-code"><a href=""></a>who2 <span class="sc">|&gt;</span></span>
-<span id="cb120-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb120-3" class="hljs-ln-code"><a href=""></a>    <span class="at">cols =</span> <span class="sc">!</span>(country<span class="sc">:</span>year),</span>
-<span id="cb120-4" class="hljs-ln-code"><a href=""></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"diagnosis_gender_age"</span>),</span>
-<span id="cb120-5" class="hljs-ln-code"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"count"</span></span>
-<span id="cb120-6" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb120-7" class="hljs-ln-code"><a href=""></a>  <span class="fu">separate</span>(</span>
-<span id="cb120-8" class="hljs-ln-code"><a href=""></a>    <span class="at">col =</span> diagnosis_gender_age,</span>
-<span id="cb120-9" class="hljs-ln-code"><a href=""></a>    <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"diagnosis"</span>, <span class="st">"gender"</span>, <span class="st">"age"</span>),</span>
-<span id="cb120-10" class="hljs-ln-code"><a href=""></a>    <span class="at">sep =</span> <span class="st">"_"</span></span>
-<span id="cb120-11" class="hljs-ln-code"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 405,440 × 6
-   country      year diagnosis gender age   count
-   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt; &lt;dbl&gt;
- 1 Afghanistan  1980 sp        m      014      NA
- 2 Afghanistan  1980 sp        m      1524     NA
- 3 Afghanistan  1980 sp        m      2534     NA
- 4 Afghanistan  1980 sp        m      3544     NA
- 5 Afghanistan  1980 sp        m      4554     NA
- 6 Afghanistan  1980 sp        m      5564     NA
- 7 Afghanistan  1980 sp        m      65       NA
- 8 Afghanistan  1980 sp        f      014      NA
- 9 Afghanistan  1980 sp        f      1524     NA
-10 Afghanistan  1980 sp        f      2534     NA
-# ℹ 405,430 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_wider用法" class="slide level2">
-<h2><code>pivot_wider()</code>用法</h2>
-<p><code>fish_encounters</code>数据集记录鱼类洄游信息：</p>
-<ul>
-<li><code>fish</code>:鱼的标记</li>
-<li><code>station</code>: 观测站</li>
-<li><code>seen</code>: 是否被观测到</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb122"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href=""></a>fish_encounters <span class="sc">%&gt;%</span></span>
-<span id="cb122-2"><a href=""></a>  <span class="fu">summary</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      fish       station        seen  
- 4842   :11   Release:19   Min.   :1  
- 4843   :11   I80_1  :19   1st Qu.:1  
- 4844   :11   Lisbon :13   Median :1  
- 4858   :11   Rstr   :12   Mean   :1  
- 4861   :11   Base_TD:11   3rd Qu.:1  
- 4857   : 9   BCE    : 8   Max.   :1  
- (Other):50   (Other):32              </code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_wider用法-1" class="slide level2">
-<h2><code>pivot_wider()</code>用法</h2>
-<h3 id="格式1">格式1</h3>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 19 × 12
-   fish  Release I80_1 Lisbon  Rstr Base_TD   BCE   BCW  BCE2  BCW2
-   &lt;fct&gt;   &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
- 1 4842        1     1      1     1       1     1     1     1     1
- 2 4843        1     1      1     1       1     1     1     1     1
- 3 4844        1     1      1     1       1     1     1     1     1
- 4 4845        1     1      1     1       1    NA    NA    NA    NA
- 5 4847        1     1      1    NA      NA    NA    NA    NA    NA
- 6 4848        1     1      1     1      NA    NA    NA    NA    NA
- 7 4849        1     1     NA    NA      NA    NA    NA    NA    NA
- 8 4850        1     1     NA     1       1     1     1    NA    NA
- 9 4851        1     1     NA    NA      NA    NA    NA    NA    NA
-10 4854        1     1     NA    NA      NA    NA    NA    NA    NA
-11 4855        1     1      1     1       1    NA    NA    NA    NA
-12 4857        1     1      1     1       1     1     1     1     1
-13 4858        1     1      1     1       1     1     1     1     1
-14 4859        1     1      1     1       1    NA    NA    NA    NA
-15 4861        1     1      1     1       1     1     1     1     1
-16 4862        1     1      1     1       1     1     1     1     1
-17 4863        1     1     NA    NA      NA    NA    NA    NA    NA
-18 4864        1     1     NA    NA      NA    NA    NA    NA    NA
-19 4865        1     1      1    NA      NA    NA    NA    NA    NA
-# ℹ 2 more variables: MAE &lt;int&gt;, MAW &lt;int&gt;</code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_wider用法-2" class="slide level2">
-<h2><code>pivot_wider()</code>用法</h2>
-<h3 id="格式2">格式2</h3>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 11 × 20
-   station `4842` `4843` `4844` `4845` `4847` `4848` `4849` `4850`
-   &lt;fct&gt;    &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
- 1 Release      1      1      1      1      1      1      1      1
- 2 I80_1        1      1      1      1      1      1      1      1
- 3 Lisbon       1      1      1      1      1      1     NA     NA
- 4 Rstr         1      1      1      1     NA      1     NA      1
- 5 Base_TD      1      1      1      1     NA     NA     NA      1
- 6 BCE          1      1      1     NA     NA     NA     NA      1
- 7 BCW          1      1      1     NA     NA     NA     NA      1
- 8 BCE2         1      1      1     NA     NA     NA     NA     NA
- 9 BCW2         1      1      1     NA     NA     NA     NA     NA
-10 MAE          1      1      1     NA     NA     NA     NA     NA
-11 MAW          1      1      1     NA     NA     NA     NA     NA
-# ℹ 11 more variables: `4851` &lt;int&gt;, `4854` &lt;int&gt;, `4855` &lt;int&gt;,
-#   `4857` &lt;int&gt;, `4858` &lt;int&gt;, `4859` &lt;int&gt;, `4861` &lt;int&gt;,
-#   `4862` &lt;int&gt;, `4863` &lt;int&gt;, `4864` &lt;int&gt;, `4865` &lt;int&gt;</code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_wider用法-3" class="slide level2">
-<h2><code>pivot_wider()</code>用法</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb126"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb126-1"><a href=""></a>fish_encounters <span class="sc">|&gt;</span></span>
-<span id="cb126-2"><a href=""></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb126-3"><a href=""></a>    <span class="at">names_from =</span> station,</span>
-<span id="cb126-4"><a href=""></a>    <span class="at">values_from =</span> seen</span>
-<span id="cb126-5"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb126-6"><a href=""></a>  <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">70</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 19 × 12
-   fish  Release I80_1 Lisbon  Rstr Base_TD   BCE   BCW  BCE2  BCW2
-   &lt;fct&gt;   &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
- 1 4842        1     1      1     1       1     1     1     1     1
- 2 4843        1     1      1     1       1     1     1     1     1
- 3 4844        1     1      1     1       1     1     1     1     1
- 4 4845        1     1      1     1       1    NA    NA    NA    NA
- 5 4847        1     1      1    NA      NA    NA    NA    NA    NA
- 6 4848        1     1      1     1      NA    NA    NA    NA    NA
- 7 4849        1     1     NA    NA      NA    NA    NA    NA    NA
- 8 4850        1     1     NA     1       1     1     1    NA    NA
- 9 4851        1     1     NA    NA      NA    NA    NA    NA    NA
-10 4854        1     1     NA    NA      NA    NA    NA    NA    NA
-11 4855        1     1      1     1       1    NA    NA    NA    NA
-12 4857        1     1      1     1       1     1     1     1     1
-13 4858        1     1      1     1       1     1     1     1     1
-14 4859        1     1      1     1       1    NA    NA    NA    NA
-15 4861        1     1      1     1       1     1     1     1     1
-16 4862        1     1      1     1       1     1     1     1     1
-17 4863        1     1     NA    NA      NA    NA    NA    NA    NA
-18 4864        1     1     NA    NA      NA    NA    NA    NA    NA
-19 4865        1     1      1    NA      NA    NA    NA    NA    NA
-# ℹ 2 more variables: MAE &lt;int&gt;, MAW &lt;int&gt;</code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_wider用法-4" class="slide level2">
-<h2><code>pivot_wider()</code>用法</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb128"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href=""></a>fish_encounters <span class="sc">|&gt;</span></span>
-<span id="cb128-2"><a href=""></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb128-3"><a href=""></a>    <span class="at">names_from =</span> station,</span>
-<span id="cb128-4"><a href=""></a>    <span class="at">values_from =</span> seen,</span>
-<span id="cb128-5"><a href=""></a>    <span class="at">values_fill =</span> <span class="dv">0</span></span>
-<span id="cb128-6"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb128-7"><a href=""></a>  <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">70</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 19 × 12
-   fish  Release I80_1 Lisbon  Rstr Base_TD   BCE   BCW  BCE2  BCW2
-   &lt;fct&gt;   &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
- 1 4842        1     1      1     1       1     1     1     1     1
- 2 4843        1     1      1     1       1     1     1     1     1
- 3 4844        1     1      1     1       1     1     1     1     1
- 4 4845        1     1      1     1       1     0     0     0     0
- 5 4847        1     1      1     0       0     0     0     0     0
- 6 4848        1     1      1     1       0     0     0     0     0
- 7 4849        1     1      0     0       0     0     0     0     0
- 8 4850        1     1      0     1       1     1     1     0     0
- 9 4851        1     1      0     0       0     0     0     0     0
-10 4854        1     1      0     0       0     0     0     0     0
-11 4855        1     1      1     1       1     0     0     0     0
-12 4857        1     1      1     1       1     1     1     1     1
-13 4858        1     1      1     1       1     1     1     1     1
-14 4859        1     1      1     1       1     0     0     0     0
-15 4861        1     1      1     1       1     1     1     1     1
-16 4862        1     1      1     1       1     1     1     1     1
-17 4863        1     1      0     0       0     0     0     0     0
-18 4864        1     1      0     0       0     0     0     0     0
-19 4865        1     1      1     0       0     0     0     0     0
-# ℹ 2 more variables: MAE &lt;int&gt;, MAW &lt;int&gt;</code></pre>
-</div>
-</div>
-</section>
-<section id="练习4pivot_wider用法" class="slide level2">
-<h2>练习4:<code>pivot_wider()</code>用法</h2>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb130"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href=""></a>fish_encounters <span class="sc">|&gt;</span></span>
-<span id="cb130-2"><a href=""></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb130-3"><a href=""></a>    <span class="at">names_from =</span> fish,</span>
-<span id="cb130-4"><a href=""></a>    <span class="at">values_from =</span> seen</span>
-<span id="cb130-5"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb130-6"><a href=""></a>  <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">70</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 11 × 20
-   station `4842` `4843` `4844` `4845` `4847` `4848` `4849` `4850`
-   &lt;fct&gt;    &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
- 1 Release      1      1      1      1      1      1      1      1
- 2 I80_1        1      1      1      1      1      1      1      1
- 3 Lisbon       1      1      1      1      1      1     NA     NA
- 4 Rstr         1      1      1      1     NA      1     NA      1
- 5 Base_TD      1      1      1      1     NA     NA     NA      1
- 6 BCE          1      1      1     NA     NA     NA     NA      1
- 7 BCW          1      1      1     NA     NA     NA     NA      1
- 8 BCE2         1      1      1     NA     NA     NA     NA     NA
- 9 BCW2         1      1      1     NA     NA     NA     NA     NA
-10 MAE          1      1      1     NA     NA     NA     NA     NA
-11 MAW          1      1      1     NA     NA     NA     NA     NA
-# ℹ 11 more variables: `4851` &lt;int&gt;, `4854` &lt;int&gt;, `4855` &lt;int&gt;,
-#   `4857` &lt;int&gt;, `4858` &lt;int&gt;, `4859` &lt;int&gt;, `4861` &lt;int&gt;,
-#   `4862` &lt;int&gt;, `4863` &lt;int&gt;, `4864` &lt;int&gt;, `4865` &lt;int&gt;</code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_wider进阶用法" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>pivot_wider()</code>进阶用法</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb132"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb132-1" class="hljs-ln-code"><a href=""></a>us_rent_income </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 104 × 5
-   GEOID NAME       variable estimate   moe
-   &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
- 1 01    Alabama    income      24476   136
- 2 01    Alabama    rent          747     3
- 3 02    Alaska     income      32940   508
- 4 02    Alaska     rent         1200    13
- 5 04    Arizona    income      27517   148
- 6 04    Arizona    rent          972     4
- 7 05    Arkansas   income      23789   165
- 8 05    Arkansas   rent          709     5
- 9 06    California income      29454   109
-10 06    California rent         1358     3
-# ℹ 94 more rows</code></pre>
-</div>
-</div>
-</section>
-<section id="pivot_wider进阶用法-1" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>pivot_wider()</code>进阶用法</h2>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb134"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb134-1" class="hljs-ln-code"><a href=""></a>us_rent_income <span class="sc">|&gt;</span></span>
-<span id="cb134-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb134-3" class="hljs-ln-code"><a href=""></a>    <span class="at">names_from =</span> variable,</span>
-<span id="cb134-4" class="hljs-ln-code"><a href=""></a>    <span class="at">values_from =</span> <span class="fu">c</span>(estimate, moe)</span>
-<span id="cb134-5" class="hljs-ln-code"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb134-6" class="hljs-ln-code"><a href=""></a>  <span class="fu">print</span>(<span class="at">width =</span> <span class="dv">70</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 52 × 6
-   GEOID NAME        estimate_income estimate_rent moe_income moe_rent
-   &lt;chr&gt; &lt;chr&gt;                 &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;
- 1 01    Alabama               24476           747        136        3
- 2 02    Alaska                32940          1200        508       13
- 3 04    Arizona               27517           972        148        4
- 4 05    Arkansas              23789           709        165        5
- 5 06    California            29454          1358        109        3
- 6 08    Colorado              32401          1125        109        5
- 7 09    Connecticut           35326          1123        195        5
- 8 10    Delaware              31560          1076        247       10
- 9 11    District o…           43198          1424        681       17
-10 12    Florida               25952          1077         70        3
-# ℹ 42 more rows</code></pre>
-</div>
-</div>
-</section></section>
-<section>
-<section id="数据读写" class="title-slide slide level1 center">
-<h1>数据读写</h1>
-
-</section>
-<section id="readr包" class="slide level2">
-<h2><code>readr</code>包</h2>
-<p><code>readr</code>包提供了一系列函数用于数据读写，核心函数包括：</p>
-<ul>
-<li><code>read_csv()</code>：读取CSV文件</li>
-<li><code>read_tsv()</code>：读取制表符分隔的文件</li>
-<li><code>read_delim()</code>：读取任意分隔符的文件</li>
-<li><code>read_table()</code>：读取空格分隔的文件</li>
-<li><code>write_csv()</code>：写入CSV文件</li>
-<li><code>write_rds()</code>：写入RDS文件</li>
-<li>…</li>
-</ul>
-</section>
-<section id="read_csv读取csv文件" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>read_csv()</code>读取CSV文件</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb136"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb136-1" class="hljs-ln-code"><a href=""></a>students <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/students.csv"</span>)</span>
-<span id="cb136-2" class="hljs-ln-code"><a href=""></a>students</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 5
-  `Student ID` `Full Name`      favourite.food     mealPlan            AGE  
-         &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;chr&gt;               &lt;chr&gt;
-1            1 Sunil Huffmann   Strawberry yoghurt Lunch only          4    
-2            2 Barclay Lynn     French fries       Lunch only          5    
-3            3 Jayendra Lyne    N/A                Breakfast and lunch 7    
-4            4 Leon Rossini     Anchovies          Lunch only          &lt;NA&gt; 
-5            5 Chidiegwu Dunkel Pizza              Breakfast and lunch five 
-6            6 Güvenç Attila    Ice cream          Lunch only          6    </code></pre>
-</div>
-</div>
-</section>
-<section id="read_csv读取csv文件-1" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>read_csv()</code>读取CSV文件</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb138"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb138-1" class="hljs-ln-code"><a href=""></a>students <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/students.csv"</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"N/A"</span>, <span class="st">""</span>))</span>
-<span id="cb138-2" class="hljs-ln-code"><a href=""></a>students</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 5
-  `Student ID` `Full Name`      favourite.food     mealPlan            AGE  
-         &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;chr&gt;               &lt;chr&gt;
-1            1 Sunil Huffmann   Strawberry yoghurt Lunch only          4    
-2            2 Barclay Lynn     French fries       Lunch only          5    
-3            3 Jayendra Lyne    &lt;NA&gt;               Breakfast and lunch 7    
-4            4 Leon Rossini     Anchovies          Lunch only          &lt;NA&gt; 
-5            5 Chidiegwu Dunkel Pizza              Breakfast and lunch five 
-6            6 Güvenç Attila    Ice cream          Lunch only          6    </code></pre>
-</div>
-</div>
-</section>
-<section id="read_csv读取csv文件-2" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>read_csv()</code>读取CSV文件</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb140"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb140-1" class="hljs-ln-code"><a href=""></a>students <span class="ot">&lt;-</span></span>
-<span id="cb140-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">read_csv</span>(<span class="st">"data/students.csv"</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"N/A"</span>, <span class="st">""</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb140-3" class="hljs-ln-code"><a href=""></a>  <span class="fu">rename</span>(</span>
-<span id="cb140-4" class="hljs-ln-code"><a href=""></a>    <span class="at">student_id =</span> <span class="st">`</span><span class="at">Student ID</span><span class="st">`</span>,</span>
-<span id="cb140-5" class="hljs-ln-code"><a href=""></a>    <span class="at">full_name =</span> <span class="st">`</span><span class="at">Full Name</span><span class="st">`</span></span>
-<span id="cb140-6" class="hljs-ln-code"><a href=""></a>  )</span>
-<span id="cb140-7" class="hljs-ln-code"><a href=""></a>students</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 5
-  student_id full_name        favourite.food     mealPlan            AGE  
-       &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;chr&gt;               &lt;chr&gt;
-1          1 Sunil Huffmann   Strawberry yoghurt Lunch only          4    
-2          2 Barclay Lynn     French fries       Lunch only          5    
-3          3 Jayendra Lyne    &lt;NA&gt;               Breakfast and lunch 7    
-4          4 Leon Rossini     Anchovies          Lunch only          &lt;NA&gt; 
-5          5 Chidiegwu Dunkel Pizza              Breakfast and lunch five 
-6          6 Güvenç Attila    Ice cream          Lunch only          6    </code></pre>
-</div>
-</div>
-</section>
-<section id="read_csv读取csv文件-3" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title"><code>read_csv()</code>读取CSV文件</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb142"><pre class="sourceCode numberSource r number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode r hljs"><span id="cb142-1" class="hljs-ln-code"><a href=""></a>students <span class="ot">&lt;-</span> </span>
-<span id="cb142-2" class="hljs-ln-code"><a href=""></a>  <span class="fu">read_csv</span>(<span class="st">"data/students.csv"</span>, <span class="at">na =</span> <span class="fu">c</span>(<span class="st">"N/A"</span>, <span class="st">""</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb142-3" class="hljs-ln-code"><a href=""></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">|&gt;</span></span>
-<span id="cb142-4" class="hljs-ln-code"><a href=""></a>  <span class="fu">mutate</span>(</span>
-<span id="cb142-5" class="hljs-ln-code"><a href=""></a>    <span class="at">meal_plan =</span> <span class="fu">factor</span>(meal_plan),</span>
-<span id="cb142-6" class="hljs-ln-code"><a href=""></a>    <span class="at">age =</span> <span class="fu">parse_number</span>(<span class="fu">if_else</span>(age <span class="sc">==</span> <span class="st">"five"</span>, <span class="st">"5"</span>, age))</span>
-<span id="cb142-7" class="hljs-ln-code"><a href=""></a>  )</span>
-<span id="cb142-8" class="hljs-ln-code"><a href=""></a>students</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 5
-  student_id full_name        favourite_food     meal_plan             age
-       &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;              &lt;fct&gt;               &lt;dbl&gt;
-1          1 Sunil Huffmann   Strawberry yoghurt Lunch only              4
-2          2 Barclay Lynn     French fries       Lunch only              5
-3          3 Jayendra Lyne    &lt;NA&gt;               Breakfast and lunch     7
-4          4 Leon Rossini     Anchovies          Lunch only             NA
-5          5 Chidiegwu Dunkel Pizza              Breakfast and lunch     5
-6          6 Güvenç Attila    Ice cream          Lunch only              6</code></pre>
-</div>
-</div>
-</section>
-<section id="探索" class="slide level2">
-<h2>探索</h2>
-<ul>
-<li><code>read_*</code>如何控制列的类型？</li>
-<li>如何读取多个文件？</li>
-<li>如何写入文件？</li>
+<li><a href="https://r4ds.hadley.nz">R for Data Science</a>, by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund</li>
 </ul>
 
 </section></section>

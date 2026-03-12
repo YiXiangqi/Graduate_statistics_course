@@ -1,6 +1,6 @@
 ---
 title: "高等数据统计分析"
-subtitle: "第二讲 函数基本用法和Tidyverse"
+subtitle: "第二讲 函数基本用法和Tidyverse（1）"
 author: "易湘琦"
 format:
   revealjs: 
@@ -188,7 +188,7 @@ df <- data.frame(x_10 = 1:20, `3_y` = letters[1:20]); class(df)
 df_tibble <- tibble(x_10 = 1:20, `3_y` = letters[1:20]); class(df_tibble)
 ```
 
-tibble核心理念是“少做事、多抱怨”,例如：
+tibble核心理念是“少做事、多抱怨”，例如：
 
 - 不会偷偷改变量名或变量类型(`names(df)`vs.`names(df_tibble)`)。
 - 不支持模糊匹配列名(比较`df$x`和`df_tibble$x`)。
@@ -453,8 +453,10 @@ ggplot(
   labs(
     title = "Body mass and flipper length",
     subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
-    x = "Flipper length (mm)", y = "Body mass (g)",
-    color = "Species", shape = "Species"
+    x = "Flipper length (mm)",
+    y = "Body mass (g)",
+    color = "Species",
+    shape = "Species"
   ) +
   scale_color_colorblind() # 使用色盲友好调色板，来自ggthemes包
 ```
@@ -508,10 +510,10 @@ head(flights)
 > 共同点：第一个参数是一个数据框，返回一个新的数据框。
 
 
-## 管道符号 {auto-animate="true"}
+## 管道符号 {auto-animate="true" .smaller}
 - `|>` 是`R 4.1.0`引入的原生管道操作符，用于将一个对象传递给下一个函数作为第一个参数。
 
-## 管道符号 {auto-animate="true"}
+## 管道符号 {auto-animate="true" .smaller}
 - `|>` 是`R 4.1.0`引入的原生管道操作符，用于将一个对象传递给下一个函数作为第一个参数。
 - `x |> f()` 等价于 `f(x)`， `x |> f(y) |> g(z)` 等价于 `g(f(x, y), z)`。
 
@@ -537,11 +539,11 @@ flights |>
 ```{r}
 #| eval: false
 flights |>
-  filter(month == 1) # 筛选出所有起飞延误超过60分钟的航班
+  filter(month == 1) # 筛选出所有1月的航班
 ```
 > 注意：`=`是赋值运算符，`==`才是比较运算符。
 
-## 练习1：`filter()`使用
+## 练习1：`filter()`使用 {.scrollable}
 - 筛选出1月1日的航班(`month`和`day`)
 ```{r}
 #| code-fold: true
@@ -647,7 +649,7 @@ flights |>
   mutate(dep_delay_hour = dep_delay / 60 )
 ```
 
-## `mutate()`新增/修改列
+## `mutate()`新增/修改列 {.scrollable}
 - 新列默认在最后一列位置，`.after`或`.before`参数调整。
 ```{r}
 #| eval: false
@@ -674,7 +676,7 @@ flights |>
   mutate(dep_delay = dep_delay / 60)
 ```
 
-## 练习3 {auto-animate="true"}
+## 练习3 {auto-animate="true" .scrollable}
 - 飞往LAX的航班中速度最快的10个航班，保留起飞日期、出发地、目的地，飞行距离，飞行时间和速度列。
 
 ```{r}
@@ -687,7 +689,7 @@ flights |>
   select(year, month, day, origin, dest, distance, air_time, speed_per_min)
 ```
 
-## 练习3 {auto-animate="true"}
+## 练习3 {auto-animate="true" .scrollable}
 - 飞往洛杉矶（LAX）的航班中飞行速度最快的10个航班，保留起飞日期、出发地、目的地，飞行距离，飞行时间和速度列。
 
 ```{r}
@@ -709,7 +711,7 @@ flights |>
   group_by(month)
 ```
 
-## `group_by()`与`summarise()`分组汇总 {auto-animate="true"}
+## `group_by()`与`summarise()`分组汇总 {auto-animate="true" .smaller}
 - `summarise()`对分组数据进行汇总计算。
 ```{r}
 flights |> 
@@ -719,7 +721,7 @@ flights |>
   )
 ```
 
-## `group_by()`与`summarise()`分组汇总 {auto-animate="true"}
+## `group_by()`与`summarise()`分组汇总 {auto-animate="true" .smaller}
 - `summarise()`对分组数据进行汇总计算。
 ```{r}
 flights |> 
@@ -729,7 +731,7 @@ flights |>
   )
 ```
 
-## `group_by()`与`summarise()`分组汇总 {auto-animate="true"}
+## `group_by()`与`summarise()`分组汇总 {auto-animate="true" .smaller}
 - `summarise()`对分组数据进行汇总计算。
 ```{r}
 flights |> 
@@ -747,7 +749,7 @@ flights |>
   group_by(year, month, day)
 ```
 
-## `group_by()`与`summarise()`分组汇总 {auto-animate="true"}
+## `group_by()`与`summarise()`分组汇总 {auto-animate="true" .smaller}
 
 ```{r}
 flights |>  
@@ -758,7 +760,7 @@ flights |>
   )
 ```
 
-## ungroup()解除分组
+## ungroup()解除分组 {auto-animate="true" .smaller}
 - `ungroup()`用于解除分组，返回一个未分组的数据框。
 ```{r}
 flights |>  
@@ -770,331 +772,5 @@ flights |>
   ungroup()
 ```
 
-
-# 数据整理(Data tidying)
->“幸福的家庭都是相似的，不幸的家庭各有各的不幸。”  
-— 列夫·托尔斯泰
-
-> “Tidy datasets are all alike, but every messy dataset is messy in its own way.”  
-— Hadley Wickham
-
-## 什么是tidy data?
-1. 每个变量一列，每列一个变量
-2. 每个观测一行，每行一个观测
-3. 每个值一个单元格，每个单元格一个值
-![](images/tidy-1.png)
-<span style="display: block; text-align: right; font-family: 'Times New Roman', serif; font-size: 0.6em; margin-top: -0.6em;"><a href="https://r4ds.hadley.nz/images/tidy-1.png">来源：R4DS by Hadley Wickham</a></span>
-
-## `tidyr`包
-`tidyr`包提供了一系列函数用于数据整理，核心函数包括：
-
-- `pivot_longer()`：宽数据转长数据
-- `pivot_wider()`：长数据转宽数据
-- `separate()`：拆分列
-- `unite()`：合并列
-- `drop_na()`：删除缺失值
-- `replace_na()`：替换缺失值
-- ...
-
-## `pivot_longer()`宽数据转长数据
-宽数据：
-```{r}
-#| echo: false
-billboard |>
-  print(n = 3, max_footer_lines = 3, width = 70)
-```
-
-长数据：
-```{r}
-#| echo: false
-billboard |> 
-  pivot_longer(
-    cols = starts_with("wk"), 
-    names_to = "week", 
-    values_to = "rank"
-  ) |>
-  print(n = 3)
-```
-
-## `pivot_longer()`用法 {auto-animate="true"}
-
-```{r}
-#| echo: true
-billboard |>
-  pivot_longer(
-    cols = starts_with("wk"), # `!c(artist, track, date.entered)`
-    names_to = "week",
-    values_to = "rank"
-  ) |>
-  print(n = 3)
-```
-
-- `cols`：需要被转换的列，`select()`相同的语法选择列。
-- `names_to`：指定“原列名”保存成的新变量名。
-- `values_to`：指定“单元格中的值”保存成的新变量名。
-
-## `pivot_longer()`用法 {auto-animate="true"}
-
-```{r}
-#| echo: false
-billboard |>
-  pivot_longer(
-    cols = starts_with("wk"), # `!c(artist, track, date.entered)`
-    names_to = "week",
-    values_to = "rank"
-  ) 
-```
-
-## `pivot_longer()`用法 {auto-animate="true"}
-```{r}
-billboard |> 
-  pivot_longer(
-    cols = starts_with("wk"), 
-    names_to = "week", 
-    values_to = "rank",
-    values_drop_na = TRUE
-  )
-```
-
-## `pivot_longer()`用法 {auto-animate="true"}
-```{r}
-billboard |>
-  pivot_longer(
-    cols = starts_with("wk"),
-    names_to = "week",
-    values_to = "rank",
-    values_drop_na = TRUE
-  ) |>
-  mutate(week = parse_number(week))
-```
-
-## `pivot_longer()`的作用方式 {auto-animate="true"}
-
-::: {.columns}
-::: {.column width="50%"}
-### 宽格式
-
-```{r}
-df <- tribble(
-  ~id,  ~bp1, ~bp2,
-   "A",  100,  120,
-   "B",  140,  115,
-   "C",  120,  125
-)
-df
-```
-:::
-
-::: {.column width="50%"}
-### 长格式
-
-```{r}
-df |> 
-  pivot_longer(
-    cols = bp1:bp2,
-    names_to = "measurement",
-    values_to = "value"
-  )
-```
-:::
-:::
-
-## `pivot_longer()`的作用方式 {auto-animate="true"}
-```{r}
-#| eval: false
-df |> 
-  pivot_longer(
-    cols = bp1:bp2,
-    names_to = "measurement",
-    values_to = "value"
-  )
-```
-![](images/wide-long.png){width=70%}
-<span style="display: block; text-align: right; font-family: 'Times New Roman', serif; font-size: 0.4em;"><a href="https://r4ds.hadley.nz/diagrams/tidy-data/variables.png">来源：R4DS by Hadley Wickham</a></span>
-
-
-## `pivot_longer()`进阶用法
-`who2`数据集包含了世界卫生组织（WHO）关于结核病的数据
-```{r}
-who2
-```
-
-## `pivot_longer()`进阶用法 {auto-animate="true"}
-```{r}
-#| code-fold: true
-who2 |> 
-  pivot_longer(
-    cols = !(country:year),
-    names_to = c("diagnosis", "gender", "age"), 
-    names_sep = "_",
-    values_to = "count"
-  )
-```
-
-## `seperate()`拆分列 {auto-animate="true"}
-
-```{r}
-who2 |> 
-  pivot_longer(
-    cols = !(country:year),
-    names_to = c("diagnosis_gender_age"), 
-    values_to = "count"
-  )
-```
-
-## `seperate()`拆分列 {auto-animate="true"}
-
-```{r}
-who2 |>
-  pivot_longer(
-    cols = !(country:year),
-    names_to = c("diagnosis_gender_age"),
-    values_to = "count"
-  ) |>
-  separate(
-    col = diagnosis_gender_age,
-    into = c("diagnosis", "gender", "age"),
-    sep = "_"
-  )
-```
-
-## `pivot_wider()`用法
-`fish_encounters`数据集记录鱼类洄游信息：
-
-- `fish`:鱼的标记
-- `station`: 观测站
-- `seen`: 是否被观测到
-```{r}
-fish_encounters %>%
-  summary()
-```
-
-## `pivot_wider()`用法
-### 格式1
-
-```{r}
-#| echo: false
-fish_encounters |>
-  pivot_wider(
-    names_from = station,
-    values_from = seen
-  ) |>
-  print(width = 70)
-```
-
-## `pivot_wider()`用法
-### 格式2
-```{r}
-#| echo: false
-fish_encounters |>
-  pivot_wider(
-    names_from = fish,
-    values_from = seen
-  ) |>
-  print(width = 70)
-```
-
-## `pivot_wider()`用法
-```{r}
-#| echo: true
-fish_encounters |>
-  pivot_wider(
-    names_from = station,
-    values_from = seen
-  ) |>
-  print(width = 70)
-```
-
-## `pivot_wider()`用法
-```{r}
-#| echo: true
-fish_encounters |>
-  pivot_wider(
-    names_from = station,
-    values_from = seen,
-    values_fill = 0
-  ) |>
-  print(width = 70)
-```
-## 练习4:`pivot_wider()`用法
-```{r}
-#| code-fold: true
-fish_encounters |>
-  pivot_wider(
-    names_from = fish,
-    values_from = seen
-  ) |>
-  print(width = 70)
-```
-
-## `pivot_wider()`进阶用法 {auto-animate="true"}
-
-```{r}
-us_rent_income 
-```
-
-## `pivot_wider()`进阶用法 {auto-animate="true"}
-
-```{r}
-#| code-fold: true
-us_rent_income |>
-  pivot_wider(
-    names_from = variable,
-    values_from = c(estimate, moe)
-  ) |>
-  print(width = 70)
-```
-
-# 数据读写
-
-## `readr`包
-
-`readr`包提供了一系列函数用于数据读写，核心函数包括：
-
-- `read_csv()`：读取CSV文件
-- `read_tsv()`：读取制表符分隔的文件
-- `read_delim()`：读取任意分隔符的文件
-- `read_table()`：读取空格分隔的文件
-- `write_csv()`：写入CSV文件
-- `write_rds()`：写入RDS文件
-- ...
-
-## `read_csv()`读取CSV文件 {auto-animate="true"}
-```{r}
-students <- read_csv("data/students.csv")
-students
-```
-
-## `read_csv()`读取CSV文件 {auto-animate="true"}
-```{r}
-students <- read_csv("data/students.csv", na = c("N/A", ""))
-students
-```
-
-## `read_csv()`读取CSV文件 {auto-animate="true"}
-```{r}
-students <-
-  read_csv("data/students.csv", na = c("N/A", "")) |>
-  rename(
-    student_id = `Student ID`,
-    full_name = `Full Name`
-  )
-students
-```
-## `read_csv()`读取CSV文件 {auto-animate="true"}
-
-```{r}
-students <- 
-  read_csv("data/students.csv", na = c("N/A", "")) |>
-  janitor::clean_names() |>
-  mutate(
-    meal_plan = factor(meal_plan),
-    age = parse_number(if_else(age == "five", "5", age))
-  )
-students
-```
-
-## 探索
-- `read_*`如何控制列的类型？
-- 如何读取多个文件？
-- 如何写入文件？
+## 资料
+-   [R for Data Science](https://r4ds.hadley.nz), by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund

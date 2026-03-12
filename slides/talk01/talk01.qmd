@@ -72,7 +72,7 @@ format:
 -   报告的清晰度和逻辑性（30%）
 -   创新性（10%）
 
-> 关于AI的使用：可以使用AI工具辅助数据分析和报告撰写，但必须在报告中明确说明使用了哪些AI工具，以及它们在分析中的具体作用。评分时会考虑AI工具的合理使用和对分析结果的贡献。
+> AI使用：可用AI辅助数据分析和报告撰写，但须在报告中说明使用了哪些AI工具，它们在分析中的具体作用。评分时会考虑AI使用的合理性和对分析结果的贡献。
 
 ## 作业1：
 为什么选这门课？
@@ -87,7 +87,7 @@ format:
 :::: {.columns}
 
 ::: {.column width="60%"}
-<span style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 5rem;">
+<span style="font-family: 'Georgia', 'Times New Roman', serif; font-size: 4.5rem;">
 “Young man, in mathematics, you don't understand things. You just get used to them.”
 </span>
 :::
@@ -113,7 +113,7 @@ R语言的特点：
 -   **丰富的包**：有成千上万的包，涵盖各种工具，例如，机器学习、深度学习、生物信息学等领域。
 
 ## R语言的安装
-R语言的安装通常包括R本身和一个集成开发环境（IDE）,推荐使用`RStudio`作为IDE。
+R语言的安装通常包括R本身和一个集成开发环境（IDE），推荐使用`RStudio`作为IDE。
 
 1. 安装R语言：访问[R项目官网](https://www.r-project.org/){target="_blank" rel="noopener noreferrer"}下载并安装。
 2. 安装RStudio：访问[RStudio官网](https://posit.co/download/rstudio-desktop/){target="_blank" rel="noopener noreferrer"}下载并安装RStudio Desktop版本。
@@ -125,7 +125,7 @@ R语言的安装通常包括R本身和一个集成开发环境（IDE）,推荐�
 `R`语言安装完成后，会有一个自带的图形交互界面（GUI）:
 
 ::: {.r-stack}
-![](images/R_GUI.png){.fragment width=800px}
+![](images/R_GUI.png){.fragment height=500px}
 :::
 
 ## 命令行中使用R
@@ -163,13 +163,13 @@ y
 
 ## 对象命名规则
 
--   以字母或点（.）开头，后续可以包含字母、数字、点（.）或下划线（_）。
+-   以字母或点（`.`）开头，后续可包含字母、数字、点（`.`）或下划线（`_`）。
 -   区分大小写，例如`myVar`和`myvar`是两个不同的对象。
 -   避免使用R的保留字（如`if`、`else`、`for`等）对象名。
 -   应具有描述性，便于理解其用途，例如`age`、`height`等。
--   使用下划线（_）或驼峰命名法（如`male_age`、`myVariable`）提高可读性.
+-   使用下划线`_`或驼峰命名法（如`male_age`、`myVariable`）提高可读性.
 
-> R允许使用一些特殊字符（如空格、连字符等）来创建对象名，需用反引号（``）将其括起来。
+> R允许使用一些特殊字符（如空格、连字符等）来创建对象名，需用反引号``将其括起来。
 
 
 ## 向量 {auto-animate="true"}
@@ -237,7 +237,7 @@ typeof(text) # 查看char_v的类型
 x <- "x"
 ```
 
-## 逻辑型向量
+## 逻辑型向量 {.scrollable}
 逻辑型向量存储布尔值（Boolean values），`TRUE`和`FALSE`:
 ```{r}
 #| echo: true
@@ -419,7 +419,7 @@ m_byrow <- matrix(1:6, nrow = 2, byrow = TRUE) # 按行优先填充矩阵
 m_byrow
 ```
 
-## 数组
+## 数组 {.smaller}
 `array`函数创建n纬数组，第一个参数是一个向量，`dim`参数指定了数组的维度。
 ```{r}
 #| echo: true
@@ -636,7 +636,7 @@ vec_named[c("d", "c", "a")]
 vec_named[c("a", "a", "a")]
 ```
 
-## 列表元素选取
+## 列表元素选取 {.smaller}
 `[]`在列表中的使用方法同上述相同，**总返回一个列表**：
 
 ```{r}
@@ -680,7 +680,7 @@ m
 m[c(9,3,4,7)]
 ```
 
-## 数据框的元素选取
+## 数据框的元素选取 {.smaller}
 -   当使用单个索引进行选取时，它们的行为类似于列表。
 -   当使用两个索引进行选取时，它们的行为类似于矩阵。
 ```{r}
@@ -689,7 +689,7 @@ df
 df[c(1,3)]
 df[c("age", "name") ]
 ```
-## 数据框的元素选取
+## 数据框的元素选取 {.smaller}
 -   当使用单个索引进行选取时，它们的行为类似于列表。
 -   当使用两个索引进行选取时，它们的行为类似于矩阵。
 ```{r}
