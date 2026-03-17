@@ -74,6 +74,7 @@ billboard |>
 
 ```{r}
 #| echo: true
+#| code-line-numbers: "|2-6|3|4-5"
 billboard |>
   pivot_longer(
     cols = starts_with("wk"), # `!c(artist, track, date.entered)`
@@ -101,6 +102,7 @@ billboard |>
 
 ## `pivot_longer()`用法 {auto-animate="true"}
 ```{r}
+#| code-line-numbers: "|6"
 billboard |> 
   pivot_longer(
     cols = starts_with("wk"), 
@@ -112,6 +114,7 @@ billboard |>
 
 ## `pivot_longer()`用法 {auto-animate="true"}
 ```{r}
+#| code-line-numbers: "|8"
 billboard |>
   pivot_longer(
     cols = starts_with("wk"),
@@ -271,7 +274,7 @@ fish_encounters |>
   ) |>
   print(width = 70)
 ```
-## 练习4：`pivot_wider()`用法 {.scrollable}
+## 练习：`pivot_wider()`用法 {.scrollable}
 ```{r}
 #| code-fold: true
 fish_encounters |>
@@ -787,11 +790,13 @@ plot_with_pred_interval
 ## 线性回归的基本假设
 线性回归模型的基本假设包括：
 
+::: incremental
 1. 线性关系：响应变量与解释变量之间存在线性关系。
 2. 独立性：观测值之间相互独立。
 3. 同方差性：误差项的方差在所有水平上是相同的。
 4. 正态性：误差项服从正态分布。
-5. 无多重共线性：解释变量之间不存在高度相关性。
+5. *无多重共线性(多元线性回归)：解释变量之间不存在高度相关性。*
+:::
 
 ## 一元线性回归 {.scrollable}
 对于如下数据：
@@ -823,17 +828,6 @@ Cov(\varepsilon_i,\varepsilon_j) = \begin{cases}
 $$
 
 这个假定常称为高斯-马尔可夫假定（Gauss-Markov assumptions）。
-
-## 一元线性回归：正态性假设 {.scrollable}
-为了方便对参数做区间估计和假设检验，通常还会假设误差项$\varepsilon_i$服从正态分布，即：
-$$
-\varepsilon_i \sim N(0, \sigma^2) \qquad i=1,\dots,n
-$$
-
-在此假定下，进一步随机变量$y_i$也服从正态分布：
-$$
-y_i \sim N(\beta_0 + \beta_1 x_i, \sigma^2) \qquad i=1,\dots,n
-$$
 
 ## 一元线性回归：矩阵形式{.scrollable}
 对于$n$个观测值一元线性回归模型。令：
@@ -880,7 +874,7 @@ $$
 **最小二乘法的核心思想**是寻找$\beta_0$和$\beta_1$的估计值$\widehat{\beta_0}$和$\widehat{\beta_1}$使离差平方和最小：
 $$
 \begin{align*}
-Q(\beta_0,\beta_1) 
+Q(\hat{\beta_0},\hat{\beta_1}) 
   &=\sum_{i=1}^n (y_i - (\widehat{\beta_0} + \widehat{\beta_1} x_i))^2 \\ 
   &= \min_{\beta_0, \beta_1} \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i))^2
 \end{align*}
@@ -914,12 +908,9 @@ ggplot(data, aes(x = x, y = y)) +
 ## 如何得到最小二乘估计？{.scrollable}
 这是一个求极值的问题
 $$
-\begin{align*}
-Q(\beta_0,\beta_1) 
-  &=\sum_{i=1}^n (y_i - (\widehat{\beta_0} + \widehat{\beta_1} x_i))^2 \\ 
-  &= \min_{\beta_0, \beta_1} \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i))^2
-\end{align*}
+Q(\beta_0,\beta_1) = \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i))^2
 $$
+
 $\widehat{\beta_0}$和$\widehat{\beta_1}$应该满足：
 $$
 \frac{\partial Q}{\partial \beta_0}\Big|_{\beta_0 = \widehat{\beta_0}} = -2\sum_{i=1}^n (y_i - (\widehat{\beta_0} + \widehat{\beta_1} x_i)) = 0 \\
@@ -937,7 +928,7 @@ $$
 :::
 
 ## 残差 {.scrollable}
-当求出$\widehat{\beta_0}$和$\widehat{\beta_1}$的最小二乘估计后，称：
+当求出最小二乘估计$\widehat{\beta_0}$和$\widehat{\beta_1}$后，称：
 $$
 \widehat{y}_i = \widehat{\beta_0} + \widehat{\beta_1} x_i
 $$
@@ -964,15 +955,18 @@ $$
 所以$\hat{\beta_1}$是$y_i$的线性组合。同理可得$\hat{\beta_0}$也是$y_i$的线性组合。
 
 ## 最小二乘估计的性质：无偏性{.scrollable}
-$x_i$非随机变量，$y_i = \beta_0 + \beta_1x_i + \varepsilon_i$，其中$E(\varepsilon_i) = 0$，固：
+**$x_i$非随机变量**，$y_i = \beta_0 + \beta_1x_i + \varepsilon_i$，其中$E(\varepsilon_i) = 0$，固：
 $$
 E(y_i) = \beta_0 + \beta_1 x_i
 $$
 又$\hat{\beta_1}$是$y_i$的线性组合：
 $$
-E(\widehat{\beta_1})  = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}E(y_i) = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}(\beta_0 + \beta_1 x_i)
+\begin{align*}
+E(\widehat{\beta_1})  & = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}E(y_i) \\
+& = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}(\beta_0 + \beta_1 x_i)
+\end{align*}
 $$
-利用$\sum(x-\overline{x}) = 0$和$\sum(x_i-\overline{x})x_i = \sum(x_i-\overline{x})^2$可得
+利用$\sum(x-\overline{x}) = 0$和$\sum(x_i-\overline{x})x_i = \sum(x_i-\overline{x})^2$，可得：
 $$
 E(\widehat{\beta_1}) = \beta_1
 $$
@@ -990,7 +984,7 @@ $$
 
 ## $\hat{\beta_0}$和$\hat{\beta_1}$的方差{.scrollable}
 
-由$y_1,y2,\dots,y_n$相互独立，且$Var(y_i) = \sigma^2$，可得：
+由$y_1,y_2,\dots,y_n$相互独立，且$var(y_i) = \sigma^2$，可得：
 $$
 var(\widehat{\beta_1}) = \frac{\sigma^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \\
 var(\widehat{\beta_0}) = \sigma^2 \left( \frac{1}{n} + \frac{\overline{x}^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \right)
@@ -998,9 +992,42 @@ $$
 
 ::: callout-note
 回归常/系数估算值的波动范围不仅与随机误差的方差$\sigma^2$有关：  
-1. 还与自变量$x_i$取值的离散程度有关。如果$x$的取值比较分散，则$\hat{\beta}$的方差较小，估计值更稳定；反之，如果$x$的取值比较集中，则$\hat{\beta}$的方差较大，估计值的稳定性就差。  
+1. 还与自变量$x$取值的离散程度有关。如果$x$的取值比较分散，则$\hat{\beta}$的方差较小，估计值更稳定；反之，如果$x$的取值比较集中，则$\hat{\beta}$的方差较大，估计值的稳定性就差。  
 2. $\hat{\beta_0}$的方差还与样本量$n$有关，$n$越大，$\hat{\beta_0}$的方差越小，估计值越稳定。
 :::
+
+## 最小二乘估计的性质：无偏性{.scrollable}
+对于固定$x_0$:
+$$
+\hat{y_0} = \widehat{\beta_0} + \widehat{\beta_1} x_0
+$$
+也是$y_1, y_2, \dots, y_n$的线性组合，且：
+$$
+\begin{align*}
+&E(\hat{y_0}) = E(\widehat{\beta_0} + \widehat{\beta_1} x_0) = \beta_0 + \beta_1 x_0 = E(y_0)\\
+&var(\hat{y_0}) = \sigma^2 \left(\frac{1}{n} + \frac{(x_0 - \overline{x})^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \right)\\
+\end{align*}
+$$
+
+::: callout-note
+$\hat{y_0}$是$E(y_0)$的无偏估计，且$\hat{y_0}$的方差随给定的$x_0$与$\overline{x}$的距离的增大而增大。
+:::
+
+::: callout-note
+在满足高斯-马尔可夫假定的前提下，最小二乘估计是线性无偏估计中方差最小的估计，即最佳线性无偏估计**BLUE（Best Linear Unbiased Estimator）**。
+:::
+
+## 一元线性回归：正态性假设 {.scrollable}
+为了方便对参数做**区间估计**和**假设检验**，通常还会假设误差项$\varepsilon_i$服从正态分布，即：
+$$
+\varepsilon_i \sim N(0, \sigma^2) \qquad i=1,\dots,n
+$$
+
+在此假定下，进一步随机变量$y_i$也服从正态分布：
+$$
+y_i \sim N(\beta_0 + \beta_1 x_i, \sigma^2) \qquad i=1,\dots,n
+$$
+
 
 ## $\hat{\beta_0}$和$\hat{\beta_1}$的分布{.scrollable}
 $\hat{\beta_0}$和$\hat{\beta_1}$是$n$个独立正态随机变量$y_1,y_2,\dots,y_n$的线性组合，所以它们也服从正态分布：
@@ -1019,11 +1046,6 @@ $$
 2. 在$\overline{x} \neq 0$时，$\hat{\beta_0}$和$\hat{\beta_1}$相关，不独立。
 :::
 
-## 最小二乘估计的性质：BLUE{.scrollable}
-::: callout-note
-在满足高斯-马尔可夫假定的前提下，最小二乘估计是线性无偏估计中方差最小的估计，即最佳线性无偏估计BLUE（Best Linear Unbiased Estimator）。
-:::
-
 对于固定$x_0$:
 $$
 \hat{y_0} = \widehat{\beta_0} + \widehat{\beta_1} x_0
@@ -1033,26 +1055,158 @@ $$
 \hat{y_0} \sim N\left(\beta_0 + \beta_1 x_0, \sigma^2 \left(\frac{1}{n} + \frac{(x_0 - \overline{x})^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \right)\right)
 $$
 
+## 线性回归的假设检验：t检验 {.scrollable}
+t检验用于检验回归系数是否显著不等于0:
+
+- 原假设（null hypothesis）为$H_0: \beta_1 = 0$
+- 备择假设(alternative hypothesis)为$H_a: \beta_1 \neq 0$。
+
+当原假设成立时：
+$$
+\hat{\beta_1} \sim N\left(0, \frac{\sigma^2}{L_{xx}}\right)  
+$$
+这里$L_{xx} = \sum_{i=1}^n (x_i - \overline{x})^2$。此时，$\hat{\beta_1}$在0附近波动，构造t统计量：
+$$
+t = \frac{\hat{\beta_1}}{\sqrt{\widehat{\sigma}^2 / L_{xx}}}
+$$
+式中：
+$$
+\widehat{\sigma}^2 = \frac{1}{n-2}\sum_{i=1}^n e_i^2
+$$
+是$\sigma^2$的无偏估计，$\hat{\sigma}$称为回归标准差。
+
+> 在原假设成立时，t统计量服从自由度为$n-2$的t分布。给定显著性水平$\alpha$，如果$t$的绝对值大于临界值$t_{\alpha/2,n-2}$，则拒绝原假设，认为$\beta_1$显著不等于0；另外，可以计算p值，如果p值小于$\alpha$，同样拒绝原假设。
+
+## 线性回归的假设检验：F检验 {.scrollable}
+F检验根据平方和分解式，直接从回归效果检验回归方程的显著性。平方和分解式是：
+$$
+\sum_{i=1}^n (y_i - \overline{y})^2 = \sum_{i=1}^n (\widehat{y}_i - \overline{y})^2 + \sum_{i=1}^n (y_i - \widehat{y}_i)^2
+$$
+其中，$\sum_{i=1}^n (y_i - \overline{y})^2$称为总离差平方和（Total Sum of Squares, SST），$\sum_{i=1}^n (\widehat{y}_i - \overline{y})^2$称为回归平方和（Regression Sum of Squares, SSR），$\sum_{i=1}^n (y_i - \widehat{y}_i)^2$称为残差平方和（Residual Sum of Squares, SSE）。
+
 ::: callout-note
-$\hat{y_0}$是$E(y_0)$的无偏估计,且$\hat{y_0}$的方差随给定的$x_0$与$\overline{x}$的距离的增大而增大。
+SST表示响应变量的总变异，SSR表示回归模型解释的变异，SSE表示回归模型未能解释的变异。
 :::
-## 模型拟合优度：$R^2$和$Adjusted\;R^2$
-SSR（回归平方和）和SSE（残差平方和）的计算公式如下：
+可以据此构造F统计量：
 $$
-SSR = \sum(\widehat{y}_i - \overline{y}) ^2\\
-SSE = \sum(y_i - \widehat{y}_i) ^2
+F = \frac{SSR / p}{SSE / (n-p-1)}
+$$
+对于一元线性回归模型，$p=1$。
+
+> 在正态假设下，F统计量服从自由度为$p$和$n-p-1$的F分布。给定显著性水平$\alpha$，如果$F$大于临界值$F_{\alpha,p,n-p-1}$，则拒绝原假设，认为回归模型显著；另外，可以计算p值，如果p值小于$\alpha$，同样拒绝原假设。
+
+## 相关系数的显著性检验 {.scrollable}
+$x$和$y$之间的相关系数$r$的计算为：
+$$
+r = \frac{\sum_{i=1}^n (x_i - \overline{x})(y_i - \overline{y})}{\sqrt{\sum_{i=1}^n (x_i - \overline{x})^2}\sqrt{\sum_{i=1}^n (y_i - \overline{y})^2}} = \frac{L_{xy}}{\sqrt{L_{xx}L_{yy}}} 
+$$
+根据$\hat{\beta_1}$的表达式可知：
+$$
+r = \frac{\hat{\beta_1} \sqrt{L_{xx}}}{\sqrt{L_{yy}}}
+$$
+
+::: callout-note
+当n较小时，相关系数的绝对值容易接近1，可能导致误判。此时需要进行相关系数的显著性检验。
+:::
+相关系数的t统计量为：
+$$  
+t = \frac{r \sqrt{n-2}}{\sqrt{1-r^2}}
+$$
+该统计量服从自由度为$n-2$的t分布。给定显著性水平$\alpha$，如果$t$的绝对值大于临界值$t_{\alpha/2,n-2}$，则拒绝原假设，认为相关系数显著不等于0；另外，可以计算p值，如果p值小于$\alpha$，同样拒绝原假设。
+
+::: callout-note
+一元线性回归模型中，t检验、F检验和相关系数的显著性检验是等价的。
+:::
+
+## 样本决定系数
+回归平方和与总离差平方和的比值称为样本决定系数（coefficient of determination），记为$R^2$，表示回归模型解释了响应变量总变异的比例。其计算公式为：
+$$
+R^2 = \frac{SSR}{SST} = 1 - \frac{SSE}{SST}
+$$
+一元线性回归模型中，样本决定系数为简单相关系数的平方。
+
+## 回归系数的区间估计 {.scrollable}
+给定置信水平为$1-\alpha$的置信区间，表示这个区间以$1-\alpha$的概率包含真实的回归系数$\beta_j$。
+以$\beta_1$为例，已知$\hat{\beta_1} \sim N(\beta_1, \sigma^2/L_{xx})$,可得：
+$$
+\frac{\hat{\beta_1} - \beta_1}{\sqrt{\widehat{\sigma}^2 / L_{xx}}} \sim t_{n-2}
+$$
+因而：
+$$
+P\left(-t_{\alpha/2,n-2} \leq \frac{\hat{\beta_1} - \beta_1}{\sqrt{\widehat{\sigma}^2 / L_{xx}}} \leq t_{\alpha/2,n-2}\right) = 1-\alpha
+$$
+所以$\beta_1$的置信区间为：
+$$
+\left[\hat{\beta_1} - t_{\alpha/2,n-2} \sqrt{\widehat{\sigma}^2 / L_{xx}}, \hat{\beta_1} + t_{\alpha/2,n-2} \sqrt{\widehat{\sigma}^2 / L_{xx}}\right]
 $$ 
 
-决定系数（$R^2$）是常用的衡量模型拟合优度的指标，计算公式为：
+## 回归拟合值的区间估计 {.scrollable}
+给定$x_0$，单值预测为$\hat{y_0} = \widehat{\beta_0} + \widehat{\beta_1} x_0$。
+
+- 响应变量（因变量）新值的区间预测
+
+对于$\hat{y_0}$，已知：
 $$
-R^2=1 - \frac{\sum{(y_i - \widehat{y}_i)^2}}{\sum{(y_i - \overline{y} )^2}}
+E(\hat{y_0}) = \beta_0 + \beta_1 x_0 \\
+var(\hat{y_0}) = \sigma^2 \left(\frac{1}{n} + \frac{(x_0 - \overline{x})^2}{L_{xx}} \right)
+$$
+加上正态假设：
+$$
+\hat{y_0} \sim N\left(\beta_0 + \beta_1 x_0, \sigma^2 \left(\frac{1}{n} + \frac{(x_0 - \overline{x})^2}{L_{xx}} \right)\right)
+$$
+记
+$$
+h_{00} = \frac{1}{n} + \frac{(x_0 - \overline{x})^2}{L_{xx}}
+$$
+为新值的**杠杆值**，则上式简写为：
+$$
+\hat{y_0} \sim N\left(\beta_0 + \beta_1 x_0, \sigma^2 h_{00}\right)
+$$
+$\hat{y_0}$为独立观测的随机变量$y_1,y_2,\ldots,y_n$的线性组合，现新值$y_0$与先前的观测是独立的，所以$y_0$与$\hat{y_0}$独立。因而：
+$$
+var(y_0 - \hat{y_0}) = var(y_0) + var(\hat{y_0}) = \sigma^2 (1 + h_{00})
+$$
+又易知$E(y_0 - \hat{y_0}) = 0$, 所以：
+$$
+y_0 - \hat{y_0} \sim N(0, \sigma^2 (1 + h_{00}))  
+$$
+因此统计量：
+$$
+\frac{y_0 - \hat{y_0}}{\sqrt{\widehat{\sigma}^2 (1 + h_{00})}} \sim t_{n-2}
+$$
+可得：
+$$
+P\left(-t_{\alpha/2,n-2} \leq \frac{y_0 - \hat{y_0}}{\sqrt{\widehat{\sigma}^2 (1 + h_{00})}} \leq t_{\alpha/2,n-2}\right) = 1-\alpha
+$$
+所以$y_0$的置信区间为：
+$$
+\left[\hat{y_0} - t_{\alpha/2,n-2} \sqrt{\widehat{\sigma}^2 (1 + h_{00})}, \hat{y_0} + t_{\alpha/2,n-2} \sqrt{\widehat{\sigma}^2 (1 + h_{00})}\right]
 $$
 
-> **注意**: $R^2$可能随着解释变量数量的增加而增加，即使新增的变量并未真正提高模型的预测能力。
-
-## $Adjusted\;R^2$
-
-$Adjusted\;R^2$对$R^2$进行了调整，考虑了模型中解释变量的数量，避免了由于模型中增加不必要的变量而导致$R^2$提高的问题。其计算公式为：
+## 回归拟合值的区间估计 {.scrollable}
+当样本量n较大，$|x_0-\overline{x}|$较小时，$h_{00}$接近0，95%的置信区间为：
 $$
-R_{adj}^2 = 1 - (1-R^2)\frac{n-1}{n-p-1}
-$$ 
+\left[\hat{y_0} - 2 \widehat{\sigma}, \hat{y_0} + 2 \widehat{\sigma}\right]
+$$
+
+::: callout-note
+对于给定显著性水平，样本量越大，$|x_0-\overline{x}|$越小，$L_{xx}$越大，则置信区间越窄，预测值的精确度越高。
+:::
+
+## 回归拟合值的区间估计 {.scrollable}
+
+- 响应变量（因变量）新值的平均值的区间预测
+
+要估算$E(y_0)$，其点估计仍为$\hat{y_0}$，又$E(y_0) = \beta_0 + \beta_1 x_0$，所以：
+$$
+\hat{y_0} - E(y_0) \sim N(0, \sigma^2 h_{00})
+$$
+置信区间为：
+$$
+\left[\hat{y_0} - t_{\alpha/2,n-2} \sqrt{h_{00}}\widehat{\sigma} , \hat{y_0} + t_{\alpha/2,n-2} \sqrt{h_{00}}\widehat{\sigma} \right] 
+$$
+
+## 资料
+-   [R for Data Science](https://r4ds.hadley.nz), by Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund
+- 应用回归分析（R语言版），何晓群，电子工业出版社，2017
+- Statistical Inference, George Casella and Roger L. Berger, Duxbury Press, 2002
