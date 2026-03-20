@@ -19,6 +19,7 @@ execute:
 ```{r}
 #| echo: false
 library(tidyverse)
+library(palmerpenguins)
 ```
 
 ## 线性回归的基本假设
@@ -61,7 +62,14 @@ Cov(\varepsilon_i,\varepsilon_j) = \begin{cases}
 \end{cases} \qquad i, j = 1, \dots, n
 $$
 
-这个假定常称为高斯-马尔可夫假定（Gauss-Markov assumptions）。
+这个假定常称为高斯-马尔可夫假定（Gauss-Markov assumptions）。***$x_i$非随机变量***，易得：
+$$
+E(y_i) = \beta_0 + \beta_1 x_i \\
+Cov(y_i,y_j) = \begin{cases}
+  \sigma^2, & i = j \\
+  0, & i \neq j
+\end{cases} \qquad i, j = 1, \dots, n
+$$
 
 ## 一元线性回归：矩阵形式{.scrollable}
 对于$n$个观测值一元线性回归模型。令：
@@ -93,7 +101,7 @@ $$
 ## 参数估计：普通最小二乘法 {.scrollable}
 - 回归分析的主要任务
 
-通过n组样本观测值$\{(x_i, y_i)\}_{i=1}^n$对$\beta_0$和$\beta_1$进行估计，一般用$\widehat{\beta_0}$和$\widehat{\beta_1}$表示$\beta_0$和$\beta_1$的估计值
+通过n组样本观测值$\{(x_i, y_i)\}_{i=1}^n$对$\beta_0$和$\beta_1$进行估计，一般用$\hat{\beta_0}$和$\hat{\beta_1}$表示$\beta_0$和$\beta_1$的估计值
 
 - 普通最小二乘法（Ordinary Least Squares, OLS）
 
@@ -105,11 +113,11 @@ Q(\beta_0,\beta_1)
   &= \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i))^2
 \end{align*}
 $$
-**最小二乘法的核心思想**是寻找$\beta_0$和$\beta_1$的估计值$\widehat{\beta_0}$和$\widehat{\beta_1}$使离差平方和最小：
+**最小二乘法的核心思想**是寻找$\beta_0$和$\beta_1$的估计值$\hat{\beta_0}$和$\hat{\beta_1}$使离差平方和最小：
 $$
 \begin{align*}
 Q(\hat{\beta_0},\hat{\beta_1}) 
-  &=\sum_{i=1}^n (y_i - (\widehat{\beta_0} + \widehat{\beta_1} x_i))^2 \\ 
+  &=\sum_{i=1}^n (y_i - (\hat{\beta_0} + \hat{\beta_1} x_i))^2 \\ 
   &= \min_{\beta_0, \beta_1} \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i))^2
 \end{align*}
 $$
@@ -145,15 +153,15 @@ $$
 Q(\beta_0,\beta_1) = \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i))^2
 $$
 
-$\widehat{\beta_0}$和$\widehat{\beta_1}$应该满足：
+$\hat{\beta_0}$和$\hat{\beta_1}$应该满足：
 $$
-\frac{\partial Q}{\partial \beta_0}\Big|_{\beta_0 = \widehat{\beta_0}} = -2\sum_{i=1}^n (y_i - (\widehat{\beta_0} + \widehat{\beta_1} x_i)) = 0 \\
-\frac{\partial Q}{\partial \beta_1}\Big|_{\beta_1 = \widehat{\beta_1}} = -2\sum_{i=1}^n x_i (y_i - (\widehat{\beta_0} + \widehat{\beta_1} x_i)) = 0
+\frac{\partial Q}{\partial \beta_0}\Big|_{\beta_0 = \hat{\beta_0}} = -2\sum_{i=1}^n (y_i - (\hat{\beta_0} + \hat{\beta_1} x_i)) = 0 \\
+\frac{\partial Q}{\partial \beta_1}\Big|_{\beta_1 = \hat{\beta_1}} = -2\sum_{i=1}^n x_i (y_i - (\hat{\beta_0} + \hat{\beta_1} x_i)) = 0
 $$
 求解可得：
 $$
-\widehat{\beta_1} = \frac{\sum_{i=1}^n (x_i - \overline{x})(y_i - \overline{y})}{\sum_{i=1}^n (x_i - \overline{x})^2} \\
-\widehat{\beta_0} = \overline{y} - \widehat{\beta_1} \overline{x}
+\hat{\beta_1} = \frac{\sum_{i=1}^n (x_i - \overline{x})(y_i - \overline{y})}{\sum_{i=1}^n (x_i - \overline{x})^2} \\
+\hat{\beta_0} = \overline{y} - \hat{\beta_1} \overline{x}
 $$
 这里$\overline{x}=\frac{1}{n}\sum_{i=1}^n x_i$，$\overline{y}=\frac{1}{n}\sum_{i=1}^n y_i$。
 
@@ -161,14 +169,21 @@ $$
 由$\hat{\beta_0} = \overline{y} - \hat{\beta_1} \overline{x}$可知回归直线是通过点$(\overline{x}, \overline{y})$的。
 :::
 
-## 残差 {.scrollable}
-当求出最小二乘估计$\widehat{\beta_0}$和$\widehat{\beta_1}$后，称：
+令$L_{xx} = \sum_{i=1}^n (x_i - \overline{x})^2$，$L_{xy} = \sum_{i=1}^n (x_i - \overline{x})(y_i - \overline{y})$，则:
 $$
-\widehat{y}_i = \widehat{\beta_0} + \widehat{\beta_1} x_i
+\hat{\beta_1} = L_{xy}/L_{xx} \\
+\hat{\beta_0} = \overline{y} - \frac{L_{xy}}{L_{xx}} \overline{x}
+$$
+。
+
+## 残差 {.scrollable}
+当求出最小二乘估计$\hat{\beta_0}$和$\hat{\beta_1}$后，称：
+$$
+\hat{y}_i = \hat{\beta_0} + \hat{\beta_1} x_i
 $$
 为观测值$y_i$的回归拟合值，称：
 $$
-e_i = y_i - \widehat{y}_i
+e_i = y_i - \hat{y}_i
 $$
 为$y_i$的残差（residual）。另，残差有如下性质：
 $$
@@ -181,7 +196,7 @@ $$
 由于：
 $$
 \begin{align*}
-\quad \widehat{\beta_1} &= \frac{\sum_{i=1}^n (x_i - \overline{x})(y_i - \overline{y})}{\sum_{i=1}^n (x_i - \overline{x})^2} \\
+\quad \hat{\beta_1} &= \frac{\sum_{i=1}^n (x_i - \overline{x})(y_i - \overline{y})}{\sum_{i=1}^n (x_i - \overline{x})^2} \\
 &= \frac{\sum_{i=1}^n (x_i - \overline{x})y_i}{\sum_{i=1}^n (x_i - \overline{x})^2} \\
 & = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}y_i
 \end{align*}
@@ -189,20 +204,16 @@ $$
 所以$\hat{\beta_1}$是$y_i$的线性组合。同理可得$\hat{\beta_0}$也是$y_i$的线性组合。
 
 ## 最小二乘估计的性质：无偏性{.scrollable}
-**$x_i$非随机变量**，$y_i = \beta_0 + \beta_1x_i + \varepsilon_i$，其中$E(\varepsilon_i) = 0$，固：
-$$
-E(y_i) = \beta_0 + \beta_1 x_i
-$$
-又$\hat{\beta_1}$是$y_i$的线性组合：
+$\hat{\beta_1}$的期望：
 $$
 \begin{align*}
-E(\widehat{\beta_1})  & = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}E(y_i) \\
+E(\hat{\beta_1})  & = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}E(y_i) \\
 & = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}(\beta_0 + \beta_1 x_i)
 \end{align*}
 $$
-利用$\sum(x-\overline{x}) = 0$和$\sum(x_i-\overline{x})x_i = \sum(x_i-\overline{x})^2$，可得：
+利用$\sum_{i=1}^n (x_i-\overline{x}) = 0$和$\sum_{j=1}^n (x_j-\overline{x})x_j = \sum_{j=1}^n (x_j-\overline{x})^2$，可得：
 $$
-E(\widehat{\beta_1}) = \beta_1
+E(\hat{\beta_1}) = \beta_1
 $$
 即$\hat{\beta_1}$是$\beta_1$的无偏估计。同理可得$\hat{\beta_0}$也是$\beta_0$的无偏估计。
 
@@ -212,16 +223,16 @@ $$
 
 进一步有：
 $$
-E(\hat{y}) = E(\widehat{\beta_0} + \widehat{\beta_1} x)  = \beta_0 + \beta_1 x = E(y)
+E(\hat{y}) = E(\hat{\beta_0} + \hat{\beta_1} x)  = \beta_0 + \beta_1 x = E(y)
 $$
-即回归拟合值$\widehat{y}$也是$y$的无偏估计。
+即回归拟合值$\hat{y}$也是$y$的无偏估计。
 
 ## $\hat{\beta_0}$和$\hat{\beta_1}$的方差{.scrollable}
 
 由$y_1,y_2,\dots,y_n$相互独立，且$var(y_i) = \sigma^2$，可得：
 $$
-var(\widehat{\beta_1}) = \frac{\sigma^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \\
-var(\widehat{\beta_0}) = \sigma^2 \left( \frac{1}{n} + \frac{\overline{x}^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \right)
+var(\hat{\beta_1}) = \frac{\sigma^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \\
+var(\hat{\beta_0}) = \sigma^2 \left( \frac{1}{n} + \frac{\overline{x}^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \right)
 $$
 
 ::: callout-note
@@ -230,15 +241,26 @@ $$
 2. $\hat{\beta_0}$的方差还与样本量$n$有关，$n$越大，$\hat{\beta_0}$的方差越小，估计值越稳定。
 :::
 
+另外，两个估计值间的协方差为：
+$$
+cov(\hat{\beta_0}, \hat{\beta_1}) = -\frac
+{\overline{x}\sigma^2}{\sum_{i=1}^n (x_i - \overline{x})^2}
+$$
+
+::: callout-note
+1. 在$\overline{x} = 0$时，$\hat{\beta_0}$和$\hat{\beta_1}$不相关。  
+2. 在$\overline{x} \neq 0$时，$\hat{\beta_0}$和$\hat{\beta_1}$相关，不独立。
+:::
+
 ## 最小二乘估计的性质：无偏性{.scrollable}
 对于固定$x_0$:
 $$
-\hat{y_0} = \widehat{\beta_0} + \widehat{\beta_1} x_0
+\hat{y_0} = \hat{\beta_0} + \hat{\beta_1} x_0
 $$
 也是$y_1, y_2, \dots, y_n$的线性组合，且：
 $$
 \begin{align*}
-&E(\hat{y_0}) = E(\widehat{\beta_0} + \widehat{\beta_1} x_0) = \beta_0 + \beta_1 x_0 = E(y_0)\\
+&E(\hat{y_0}) = E(\hat{\beta_0} + \hat{\beta_1} x_0) = \beta_0 + \beta_1 x_0 = E(y_0)\\
 &var(\hat{y_0}) = \sigma^2 \left(\frac{1}{n} + \frac{(x_0 - \overline{x})^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \right)\\
 \end{align*}
 $$
@@ -266,23 +288,13 @@ $$
 ## $\hat{\beta_0}$和$\hat{\beta_1}$的分布{.scrollable}
 $\hat{\beta_0}$和$\hat{\beta_1}$是$n$个独立正态随机变量$y_1,y_2,\dots,y_n$的线性组合，所以它们也服从正态分布：
 $$
-\widehat{\beta_1} \sim N\left(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n (x_i - \overline{x})^2}\right) \\
-\widehat{\beta_0} \sim N\left(\beta_0, \sigma^2 \left( \frac{1}{n} + \frac{\overline{x}^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \right)\right)
+\hat{\beta_1} \sim N\left(\beta_1, \frac{\sigma^2}{\sum_{i=1}^n (x_i - \overline{x})^2}\right) \\
+\hat{\beta_0} \sim N\left(\beta_0, \sigma^2 \left( \frac{1}{n} + \frac{\overline{x}^2}{\sum_{i=1}^n (x_i - \overline{x})^2} \right)\right)
 $$
-另外，$\hat{\beta_0}$和$\hat{\beta_1}$之间的协方差为：
-$$
-cov(\widehat{\beta_0}, \widehat{\beta_1}) = -\frac{\overline{x}\sigma^2}{\sum_{i=1}^n (x_i - \overline{x})^2}
-$$
-所以：
-
-::: callout-note
-1. 在$\overline{x} = 0$时，$\hat{\beta_0}$和$\hat{\beta_1}$不相关。  
-2. 在$\overline{x} \neq 0$时，$\hat{\beta_0}$和$\hat{\beta_1}$相关，不独立。
-:::
 
 对于固定$x_0$:
 $$
-\hat{y_0} = \widehat{\beta_0} + \widehat{\beta_1} x_0
+\hat{y_0} = \hat{\beta_0} + \hat{\beta_1} x_0
 $$
 也是$y_1, y_2, \dots, y_n$的线性组合，且：
 $$
@@ -301,11 +313,11 @@ $$
 $$
 这里$L_{xx} = \sum_{i=1}^n (x_i - \overline{x})^2$。此时，$\hat{\beta_1}$在0附近波动，构造t统计量：
 $$
-t = \frac{\hat{\beta_1}}{\sqrt{\widehat{\sigma}^2 / L_{xx}}}
+t = \frac{\hat{\beta_1}}{\sqrt{\hat{\sigma}^2 / L_{xx}}}
 $$
 式中：
 $$
-\widehat{\sigma}^2 = \frac{1}{n-2}\sum_{i=1}^n e_i^2
+\hat{\sigma}^2 = \frac{1}{n-2}\sum_{i=1}^n e_i^2
 $$
 是$\sigma^2$的无偏估计，$\hat{\sigma}$称为回归标准差。
 
@@ -314,9 +326,9 @@ $$
 ## 线性回归的假设检验：F检验 {.scrollable}
 F检验根据平方和分解式，直接从回归效果检验回归方程的显著性。平方和分解式是：
 $$
-\sum_{i=1}^n (y_i - \overline{y})^2 = \sum_{i=1}^n (\widehat{y}_i - \overline{y})^2 + \sum_{i=1}^n (y_i - \widehat{y}_i)^2
+\sum_{i=1}^n (y_i - \overline{y})^2 = \sum_{i=1}^n (\hat{y}_i - \overline{y})^2 + \sum_{i=1}^n (y_i - \hat{y}_i)^2
 $$
-其中，$\sum_{i=1}^n (y_i - \overline{y})^2$称为总离差平方和（Total Sum of Squares, SST），$\sum_{i=1}^n (\widehat{y}_i - \overline{y})^2$称为回归平方和（Regression Sum of Squares, SSR），$\sum_{i=1}^n (y_i - \widehat{y}_i)^2$称为残差平方和（Residual Sum of Squares, SSE）。
+其中，$\sum_{i=1}^n (y_i - \overline{y})^2$称为总离差平方和（Total Sum of Squares, SST），$\sum_{i=1}^n (\hat{y}_i - \overline{y})^2$称为回归平方和（Regression Sum of Squares, SSR），$\sum_{i=1}^n (y_i - \hat{y}_i)^2$称为残差平方和（Residual Sum of Squares, SSE）。
 
 ::: callout-note
 SST表示响应变量的总变异，SSR表示回归模型解释的变异，SSE表示回归模型未能解释的变异。
@@ -330,7 +342,7 @@ $$
 > 在正态假设下，F统计量服从自由度为$p$和$n-p-1$的F分布。给定显著性水平$\alpha$，如果$F$大于临界值$F_{\alpha,p,n-p-1}$，则拒绝原假设，认为回归模型显著；另外，可以计算p值，如果p值小于$\alpha$，同样拒绝原假设。
 
 ## 相关系数的显著性检验 {.scrollable}
-$x$和$y$之间的相关系数$r$的计算为：
+$x$和$y$之间的样本相关系数$r$的计算为：
 $$
 r = \frac{\sum_{i=1}^n (x_i - \overline{x})(y_i - \overline{y})}{\sqrt{\sum_{i=1}^n (x_i - \overline{x})^2}\sqrt{\sum_{i=1}^n (y_i - \overline{y})^2}} = \frac{L_{xy}}{\sqrt{L_{xx}L_{yy}}} 
 $$
@@ -363,19 +375,19 @@ $$
 给定置信水平为$1-\alpha$的置信区间，表示这个区间以$1-\alpha$的概率包含真实的回归系数$\beta_j$。
 以$\beta_1$为例，已知$\hat{\beta_1} \sim N(\beta_1, \sigma^2/L_{xx})$,可得：
 $$
-\frac{\hat{\beta_1} - \beta_1}{\sqrt{\widehat{\sigma}^2 / L_{xx}}} \sim t_{n-2}
+\frac{\hat{\beta_1} - \beta_1}{\sqrt{\hat{\sigma}^2 / L_{xx}}} \sim t_{n-2}
 $$
 因而：
 $$
-P\left(-t_{\alpha/2,n-2} \leq \frac{\hat{\beta_1} - \beta_1}{\sqrt{\widehat{\sigma}^2 / L_{xx}}} \leq t_{\alpha/2,n-2}\right) = 1-\alpha
+P\left(-t_{\alpha/2,n-2} \leq \frac{\hat{\beta_1} - \beta_1}{\sqrt{\hat{\sigma}^2 / L_{xx}}} \leq t_{\alpha/2,n-2}\right) = 1-\alpha
 $$
 所以$\beta_1$的置信区间为：
 $$
-\left[\hat{\beta_1} - t_{\alpha/2,n-2} \sqrt{\widehat{\sigma}^2 / L_{xx}}, \hat{\beta_1} + t_{\alpha/2,n-2} \sqrt{\widehat{\sigma}^2 / L_{xx}}\right]
+\left[\hat{\beta_1} - t_{\alpha/2,n-2} \sqrt{\hat{\sigma}^2 / L_{xx}}, \hat{\beta_1} + t_{\alpha/2,n-2} \sqrt{\hat{\sigma}^2 / L_{xx}}\right]
 $$ 
 
 ## 回归拟合值的区间估计 {.scrollable}
-给定$x_0$，单值预测为$\hat{y_0} = \widehat{\beta_0} + \widehat{\beta_1} x_0$。
+给定$x_0$，单值预测为$\hat{y_0} = \hat{\beta_0} + \hat{\beta_1} x_0$。
 
 - 响应变量（因变量）新值的区间预测
 
@@ -406,21 +418,21 @@ y_0 - \hat{y_0} \sim N(0, \sigma^2 (1 + h_{00}))
 $$
 因此统计量：
 $$
-\frac{y_0 - \hat{y_0}}{\sqrt{\widehat{\sigma}^2 (1 + h_{00})}} \sim t_{n-2}
+\frac{y_0 - \hat{y_0}}{\sqrt{\hat{\sigma}^2 (1 + h_{00})}} \sim t_{n-2}
 $$
 可得：
 $$
-P\left(-t_{\alpha/2,n-2} \leq \frac{y_0 - \hat{y_0}}{\sqrt{\widehat{\sigma}^2 (1 + h_{00})}} \leq t_{\alpha/2,n-2}\right) = 1-\alpha
+P\left(-t_{\alpha/2,n-2} \leq \frac{y_0 - \hat{y_0}}{\sqrt{\hat{\sigma}^2 (1 + h_{00})}} \leq t_{\alpha/2,n-2}\right) = 1-\alpha
 $$
 所以$y_0$的置信区间为：
 $$
-\left[\hat{y_0} - t_{\alpha/2,n-2} \sqrt{\widehat{\sigma}^2 (1 + h_{00})}, \hat{y_0} + t_{\alpha/2,n-2} \sqrt{\widehat{\sigma}^2 (1 + h_{00})}\right]
+\left[\hat{y_0} - t_{\alpha/2,n-2} \sqrt{\hat{\sigma}^2 (1 + h_{00})}, \hat{y_0} + t_{\alpha/2,n-2} \sqrt{\hat{\sigma}^2 (1 + h_{00})}\right]
 $$
 
 ## 回归拟合值的区间估计 {.scrollable}
 当样本量n较大，$|x_0-\overline{x}|$较小时，$h_{00}$接近0，95%的置信区间为：
 $$
-\left[\hat{y_0} - 2 \widehat{\sigma}, \hat{y_0} + 2 \widehat{\sigma}\right]
+\left[\hat{y_0} - 2 \hat{\sigma}, \hat{y_0} + 2 \hat{\sigma}\right]
 $$
 
 ::: callout-note
@@ -437,5 +449,122 @@ $$
 $$
 置信区间为：
 $$
-\left[\hat{y_0} - t_{\alpha/2,n-2} \sqrt{h_{00}}\widehat{\sigma} , \hat{y_0} + t_{\alpha/2,n-2} \sqrt{h_{00}}\widehat{\sigma} \right] 
+\left[\hat{y_0} - t_{\alpha/2,n-2} \sqrt{h_{00}}\hat{\sigma} , \hat{y_0} + t_{\alpha/2,n-2} \sqrt{h_{00}}\hat{\sigma} \right] 
 $$
+
+## 异方差性 {.scrollable}
+对于随机误差项有如下假定：
+$$
+E(\varepsilon_i) = 0 \\ 
+Cov(\varepsilon_i,\varepsilon_j) = \begin{cases}
+  \sigma^2, & i = j \\
+  0, & i \neq j
+\end{cases} \qquad i, j = 1, \dots, n
+$$
+但实际问题中，可能存在：
+$$
+var(\varepsilon_i) \neq var(\varepsilon_j) \qquad i \neq j
+$$
+即存在异方差性（heteroscedasticity）。例如：
+
+::: incremental
+- 在经济学中，收入较高的人群的消费支出可能具有更大的变异性
+- 在生物学中，较大的动物可能具有更大的体重变异性
+
+:::
+
+## 异方差性带来的问题
+当存在异方差性时，普通最小二乘估计仍然是无偏的， 但是：
+
+- 不是最佳线性无偏估计（BLUE），即存在其他线性无偏估计具有更小的方差。
+- 低估方差，传统的t检验F检验不再适用，容易夸大显著性
+- 置信区间的计算也不再准确。
+
+## 异方差性的诊断：残差图 
+
+> 如果满足同方差性假设，残差与拟合值之间或者和自变量之间应该呈现出怎样的关系?
+
+## 异方差性的诊断：残差图 {auto-animate="true"}
+
+残差的期望和方差如下：
+$$
+E(e_i) = 0 \\
+var(e_i) = \sigma^2 (1 - h_{ii})
+$$
+其中$h_{ii}$是第$i$个观测值的杠杆值，满足$0 \leq h_{ii} \leq 1$。因此，残差的方差随杠杆值的增大而减小。
+
+定义标准化残差如下：
+$$
+r_i = \frac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}
+$$
+
+
+## 异方差性的诊断：残差图 
+
+> 如果满足同方差性假设，残差与拟合值之间或者和自变量之间应该呈现出怎样的关系?
+
+标准化残差应该呈现出在0附近随机分布，且散布范围在自变量或者回归拟合值的不同取值下大致相同的形态。
+
+## 异方差性的诊断：残差图
+对于如下模型：
+```{r}
+penguins_lm_m0 <- lm(body_mass_g ~ bill_length_mm, data = penguins)
+```
+残差图：
+make the ggplot bigger in the slides
+```{r}
+#| echo: false
+penguins |>
+  select(body_mass_g, bill_length_mm) |>
+  drop_na() |>
+  mutate(
+    fitted = fitted(penguins_lm_m0),
+    resid_raw = resid(penguins_lm_m0),
+    resid_std = rstandard(penguins_lm_m0),
+    ratio = resid_raw / resid_std
+  ) |>
+  pivot_longer(
+    cols = c(resid_raw, resid_std),
+    names_to = "resid_type",
+    values_to = "resid"
+  ) |>
+  ggplot(aes(x = fitted, y = resid, color = resid_type)) +
+  geom_point() +
+  facet_wrap(
+    ~resid_type,
+    scales = "free_y",
+    labeller = as_labeller(c(
+      resid_raw = "Raw Residuals",
+      resid_std = "Standardized Residuals"
+    ))
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
+  labs(x = "Fitted Values", y = "Residuals") +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+## 异方差性的诊断：等级相关系数法
+等级相关系数法又称斯皮尔曼（Spearman）检验。基本思想是：如果存在异方差性，残差的绝对值与自变量或者回归拟合值之间应该存在单调关系。检验步骤如下：
+1. 计算残差的绝对值$|e_i|$。
+2. 对自变量$x_i$或者回归拟合值$\hat{y}_i$进行排序，得到等级$r_{x_i}$或者$r_{\hat{y}_i}$。
+3. 对残差的绝对值$|e_i|$进行排序，得到等级$r_{|e_i|}$。
+4. 计算等级相关系数：
+$$
+\rho = 1 - \frac{6 \sum_{i=1}^n (r_{x_i} - r_{|e_i|})^2}{n(n^2 - 1)}
+$$
+5. 根据等级相关系数的分布进行显著性检验，判断是否存在异方差性。
+
+## 异方差性的诊断：等级相关系数法
+使用斯皮尔曼检验诊断异方差性，用`cor()`函数：
+```{r}
+#| echo: true
+library(ggpubr)
+resid_abs <- abs(resid(penguins_lm_m0))
+cor_test <- cor.test(resid_abs, fitted(penguins_lm_m0), method = "spearman")
+cor_test
+``` 
+
+> 探索：其它异方差的诊断方法。
+
+## 异方差的处理：加权最小二乘法
