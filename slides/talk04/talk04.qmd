@@ -9,7 +9,6 @@ format:
       buttons: false
     preview-links: auto
     logo: images/JMU_logo.jpg
-    css: styles.css
     footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
 execute:
   echo: true
@@ -21,6 +20,20 @@ execute:
 library(tidyverse)
 library(palmerpenguins)
 ```
+
+## 你将学到
+
+::: incremental
+1. 线性回归模型的基本假设
+2. 线性回归模型的理论基础
+    - 一元线性回归的基本数学形式
+    - 普通最小二乘法参数估计及其性质
+    - 回归系数与拟合值的区间估计
+    - 假设检验方法：t检验、F检验、相关系数显著性检验
+3. 线性回归模型的诊断与改进
+    - 异方差性的概念和诊断方法
+    - 加权最小二乘法（WLS）与R实现
+:::
 
 ## 线性回归的基本假设
 线性回归模型的基本假设包括：
@@ -452,6 +465,11 @@ $$
 \left[\hat{y_0} - t_{\alpha/2,n-2} \sqrt{h_{00}}\hat{\sigma} , \hat{y_0} + t_{\alpha/2,n-2} \sqrt{h_{00}}\hat{\sigma} \right] 
 $$
 
+## 最大似然估计法
+
+> 探索:
+最大似然估计法（Maximum Likelihood Estimation, MLE）是另一种常用的参数估计方法。对于一元线性回归模型，在满足正态假设的前提下，最小二乘估计和最大似然估计是等价的。
+
 ## 异方差性 {.scrollable}
 对于随机误差项有如下假定：
 $$
@@ -511,7 +529,6 @@ $$
 penguins_lm_m0 <- lm(body_mass_g ~ bill_length_mm, data = penguins)
 ```
 残差图：
-make the ggplot bigger in the slides
 ```{r}
 #| echo: false
 penguins |>
@@ -528,7 +545,7 @@ penguins |>
     names_to = "resid_type",
     values_to = "resid"
   ) |>
-  ggplot(aes(x = fitted, y = resid, color = resid_type)) +
+  ggplot(aes(x = bill_length_mm, y = resid, color = resid_type)) +
   geom_point() +
   facet_wrap(
     ~resid_type,
@@ -539,32 +556,273 @@ penguins |>
     ))
   ) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
-  labs(x = "Fitted Values", y = "Residuals") +
+  labs(x = "Bill length (mm)", y = "Residuals") +
   theme_bw() +
   theme(legend.position = "none")
 ```
 
-## 异方差性的诊断：等级相关系数法
+## 异方差性的诊断：等级相关系数法 {.scrollable}
 等级相关系数法又称斯皮尔曼（Spearman）检验。基本思想是：如果存在异方差性，残差的绝对值与自变量或者回归拟合值之间应该存在单调关系。检验步骤如下：
-1. 计算残差的绝对值$|e_i|$。
-2. 对自变量$x_i$或者回归拟合值$\hat{y}_i$进行排序，得到等级$r_{x_i}$或者$r_{\hat{y}_i}$。
-3. 对残差的绝对值$|e_i|$进行排序，得到等级$r_{|e_i|}$。
-4. 计算等级相关系数：
+
+- 计算残差的绝对值$|e_i|$。
+- 对自变量$x_i$或者回归拟合值$\hat{y}_i$进行排序，得到等级$r_{x_i}$或者$r_{\hat{y}_i}$。
+- 对残差的绝对值$|e_i|$进行排序，得到等级$r_{|e_i|}$。
+- 计算等级相关系数：
 $$
 \rho = 1 - \frac{6 \sum_{i=1}^n (r_{x_i} - r_{|e_i|})^2}{n(n^2 - 1)}
 $$
-5. 根据等级相关系数的分布进行显著性检验，判断是否存在异方差性。
+
+- 根据等级相关系数的分布进行显著性检验，判断是否存在异方差性。
 
 ## 异方差性的诊断：等级相关系数法
 使用斯皮尔曼检验诊断异方差性，用`cor()`函数：
 ```{r}
 #| echo: true
-library(ggpubr)
 resid_abs <- abs(resid(penguins_lm_m0))
-cor_test <- cor.test(resid_abs, fitted(penguins_lm_m0), method = "spearman")
+cor_test <- cor.test(resid_abs, penguins_lm_m0$model$bill_length_mm, method = "spearman")
 cor_test
 ``` 
 
 > 探索：其它异方差的诊断方法。
 
-## 异方差的处理：加权最小二乘法
+## 不同的残差
+
+- raw residuals：$e_i = y_i - \hat{y}_i$
+- standardized residuals：$r_i = \frac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}$
+- studentized residuals：$t_i = \frac{e_i}{\hat{\sigma}_{(i)} \sqrt{1 - h_{ii}}}$，其中$\hat{\sigma}_{(i)}$是去掉第$i$个观测值后的回归标准差。
+
+## 异方差的处理：加权最小二乘法 {.scrollable}
+OLS最小化离差平方和：
+$$
+\begin{align*}
+Q(\beta_0,\beta_1) 
+  &= \sum_{i=1}^n (y_i - E(y_i))^2 \\
+  &= \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i))^2
+\end{align*}
+$$
+在异方差时，回归线会被拉向误差项方差较大的项。
+
+加权最小二乘法（Weighted Least Squares, WLS）通过给每个观测值赋予适当的权重（$w_i$），以调整各项在平方和中的作用，WLS离差平方和：
+$$
+\begin{align*}
+Q_w(\beta_0,\beta_1) 
+  &= \sum_{i=1}^n w_i (y_i - E(y_i))^2 \\
+  &= \sum_{i=1}^n w_i (y_i - (\beta_0 + \beta_1 x_i))^2
+\end{align*}
+$$
+参数估计为：
+$$
+\begin{align*}
+\hat{\beta_1} &= \frac{\sum_{i=1}^n w_i (x_i - \overline{x}_w)(y_i - \overline{y}_w)}{\sum_{i=1}^n w_i (x_i - \overline{x}_w)^2} \\
+\hat{\beta_0} &= \overline{y}_w - \hat{\beta_1} \overline{x}_w
+\end{align*}
+$$
+其中$\overline{x}_w = \frac{\sum_{i=1}^n w_i x_i}{\sum_{i=1}^n w_i}$，$\overline{y}_w = \frac{\sum_{i=1}^n w_i y_i}{\sum_{i=1}^n w_i}$。
+
+ 为了消除异方差性的影响，使不同观测值的地位相同，权重通常取为观测值误差项方差的倒数，即$w_i = 1/\sigma_i^2$。
+
+$\sigma_i^2$通常是未知的，但当起随自变量（或其他变量）系统变化时，可以利用这种关系。例如，如果$\sigma_i^2$与$x_i$成正比，即$\sigma_i^2 = \sigma^2 x_i^2$，则可以取权重为$w_i = 1/x_i^2$。
+
+## 异方差的处理：`nlme`包的`gls()`函数 {.scrollable}
+
+在R中，可以使用`nlme`包的`gls()`函数来拟合加权最小二乘回归模型。该函数允许用户指定不同的权重结构，以处理异方差性问题。
+
+例如：
+```{r}
+#| echo: false
+penguins |>
+  select(body_mass_g, bill_length_mm) |>
+  drop_na() |>
+  mutate(
+    fitted = fitted(penguins_lm_m0),
+    resid_raw = resid(penguins_lm_m0),
+    resid_std = rstandard(penguins_lm_m0),
+    ratio = resid_raw / resid_std
+  ) |>
+  pivot_longer(
+    cols = c(resid_raw, resid_std),
+    names_to = "resid_type",
+    values_to = "resid"
+  ) |>
+  ggplot(aes(x = bill_length_mm, y = resid, color = resid_type)) +
+  geom_point() +
+  facet_wrap(
+    ~resid_type,
+    scales = "free_y",
+    labeller = as_labeller(c(
+      resid_raw = "Raw Residuals",
+      resid_std = "Standardized Residuals"
+    ))
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
+  labs(x = "Bill length (mm)", y = "Residuals") +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+## 异方差的处理：`nlme`包的`gls()`函数 {.scrollable}
+
+通过指定`weights`参数，以反映误差项方差的结构：
+```{r}
+library(nlme)
+penguins_gls_m0 <- gls(
+    body_mass_g ~ bill_length_mm,
+    data = penguins,
+    weights = varPower(form = ~bill_length_mm),
+    na.action = na.omit
+) # ingnore NA
+```
+这里面的`varPower(form = ~ bill_length_mm)`表示误差项的方差与`bill_length_mm`的幂函数相关，也就是 $var(\varepsilon_i) = \sigma^2 |x_i|^{2\delta}$，其中$\delta$会根据数据拟合得到。
+
+## 验证异方差性是否得到处理
+这里通过检验normalized residuals与自变量（或其它变量）的关系来验证异方差性是否得到处理：
+```{r}
+#| code-fold: true
+penguins |>
+  select(body_mass_g, bill_length_mm) |>
+  drop_na() |>
+  mutate(
+    fitted = fitted(penguins_gls_m0),
+    resid_raw = resid(penguins_gls_m0),
+    resid_norm = resid(penguins_gls_m0, type = "normalized")
+  ) |>
+  pivot_longer(
+    cols = c(resid_raw, resid_norm),
+    names_to = "resid_type",
+    values_to = "resid"
+  ) |>
+  ggplot(aes(x = bill_length_mm, y = resid, color = resid_type)) +
+  geom_point() +
+  facet_wrap(
+    ~resid_type,
+    scales = "free_y",
+    labeller = as_labeller(c(
+      resid_raw = "Raw Residuals",
+      resid_norm = "Normalized Residuals"
+    ))
+  ) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
+  labs(x = "Bill length (mm)", y = "Residuals") +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+## 验证引入权重后模型的拟合效果 {.scrollable}
+可以通过比较引入权重前后的模型拟合效果来验证加权最小二乘法是否有效处理了异方差性问题。
+
+- OLS，无权重模型：
+
+```{r}
+#| echo: true
+penguins_lm_m0 <- gls(
+    body_mass_g ~ bill_length_mm,
+    data = penguins,
+    na.action = na.omit
+) # 这里gls()函数等价于lm()函数
+```
+
+- WLS，加权模型：
+
+```{r}
+#| echo: true
+penguins_gls_m0 <- update(
+    penguins_lm_m0,
+    weights = varPower(form = ~bill_length_mm)
+)
+```
+
+- 比较模型拟合效果：
+```{r}
+#| echo: true
+model_comparison <- anova(penguins_lm_m0, penguins_gls_m0)
+model_comparison
+```
+结果中的：
+
+- logLik指对数似然估计值（log-likelihood），越大表示模型拟合效果越好。
+- AIC（Akaike Information Criterion）表示赤池信息准则，定义为 $-2 \log L + 2k$，其中 $\log L$ 是对数似然值，$k$ 是模型参数个数。AIC综合考虑了模型的拟合效果和复杂度，值越小表示模型越优。
+- p值表示两个模型之间的显著性差异，如果p值小于预设的显著性水平（如0.05），则可以认为加权模型显著优于无权重模型。
+
+> 探索：结果中的其它信息（如BIC等）的含义。
+
+## 其它`varFunc`函数 {.scrollable}
+
+`nlme`包提供了多种`varFunc`函数来处理不同类型的异方差性问题：
+
+- `varIdent(form = ~1 | group)`：允许不同组别具有不同的方差。
+- `varExp(form = ~ covariate)`：方差随协变量的指数函数变化。
+- `varPower(form = ~ covariate)`：方差随协变量的幂函数变化。
+- `varConstPower(form = ~ covariate)`：方差随协变量的幂函数变化，但具有常数项。
+- `varFixed(value)`：方差为固定值，适用于已知方差结构的情况。
+选择合适的`varFunc`函数取决于数据的特征和异方差性的类型，可以通过比较不同模型的拟合效果来确定最佳的处理方法。
+
+## `varIdent()`函数的使用 {.scrollable}
+`iris`数据集中记录了三种鸢尾花（setosa、versicolor、virginica）的花瓣宽度（petal width）、花瓣长度（petal length）等信息。
+绘制制花瓣宽度与花瓣长度的散点图，并根据花的种类进行颜色区分：
+```{r}
+#| echo: false
+ggplot(iris, aes(x = Petal.Length, y = Petal.Width, color = Species)) +
+  geom_point() +
+  labs(x = "Petal Length", y = "Petal Width") +
+  theme_bw()
+```
+
+## `varIdent()`函数的使用 {.scrollable}
+- OLS模型：
+```{r}
+#| echo: true
+iris_lm <- lm(Petal.Width ~ Petal.Length, data = iris)
+```
+
+- 不同种类花的残差图：
+
+```{r}
+#| echo: false
+iris |>
+  select(Petal.Length, Petal.Width, Species) |>
+  drop_na() |>
+  mutate(
+    fitted = fitted(iris_lm),
+    resid = rstandard(iris_lm)
+  ) |>
+  ggplot(aes(x = Species, y = resid, color = Species)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, alpha = 0.5) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
+  labs(x = "", y = "Standardized Residuals") +
+  theme_bw()
+``` 
+
+## `varIdent()`函数的使用
+- 加权模型，用`varIdent()`函数指定不同种类花的方差不同，也即是$var(\varepsilon_i) = \sigma^2_{species_i}$:
+```{r}
+#| echo: true
+iris_gls <- gls(Petal.Width ~ Petal.Length,
+    data = iris,
+    weights = varIdent(form = ~ 1 | Species)
+)
+```
+
+## `varIdent()`函数的使用
+- 加权模型的残差图：
+```{r}  
+#| echo: false
+iris |>
+  select(Petal.Length, Petal.Width, Species) |>
+  drop_na() |>
+  mutate(
+    resid = resid(iris_gls, type = "normalized")
+  ) |>
+  ggplot(aes(x = Species, y = resid, color = Species)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, alpha = 0.5) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
+  labs(x = "", y = "Normalized Residuals") +
+  theme_bw()
+```
+
+## 参考资料
+
+- 应用回归分析（R语言版），何晓群，电子工业出版社，2017
+- Mixed effects Models in S and S-Plus(pages 206-214) by Pinheiro and Bates, Springer, 2000
+- Mixed Effects Models And Extensions in Ecology with R (pages 72 - 84), by Alain F. Zuur, Elena N. Ieno, Neil Walker, Anatoly A. Saveliev, Graham M. Smith, Springer, 2009

@@ -99,7 +99,6 @@
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="talk04_files/libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
-  <link rel="stylesheet" href="styles.css">
   <link href="talk04_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="talk04_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="talk04_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -210,6 +209,24 @@
 </div>
 </div>
 
+</section>
+<section id="你将学到" class="slide level2">
+<h2>你将学到</h2>
+<ol type="1">
+<li class="fragment">线性回归模型的基本假设</li>
+<li class="fragment">线性回归模型的理论基础
+<ul>
+<li class="fragment">一元线性回归的基本数学形式</li>
+<li class="fragment">普通最小二乘法参数估计及其性质</li>
+<li class="fragment">回归系数与拟合值的区间估计</li>
+<li class="fragment">假设检验方法：t检验、F检验、相关系数显著性检验</li>
+</ul></li>
+<li class="fragment">线性回归模型的诊断与改进
+<ul>
+<li class="fragment">异方差性的概念和诊断方法</li>
+<li class="fragment">加权最小二乘法（WLS）与R实现</li>
+</ul></li>
+</ol>
 </section>
 <section id="线性回归的基本假设" class="slide level2">
 <h2>线性回归的基本假设</h2>
@@ -638,6 +655,12 @@ P\left(-t_{\alpha/2,n-2} \leq \frac{y_0 - \hat{y_0}}{\sqrt{\hat{\sigma}^2 (1 + h
 \left[\hat{y_0} - t_{\alpha/2,n-2} \sqrt{h_{00}}\hat{\sigma} , \hat{y_0} + t_{\alpha/2,n-2} \sqrt{h_{00}}\hat{\sigma} \right]
 \]</span></p>
 </section>
+<section id="最大似然估计法" class="slide level2">
+<h2>最大似然估计法</h2>
+<blockquote>
+<p>探索: 最大似然估计法（Maximum Likelihood Estimation, MLE）是另一种常用的参数估计方法。对于一元线性回归模型，在满足正态假设的前提下，最小二乘估计和最大似然估计是等价的。</p>
+</blockquote>
+</section>
 <section id="异方差性" class="slide level2 scrollable">
 <h2>异方差性</h2>
 <p>对于随机误差项有如下假定： <span class="math display">\[
@@ -692,10 +715,235 @@ r_i = \frac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>penguins_lm_m0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(body_mass_g <span class="sc">~</span> bill_length_mm, <span class="at">data =</span> penguins)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>残差图： make the ggplot bigger in the slides</p>
+<p>残差图：</p>
 
+<img data-src="talk04_files/figure-revealjs/unnamed-chunk-4-1.png" width="960" class="r-stretch"></section>
+<section id="异方差性的诊断等级相关系数法" class="slide level2 scrollable">
+<h2>异方差性的诊断：等级相关系数法</h2>
+<p>等级相关系数法又称斯皮尔曼（Spearman）检验。基本思想是：如果存在异方差性，残差的绝对值与自变量或者回归拟合值之间应该存在单调关系。检验步骤如下：</p>
+<ul>
+<li><p>计算残差的绝对值<span class="math inline">\(|e_i|\)</span>。</p></li>
+<li><p>对自变量<span class="math inline">\(x_i\)</span>或者回归拟合值<span class="math inline">\(\hat{y}_i\)</span>进行排序，得到等级<span class="math inline">\(r_{x_i}\)</span>或者<span class="math inline">\(r_{\hat{y}_i}\)</span>。</p></li>
+<li><p>对残差的绝对值<span class="math inline">\(|e_i|\)</span>进行排序，得到等级<span class="math inline">\(r_{|e_i|}\)</span>。</p></li>
+<li><p>计算等级相关系数： <span class="math display">\[
+\rho = 1 - \frac{6 \sum_{i=1}^n (r_{x_i} - r_{|e_i|})^2}{n(n^2 - 1)}
+\]</span></p></li>
+<li><p>根据等级相关系数的分布进行显著性检验，判断是否存在异方差性。</p></li>
+</ul>
+</section>
+<section id="异方差性的诊断等级相关系数法-1" class="slide level2">
+<h2>异方差性的诊断：等级相关系数法</h2>
+<p>使用斯皮尔曼检验诊断异方差性，用<code>cor()</code>函数：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>resid_abs <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="fu">resid</span>(penguins_lm_m0))</span>
+<span id="cb2-2"><a href=""></a>cor_test <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(resid_abs, penguins_lm_m0<span class="sc">$</span>model<span class="sc">$</span>bill_length_mm, <span class="at">method =</span> <span class="st">"spearman"</span>)</span>
+<span id="cb2-3"><a href=""></a>cor_test</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Spearman's rank correlation rho
 
-<img data-src="talk04_files/figure-revealjs/unnamed-chunk-4-1.png" width="1440" class="r-stretch"></section>
+data:  resid_abs and penguins_lm_m0$model$bill_length_mm
+S = 3278085, p-value &lt; 2.2e-16
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.5083037 </code></pre>
+</div>
+</div>
+<blockquote>
+<p>探索：其它异方差的诊断方法。</p>
+</blockquote>
+</section>
+<section id="不同的残差" class="slide level2">
+<h2>不同的残差</h2>
+<ul>
+<li>raw residuals：<span class="math inline">\(e_i = y_i - \hat{y}_i\)</span></li>
+<li>standardized residuals：<span class="math inline">\(r_i = \frac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}\)</span></li>
+<li>studentized residuals：<span class="math inline">\(t_i = \frac{e_i}{\hat{\sigma}_{(i)} \sqrt{1 - h_{ii}}}\)</span>，其中<span class="math inline">\(\hat{\sigma}_{(i)}\)</span>是去掉第<span class="math inline">\(i\)</span>个观测值后的回归标准差。</li>
+</ul>
+</section>
+<section id="异方差的处理加权最小二乘法" class="slide level2 scrollable">
+<h2>异方差的处理：加权最小二乘法</h2>
+<p>OLS最小化离差平方和： <span class="math display">\[
+\begin{align*}
+Q(\beta_0,\beta_1)
+  &amp;= \sum_{i=1}^n (y_i - E(y_i))^2 \\
+  &amp;= \sum_{i=1}^n (y_i - (\beta_0 + \beta_1 x_i))^2
+\end{align*}
+\]</span> 在异方差时，回归线会被拉向误差项方差较大的项。</p>
+<p>加权最小二乘法（Weighted Least Squares, WLS）通过给每个观测值赋予适当的权重（<span class="math inline">\(w_i\)</span>），以调整各项在平方和中的作用，WLS离差平方和： <span class="math display">\[
+\begin{align*}
+Q_w(\beta_0,\beta_1)
+  &amp;= \sum_{i=1}^n w_i (y_i - E(y_i))^2 \\
+  &amp;= \sum_{i=1}^n w_i (y_i - (\beta_0 + \beta_1 x_i))^2
+\end{align*}
+\]</span> 参数估计为： <span class="math display">\[
+\begin{align*}
+\hat{\beta_1} &amp;= \frac{\sum_{i=1}^n w_i (x_i - \overline{x}_w)(y_i - \overline{y}_w)}{\sum_{i=1}^n w_i (x_i - \overline{x}_w)^2} \\
+\hat{\beta_0} &amp;= \overline{y}_w - \hat{\beta_1} \overline{x}_w
+\end{align*}
+\]</span> 其中<span class="math inline">\(\overline{x}_w = \frac{\sum_{i=1}^n w_i x_i}{\sum_{i=1}^n w_i}\)</span>，<span class="math inline">\(\overline{y}_w = \frac{\sum_{i=1}^n w_i y_i}{\sum_{i=1}^n w_i}\)</span>。</p>
+<p>为了消除异方差性的影响，使不同观测值的地位相同，权重通常取为观测值误差项方差的倒数，即<span class="math inline">\(w_i = 1/\sigma_i^2\)</span>。</p>
+<p><span class="math inline">\(\sigma_i^2\)</span>通常是未知的，但当起随自变量（或其他变量）系统变化时，可以利用这种关系。例如，如果<span class="math inline">\(\sigma_i^2\)</span>与<span class="math inline">\(x_i\)</span>成正比，即<span class="math inline">\(\sigma_i^2 = \sigma^2 x_i^2\)</span>，则可以取权重为<span class="math inline">\(w_i = 1/x_i^2\)</span>。</p>
+</section>
+<section id="异方差的处理nlme包的gls函数" class="slide level2 scrollable">
+<h2>异方差的处理：<code>nlme</code>包的<code>gls()</code>函数</h2>
+<p>在R中，可以使用<code>nlme</code>包的<code>gls()</code>函数来拟合加权最小二乘回归模型。该函数允许用户指定不同的权重结构，以处理异方差性问题。</p>
+<p>例如：</p>
+
+<img data-src="talk04_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section>
+<section id="异方差的处理nlme包的gls函数-1" class="slide level2 scrollable">
+<h2>异方差的处理：<code>nlme</code>包的<code>gls()</code>函数</h2>
+<p>通过指定<code>weights</code>参数，以反映误差项方差的结构：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="fu">library</span>(nlme)</span>
+<span id="cb4-2"><a href=""></a>penguins_gls_m0 <span class="ot">&lt;-</span> <span class="fu">gls</span>(</span>
+<span id="cb4-3"><a href=""></a>    body_mass_g <span class="sc">~</span> bill_length_mm,</span>
+<span id="cb4-4"><a href=""></a>    <span class="at">data =</span> penguins,</span>
+<span id="cb4-5"><a href=""></a>    <span class="at">weights =</span> <span class="fu">varPower</span>(<span class="at">form =</span> <span class="sc">~</span>bill_length_mm),</span>
+<span id="cb4-6"><a href=""></a>    <span class="at">na.action =</span> na.omit</span>
+<span id="cb4-7"><a href=""></a>) <span class="co"># ingnore NA</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>这里面的<code>varPower(form = ~ bill_length_mm)</code>表示误差项的方差与<code>bill_length_mm</code>的幂函数相关，也就是 <span class="math inline">\(var(\varepsilon_i) = \sigma^2 |x_i|^{2\delta}\)</span>，其中<span class="math inline">\(\delta\)</span>会根据数据拟合得到。</p>
+</section>
+<section id="验证异方差性是否得到处理" class="slide level2">
+<h2>验证异方差性是否得到处理</h2>
+<p>这里通过检验normalized residuals与自变量（或其它变量）的关系来验证异方差性是否得到处理：</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href=""></a>  <span class="fu">select</span>(body_mass_g, bill_length_mm) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href=""></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href=""></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-5"><a href=""></a>    <span class="at">fitted =</span> <span class="fu">fitted</span>(penguins_gls_m0),</span>
+<span id="cb5-6"><a href=""></a>    <span class="at">resid_raw =</span> <span class="fu">resid</span>(penguins_gls_m0),</span>
+<span id="cb5-7"><a href=""></a>    <span class="at">resid_norm =</span> <span class="fu">resid</span>(penguins_gls_m0, <span class="at">type =</span> <span class="st">"normalized"</span>)</span>
+<span id="cb5-8"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb5-9"><a href=""></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb5-10"><a href=""></a>    <span class="at">cols =</span> <span class="fu">c</span>(resid_raw, resid_norm),</span>
+<span id="cb5-11"><a href=""></a>    <span class="at">names_to =</span> <span class="st">"resid_type"</span>,</span>
+<span id="cb5-12"><a href=""></a>    <span class="at">values_to =</span> <span class="st">"resid"</span></span>
+<span id="cb5-13"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb5-14"><a href=""></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bill_length_mm, <span class="at">y =</span> resid, <span class="at">color =</span> resid_type)) <span class="sc">+</span></span>
+<span id="cb5-15"><a href=""></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb5-16"><a href=""></a>  <span class="fu">facet_wrap</span>(</span>
+<span id="cb5-17"><a href=""></a>    <span class="sc">~</span>resid_type,</span>
+<span id="cb5-18"><a href=""></a>    <span class="at">scales =</span> <span class="st">"free_y"</span>,</span>
+<span id="cb5-19"><a href=""></a>    <span class="at">labeller =</span> <span class="fu">as_labeller</span>(<span class="fu">c</span>(</span>
+<span id="cb5-20"><a href=""></a>      <span class="at">resid_raw =</span> <span class="st">"Raw Residuals"</span>,</span>
+<span id="cb5-21"><a href=""></a>      <span class="at">resid_norm =</span> <span class="st">"Normalized Residuals"</span></span>
+<span id="cb5-22"><a href=""></a>    ))</span>
+<span id="cb5-23"><a href=""></a>  ) <span class="sc">+</span></span>
+<span id="cb5-24"><a href=""></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb5-25"><a href=""></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Bill length (mm)"</span>, <span class="at">y =</span> <span class="st">"Residuals"</span>) <span class="sc">+</span></span>
+<span id="cb5-26"><a href=""></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb5-27"><a href=""></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+
+</div>
+<img data-src="talk04_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"></section>
+<section id="验证引入权重后模型的拟合效果" class="slide level2 scrollable">
+<h2>验证引入权重后模型的拟合效果</h2>
+<p>可以通过比较引入权重前后的模型拟合效果来验证加权最小二乘法是否有效处理了异方差性问题。</p>
+<ul>
+<li>OLS，无权重模型：</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a>penguins_lm_m0 <span class="ot">&lt;-</span> <span class="fu">gls</span>(</span>
+<span id="cb6-2"><a href=""></a>    body_mass_g <span class="sc">~</span> bill_length_mm,</span>
+<span id="cb6-3"><a href=""></a>    <span class="at">data =</span> penguins,</span>
+<span id="cb6-4"><a href=""></a>    <span class="at">na.action =</span> na.omit</span>
+<span id="cb6-5"><a href=""></a>) <span class="co"># 这里gls()函数等价于lm()函数</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>WLS，加权模型：</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>penguins_gls_m0 <span class="ot">&lt;-</span> <span class="fu">update</span>(</span>
+<span id="cb7-2"><a href=""></a>    penguins_lm_m0,</span>
+<span id="cb7-3"><a href=""></a>    <span class="at">weights =</span> <span class="fu">varPower</span>(<span class="at">form =</span> <span class="sc">~</span>bill_length_mm)</span>
+<span id="cb7-4"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>比较模型拟合效果：</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>model_comparison <span class="ot">&lt;-</span> <span class="fu">anova</span>(penguins_lm_m0, penguins_gls_m0)</span>
+<span id="cb8-2"><a href=""></a>model_comparison</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                Model df      AIC      BIC    logLik   Test  L.Ratio p-value
+penguins_lm_m0      1  3 5385.487 5396.973 -2689.743                        
+penguins_gls_m0     2  4 5314.586 5329.902 -2653.293 1 vs 2 72.90073  &lt;.0001</code></pre>
+</div>
+</div>
+<p>结果中的：</p>
+<ul>
+<li>logLik指对数似然估计值（log-likelihood），越大表示模型拟合效果越好。</li>
+<li>AIC（Akaike Information Criterion）表示赤池信息准则，定义为 <span class="math inline">\(-2 \log L + 2k\)</span>，其中 <span class="math inline">\(\log L\)</span> 是对数似然值，<span class="math inline">\(k\)</span> 是模型参数个数。AIC综合考虑了模型的拟合效果和复杂度，值越小表示模型越优。</li>
+<li>p值表示两个模型之间的显著性差异，如果p值小于预设的显著性水平（如0.05），则可以认为加权模型显著优于无权重模型。</li>
+</ul>
+<blockquote>
+<p>探索：结果中的其它信息（如BIC等）的含义。</p>
+</blockquote>
+</section>
+<section id="其它varfunc函数" class="slide level2 scrollable">
+<h2>其它<code>varFunc</code>函数</h2>
+<p><code>nlme</code>包提供了多种<code>varFunc</code>函数来处理不同类型的异方差性问题：</p>
+<ul>
+<li><code>varIdent(form = ~1 | group)</code>：允许不同组别具有不同的方差。</li>
+<li><code>varExp(form = ~ covariate)</code>：方差随协变量的指数函数变化。</li>
+<li><code>varPower(form = ~ covariate)</code>：方差随协变量的幂函数变化。</li>
+<li><code>varConstPower(form = ~ covariate)</code>：方差随协变量的幂函数变化，但具有常数项。</li>
+<li><code>varFixed(value)</code>：方差为固定值，适用于已知方差结构的情况。 选择合适的<code>varFunc</code>函数取决于数据的特征和异方差性的类型，可以通过比较不同模型的拟合效果来确定最佳的处理方法。</li>
+</ul>
+</section>
+<section id="varident函数的使用" class="slide level2 scrollable">
+<h2><code>varIdent()</code>函数的使用</h2>
+<p><code>iris</code>数据集中记录了三种鸢尾花（setosa、versicolor、virginica）的花瓣宽度（petal width）、花瓣长度（petal length）等信息。 绘制制花瓣宽度与花瓣长度的散点图，并根据花的种类进行颜色区分：</p>
+
+<img data-src="talk04_files/figure-revealjs/unnamed-chunk-12-1.png" width="960" class="r-stretch"></section>
+<section id="varident函数的使用-1" class="slide level2 scrollable">
+<h2><code>varIdent()</code>函数的使用</h2>
+<ul>
+<li>OLS模型：</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a>iris_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(Petal.Width <span class="sc">~</span> Petal.Length, <span class="at">data =</span> iris)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>不同种类花的残差图：</li>
+</ul>
+
+<img data-src="talk04_files/figure-revealjs/unnamed-chunk-14-1.png" width="960" class="r-stretch"></section>
+<section id="varident函数的使用-2" class="slide level2">
+<h2><code>varIdent()</code>函数的使用</h2>
+<ul>
+<li>加权模型，用<code>varIdent()</code>函数指定不同种类花的方差不同，也即是<span class="math inline">\(var(\varepsilon_i) = \sigma^2_{species_i}\)</span>:</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>iris_gls <span class="ot">&lt;-</span> <span class="fu">gls</span>(Petal.Width <span class="sc">~</span> Petal.Length,</span>
+<span id="cb11-2"><a href=""></a>    <span class="at">data =</span> iris,</span>
+<span id="cb11-3"><a href=""></a>    <span class="at">weights =</span> <span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> Species)</span>
+<span id="cb11-4"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="varident函数的使用-3" class="slide level2">
+<h2><code>varIdent()</code>函数的使用</h2>
+<ul>
+<li>加权模型的残差图：</li>
+</ul>
+
+<img data-src="talk04_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"></section>
+<section id="参考资料" class="slide level2">
+<h2>参考资料</h2>
+<ul>
+<li>应用回归分析（R语言版），何晓群，电子工业出版社，2017</li>
+<li>Mixed effects Models in S and S-Plus(pages 206-214) by Pinheiro and Bates, Springer, 2000</li>
+<li>Mixed Effects Models And Extensions in Ecology with R (pages 72 - 84), by Alain F. Zuur, Elena N. Ieno, Neil Walker, Anatoly A. Saveliev, Graham M. Smith, Springer, 2009</li>
+</ul>
+
+</section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="images/JMU_logo.jpg" class="slide-logo"></p>
