@@ -1,0 +1,394 @@
+---
+title: "作业03：t 检验、方差分析、相关系数与线性回归"
+subtitle: "复习第三讲内容，掌握常用统计推断方法"
+author: 易湘琦
+author-title: ""
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+## 作业目标
+
+本次作业对应第三讲 `talk03.qmd`，目标是：
+
+1. 继续学习 Quarto 基础用法。
+2. 练习`tidyverse`中数据输入、清洗、变换和可视化的基本操作。
+3. 学习并掌握 t 检验、方差分析、相关分析和一元线性回归的基本应用。
+
+预计完成时间：**3–4 小时**。
+
+## 提交要求（必须遵守）
+
+- 提交：
+	 - `homework03.qmd`
+	 - `homework03.html`
+	 - ***渲染后生成的同名文件夹***
+- 所有代码必须可运行，渲染后 HTML 不报错。
+- 文末必须包含 **AI 使用声明**（按文末模板填写；未使用也要填写）。
+- 报告完成本次作业花费的时间。
+
+## 常用 Markdown 语法与示例
+通过前次作业，你应该已经对 Quarto 有了初步了解，这次作业将继续练习 Markdown 的基础用法，特别是一些常用的文本格式和结构。
+
+- **粗体与斜体**：
+  - 粗体：`**加粗内容**` → **加粗内容**
+  - 斜体：`*斜体内容*` → *斜体内容*
+  - 粗体+斜体：`***加粗且斜体内容***` → ***加粗且斜体内容***
+
+- **插入图片**：
+  ```markdown
+  ![图片说明](图片路径)
+  ```
+
+- **插入链接**：
+  ```markdown
+  [链接文字](链接地址)
+  ```
+
+- **表格**：
+```markdown
+  | 姓名 | 分数 |
+  | ---- | ----|
+  | 张三 | 90   |
+  | 李四 | 85   |
+```  
+
+| 姓名 | 分数 |
+| ----| ---- |
+| 张三 | 90   |
+| 李四 | 85   |
+
+::: callout-note
+更多关于`Markdown`的基础用法可以参考官方教程：[Markdown Basics
+](https://quarto.org/docs/authoring/markdown-basics.html)。
+:::
+
+## 模块 A：t 检验（25 分）
+
+- 使用`palmerpenguins`包中的`penguins`，完成A1。
+- 使用`?sleep`或`help(sleep)`查看`sleep`数据集的说明，完成A2和A3。
+
+::: callout-note
+本次作业中未指明出处的数据集均来自R内置数据集。
+:::
+
+### A1. 独立样本 t 检验（7 分）
+- 明确独立样本 t 检验的适用场景和基本用法。
+- 分析`Biscoe`岛上的`Adelie`企鹅和`Dream`岛上的`Adelie`企鹅在鳍长上是否存在显著差异。
+
+### A2. 单样本 t 检验（8 分）
+- 自行学习单样本 t 检验的应用场景和基本用法。
+- 分析`sleep`数据集中`group`为`1`中受试者的睡眠是否有显著增加，并简要解释结果。
+
+### A3. 配对样本 t 检验（10 分）
+
+- 自行学习配对样本 t 检验的应用场景和基本用法。
+- 分析`sleep`数据集中两种药物在增加睡眠时间上是否存在显著差异，并简要解释结果。
+- 复现下图：
+
+```{r}
+library(tidyverse)
+sleep %>%
+  ggplot(aes(x = group, y = extra)) +
+  geom_boxplot() +
+  geom_jitter(size = 2, width = 0.2, mapping = aes(color = as.factor(ID))) +
+  scale_x_discrete(labels = c("Drug 1", "Drug 2")) +
+  labs(color = "Subject ID", y = "Increase in sleep time (hours)") +
+  theme_bw() +
+  theme(
+    legend.position = "top",
+    axis.title.x = element_blank(),
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14),
+    legend.title = element_text(size = 14),
+    legend.text = element_text(size = 12)
+  )
+```
+
+
+## 模块 B：方差分析（ANOVA，25 分）
+
+- 使用`?ToothGrowth`或`help(ToothGrowth)`查看`ToothGrowth`数据集的说明，完成B1和B2。
+- 使用`?CO2`或`help(CO2)`查看`CO2`数据集的说明，完成B3。
+
+### B1. One-way ANOVA（5 分）
+- 明确单因素方差分析的适用场景和基本用法。
+- 分析`ToothGrowth`数据集中不同剂量的`VC`对牙本质细胞长度（length of odontoblasts）的影响是否存在显著差异，并简要解释结果。
+- 若存在差异，当剂量从 0.5 增加到 1 时，牙本质细胞长度是否有显著变化？当剂量从 1 增加到 2 时，牙本质细胞长度是否有显著变化？
+
+### B2. Two-way ANOVA（10 分）
+- 自行学习双因素方差分析的应用场景和基本用法，重点理解交互作用的概念。
+- 分析`ToothGrowth`数据集中不同类型和剂量的补充剂对牙本质细胞长度的影响是否存在显著差异，并简要解释结果。
+- 复现下图：柱状图，y轴为不同类型补充剂，x轴为牙本质细胞长度，柱子颜色区分补充剂剂量，柱子长度表示样本均值，并添加误差线表示样本标准差。
+
+***提示：配色用`scale_fill_brewer(palette = "Set2")`***
+
+```{r}
+ToothGrowth |> 
+	mutate(dose = factor(dose, levels = c(2, 1, 0.5))) |>
+	group_by(supp, dose) |>
+	summarise(mean_len = mean(len), sd_len = sd(len), .groups = "drop") |>
+	ggplot(aes(x = mean_len, y = supp, fill = dose)) +
+	geom_col(position = position_dodge(width = 0.9)) +
+	geom_errorbar(aes(xmin = mean_len - sd_len, xmax = mean_len + sd_len), position = position_dodge(width = 0.9), width = 0.2) +
+	labs(x = "Length of odontoblasts", fill = "Dose") +
+	guides(fill = guide_legend(title = "Dose (mg/day)", reverse = TRUE)) +
+	scale_fill_brewer(palette = "Set2") +
+	theme_bw() +
+	theme(
+		axis.title.y = element_blank(),
+		axis.title = element_text(size = 16),
+		axis.text = element_text(size = 14),
+		legend.title = element_text(size = 14),
+		legend.text = element_text(size = 12)
+	)
+	
+```
+
+### B3. Repeated-measures ANOVA（10 分）
+- 自行学习重复测量方差分析的应用场景和基本用法。
+- `CO2`数据集中，对于产自`Quebec`且未经过冷处理`nonchilled`的植物，分析不同浓度的二氧化碳对植物的CO<sub>2</sub>吸收速率的影响是否存在显著差异，并简要解释结果。***注意：这里将`conc`作为分类变量处理。***
+
+
+
+## 模块 C：相关分析（20 分）
+
+### C1. 皮尔逊相关系数：基础练习（10 分）
+
+- 明确皮尔逊相关分析的适用场景和基本用法。
+- 计算`palmerpenguins`包`penguins`数据集中`bill_length_mm`，`bill_depth_mm`，`flipper_length_mm`和`body_mass_g`两两之间的皮尔逊相关系数，并进行显著性检验。
+- 复现下图：
+
+```{r}
+library(corrplot)
+library(palmerpenguins)
+penguins_cor <-
+  penguins |>
+  select(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g) |>
+  rename(
+	`bill length` = bill_length_mm,
+	`bill depth` = bill_depth_mm,
+	`flipper length` = flipper_length_mm,
+	`body mass` = body_mass_g
+  ) |>
+  drop_na() |>
+  cor()
+penguins_test <-
+  penguins |>
+  select(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g) |>
+  rename(
+	`bill length` = bill_length_mm,
+	`bill depth` = bill_depth_mm,
+	`flipper length` = flipper_length_mm,
+	`body mass` = body_mass_g
+  ) |>
+  drop_na() |>
+  cor.mtest()
+
+corrplot(
+  penguins_cor,
+  method = "circle",
+  type = "upper",
+  tl.col = "black",
+  tl.srt = 45,
+  p.mat = penguins_test$p.value,
+  sig.level = 0.05,
+  insig = "blank",
+  diag = FALSE
+)
+```
+
+***提示***：`talk03.qmd`中已经介绍了`cor()`函数计算相关系数，`cor.mtest()`函数进行显著性检验，`corrplot()`函数绘制相关矩阵图。你可以通过查阅相关函数的文档来完成上述任务。
+
+### C2. 皮尔逊相关系数的局限（10 分）
+
+- `anscombe`中记录了4套关于 x 和 y 的数据
+
+```{r}
+#| echo: true
+anscombe
+```
+- 对其进行如下整理，得到`anscombe_tidy`
+```{r}
+#| echo: true
+anscombe_tidy <-
+  anscombe |>
+  pivot_longer(
+    everything(),
+    cols_vary = "slowest",
+    names_to = c(".value", "set"),
+    names_pattern = "(.)(.)"
+  )
+anscombe_tidy
+```
+
+- 计算每套数据中 x 和 y 的均值、标准差、相关系数，你看到了什么？
+```{r}
+#| eval: false
+anscombe_tidy |>
+  group_by(set) |>
+  summarise(
+    y_mean = mean(y),
+    x_mean = mean(x),
+    y_sd = sd(y),
+    x_sd = sd(x),
+    cor_xy = cor(x, y),
+    .groups = "drop"
+  )
+```
+
+- 画出每套数据的散点图，你看到了什么？
+```{r}
+#| eval: false
+anscombe_tidy |>
+  ggplot() +
+  geom_point(aes(x = x, y = y), color = "steelblue", size = 3) +
+  facet_wrap(~set) +
+  labs(x = "x", y = "y") +
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  )
+```
+
+- 谈谈你对上述结果的理解：皮尔逊相关系数有哪些局限？在借助于图像之外，还有什么手段可以识别出相关分析中潜藏的异常情况？
+
+---
+## 模块 D：线性回归（20 分）
+
+### D1. 数据读入（5 分）
+
+- 将储存在`data/mtcars.csv`中的数据读入 R 中，命名为`mtcars_data`，并展示前几行数据。
+
+> 注意:  
+- `mtcars.csv`文件头部以`#`开头的几行是关于数据的描述性文字，不是数据本身，正确读入数据需要跳过这些行。建议通过查阅`read_csv()`函数的文档来找到解决方案。  
+- 读入时通过参数设置指定`vs`、`am`两列为因子变量，`cyl`、`gear`和`carb`三列为整数型变量。
+
+```{r}
+mtcars_data <- read_csv("data/mtcars.csv", skip = 3,
+                        col_types = cols(
+                          vs = col_factor(),
+                          am = col_factor(),
+                          cyl = col_integer(),
+                          gear = col_integer(),
+                          carb = col_integer()
+                        ))
+```
+
+```{r}
+#| echo: ture
+mtcars_data
+```
+
+### D2. 绘制如下`mpg`与`hp`的关系图（5 分）
+
+```{r}
+ggplot(mtcars_data, aes(x = hp, y = mpg)) +
+  geom_point(color = "steelblue", size = 3) +
+  labs(x = "Horsepower (hp)", y = "Miles per gallon (mpg)") +
+  theme_bw() +
+  theme(
+	axis.title = element_text(size = 16),
+	axis.text = element_text(size = 14)
+  )
+```
+
+### D3. 线性回归分析（5 分）
+
+- 以`mpg`为响应变量（因变量），`hp`为解释变量（自变量），建立一元线性回归模型。
+- 输出回归结果，并简要分析。
+```{r}
+lm_model <- lm(mpg ~ hp, data = mtcars_data)
+```
+### D4. 预测和绘图（5 分）
+
+- 使用D3中建立的线性回归模型进行预测，在原散点图上叠加绘制回归线和**99%的预测区间**。
+
+```{r}
+hp_new <- tibble(hp = seq(min(mtcars_data$hp), max(mtcars_data$hp), length.out = 100))
+mtcars_pred<- predict(lm_model, newdata = hp_new, interval = "prediction", level = 0.99) |> as_tibble() |> bind_cols(hp_new)
+
+mtcars_data |>
+  ggplot(aes(x = hp, y = mpg)) +
+  geom_point(color = "steelblue", size = 3) +
+  geom_line(data = mtcars_pred, aes(x = hp, y = fit), color = "tomato", size = 1) +
+  geom_ribbon(data = mtcars_pred, aes(x = hp, y = fit, ymin = lwr, ymax = upr), alpha = 0.2, fill = "tomato") +
+  labs(x = "Horsepower (hp)", y = "Miles per gallon (mpg)") +
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 14)
+  )
+```
+## 模块 E：文档表达与规范 （10分）
+
+1. 文档结构清晰：有分节标题、列表、必要文字说明。
+2. 代码与结果对应，可复现。
+3. 每个模块有结论文字，而不只给代码。
+4. `qmd` 成功渲染出 `html`。
+
+
+## Bonus： Repeated-measures ANOVA （可选，10分）
+
+- 在 B3 的基础上，分析对于产自`Quebec`的植物，冷处理是否对 CO<sub>2</sub> 吸收速率有显著影响，该影响在不同环境浓度CO<sub>2</sub>下是否存在差异。
+- 复现下图；了解如何显示上、下标、希腊字母等，推荐使用`ggtext`包。
+```{r}
+library(ggtext)
+CO2 |> 
+	group_by(Type, Treatment, conc) |>
+	summarise(mean_uptake = mean(uptake), sd_uptake = sd(uptake), .groups = "drop") |>
+	ggplot(aes(x = conc, y = mean_uptake, color = Treatment)) +
+	geom_line() +
+	geom_point(size = 3) +
+	geom_errorbar(aes(ymin = mean_uptake - sd_uptake, ymax = mean_uptake + sd_uptake), width = 25) +
+	facet_wrap(~Type) +
+	labs(color = "Treatment") +
+	xlab("CO<sub>2</sub> concentration (mL L<sup>-1</sup>)") +
+	ylab("CO<sub>2</sub> uptake (&mu;mol m<sup>-2</sup> s<sup>-1</sup>)") +
+	scale_color_manual(values = c("steelblue", "tomato")) +
+	theme_bw() +
+	theme(
+		axis.title.y = element_markdown(size = 16),
+		axis.title.x = element_markdown(size = 16),
+		axis.text = element_text(size = 14),
+		legend.title = element_blank(),
+		legend.text = element_text(size = 12),
+		legend.position = "inside",
+		legend.position.inside = c(0.8, 0.8),
+		legend.background = element_rect(fill = "transparent", color = "black", linewidth = 0.25)
+	)
+```
+
+## 提交前检查清单
+
+- [ ] `homework03.qmd` 能渲染成功
+- [ ] `homework03.html` 已生成且内容完整
+- [ ] ***渲染后生成的同名文件夹一并提交***
+- [ ] 数据与分析过程清晰、规范
+- [ ] 已完成 AI 使用声明（按模板填写）
+- [ ] 已记录完成作业花费的时间
+
+
+## AI 使用声明（必填模板）
+
+请在文末保留并填写以下模板（未使用也要填写）。
+
+### 情况 1：我使用了 AI 工具
+
+- 工具名称：
+- 具体使用环节（如：报错排查 / 语法查询 / 代码草稿）：
+- 我做的人工核查与修改：
+- 我确认并对最终提交内容负责：是
+
+### 情况 2：我未使用 AI 工具
+
+- 本次作业未使用任何 AI 工具。
+- 我确认并对最终提交内容负责：是
