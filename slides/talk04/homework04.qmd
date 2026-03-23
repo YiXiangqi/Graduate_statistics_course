@@ -1,0 +1,236 @@
+---
+title: "作业04：回归残差与异方差建模"
+subtitle: "复习第四讲内容，掌握线性回归模型中异方差诊断与处理方法"
+author: 易湘琦
+author-title: ""
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## 作业目标
+
+本次作业对应第四讲 `talk04.qmd`，目标是：
+
+1. 掌握更多 Quarto 的基本使用技巧。
+2. 理解线性回归模型中多种残差的定义、计算与应用。
+3. 学会使用`nlme`包的`varFunc`类函数定义不同误差项方差结构以处理异方差性问题。
+
+预计完成时间：**3–4 小时**。
+
+## 提交要求（必须遵守）
+
+- 提交：
+   - `homework04.qmd`
+   - `homework04.html`
+   - ***渲染后生成的同名文件夹***
+- 所有代码必须可运行，渲染后 HTML 不报错。
+- 文末必须包含 **AI 使用声明**（按模板填写；未使用也要填写）。
+- 报告完成本次作业花费的时间。
+
+
+
+## Part 1：Quarto 基本与进阶技巧
+
+本节介绍在完成作业和撰写报告时常用但前两次作业未涉及的 Quarto 进阶技巧。每项均配有源文件写法和渲染效果示例。
+
+
+
+### 自动目录与分节导航
+
+**源文件写法：**
+```yaml
+format:
+  html:
+    toc: true
+    toc-depth: 3
+```
+**渲染效果：**
+页面顶部自动生成可点击的目录，便于跳转。
+
+
+
+### 代码块进阶用法
+
+#### **代码块折叠/展开**
+
+**源文件写法：**
+```{{r}}
+#| code-fold: true
+summary(lm(mpg ~ hp, data = mtcars))
+```
+**渲染效果：**
+代码和输出默认折叠，点击可展开查看。
+
+```{r}
+#| code-fold: true
+summary(lm(mpg ~ hp, data = mtcars))
+```
+
+#### **隐藏代码或输出**
+
+**源文件写法：**
+```{{r}}
+#| echo: false
+#| results: hide
+plot(1:10)
+```
+**渲染效果：**
+只显示图形，不显示代码或输出。
+
+```{r}
+#| echo: false
+#| results: hide
+plot(1:10)
+```
+
+
+#### **分组标签（Tabsets）**
+
+**源文件写法：**
+
+    ::: {.panel-tabset}
+
+    ### R 代码
+
+    ```{{r}}
+    summary(cars)
+    ```
+    ### Python 代码
+
+    ```{{python}}
+    print('Hello, Quarto!')
+    ```
+    
+    :::
+
+
+**渲染效果：**
+同一位置可切换不同标签页，分别显示 R 和 Python[^1] 代码块。
+
+[^1]: Qarto 支持包括Python在内的多种语言。
+
+::: {.panel-tabset}
+
+### R 代码
+
+```{r}
+summary(cars)
+```
+
+### Python 代码
+
+```{python}
+print('Hello, Quarto!')
+```
+
+:::
+
+### 数学公式
+Quarto 支持 LaTeX 语法的数学公式，行内公式用 `$...$` 包裹，块级公式用 `$$...$$` 包裹。
+
+**行内公式**  
+
+源文件中：`$y = \beta_0 + \beta_1 x$`  
+渲染后：$y = \beta_0 + \beta_1 x$
+
+**块级公式**  
+
+源文件中：
+
+    $$
+    \hat{\beta}_1 = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})^2}
+    $$  
+
+渲染后：
+$$
+\hat{\beta}_1 = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})^2}
+$$
+
+
+## Part 2：线性回归模型中的残差
+
+本节聚焦于一元线性回归模型中的残差类型、计算方法与杠杆值的直观理解。
+
+### 1. 残差类型与杠杆值
+
+- **原始残差（Raw Residual）**  
+  $e_i = y_i - \hat{y}_i$，即观测值与拟合值之差。
+
+- **杠杆值（Leverage）**  
+  杠杆值 $h_{ii}$ 衡量第 $i$ 个观测值对自身拟合值的影响。高杠杆点对回归直线影响大，容易成为异常点。
+  
+  $h_{ii} = \mathbf{x}_i^T (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{x}_i$，一元回归下 $h_{ii}$ 只与自变量 $x_i$ 距均值的远近有关。
+
+- **标准化残差（Standardized Residual）**  
+  $r_i = \dfrac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}$，其中 $\hat{\sigma}$ 为回归标准差。标准化残差考虑了不同观测点的杠杆效应，使残差具有可比性。
+
+- **学生化残差（Studentized Residual）**  
+  $t_i = \dfrac{e_i}{\hat{\sigma}_{(i)} \sqrt{1 - h_{ii}}}$，$\hat{\sigma}_{(i)}$ 是去掉第 $i$ 个观测值后重新拟合模型得到的标准差。学生化残差对异常值更敏感。
+
+
+### 2. 案例：penguins 数据集一元线性回归
+
+使用 `palmerpenguins::penguins` 数据集，建立体重（body_mass_g）对鳍长（flipper_length_mm）的一元线性回归模型。
+手动计算原始残差、杠杆值和标准化残差（不直接用 `rstandard()`）。
+
+
+### 3. 学生化残差的手动计算与比对
+
+要求：
+- 手动计算每个观测的学生化残差（即去掉该点后重新拟合，得到 $\hat{\sigma}_{(i)}$）。
+- 与 `rstudent(fit)` 的结果比对。
+- 用 `ggplot2` 绘制学生化残差与鳍长的散点图。
+- 结合`talk04.qmd`内容，给出典型残差图示例。
+
+*提示：手动计算时可用循环或 apply，效率不重要，重在理解。*
+
+
+### 4. 补充说明
+
+- 有时“标准化残差”指 $e_i/\hat{\sigma}$，有时指 $e_i/(\hat{\sigma}\sqrt{1-h_{ii}})$，有时又叫 internally studentized residual。
+- “学生化残差”通常指 externally studentized residual，即 $e_i/(\hat{\sigma}_{(i)}\sqrt{1-h_{ii}})$。
+- 注意辨别不同教材和软件的定义。
+
+
+## Part 3：异方差性与`nlme`包的`varFunc`建模
+
+- 解释异方差性的概念、成因及其对回归分析的影响。
+- 介绍异方差性的诊断方法（如残差图、等级相关系数法等）。
+- 说明加权最小二乘法（WLS）的基本思想。
+- 重点介绍`nlme`包中`gls()`函数的用法，如何通过`weights`参数指定不同的`varFunc`类函数（如`varIdent`、`varPower`、`varExp`等）来建模不同的误差项方差结构。
+- 给出典型的 R 代码示例，说明如何拟合、比较和诊断带有异方差结构的回归模型。
+- 总结如何根据数据特征选择合适的`varFunc`函数。
+
+
+
+## 文档表达与规范
+
+1. 文档结构清晰：有分节标题、列表、必要文字说明。
+2. 代码与结果对应，可复现。
+3. 每个部分有结论文字，而不只给代码。
+4. `qmd` 成功渲染出 `html`。
+
+
+
+## AI 使用声明（必填模板）
+请在文末保留并填写以下模板（未使用也要填写）。
+
+### 情况 1：我使用了 AI 工具
+
+- 工具名称：
+- 具体使用环节（如：报错排查 / 语法查询 / 代码草稿）：
+- 我做的人工核查与修改：
+- 我确认并对最终提交内容负责：是
+
+### 情况 2：我未使用 AI 工具
+
+
+- 本次作业未使用任何 AI 工具。
+- 我确认并对最终提交内容负责：是
