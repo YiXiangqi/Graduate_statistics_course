@@ -35,7 +35,10 @@ library(palmerpenguins)
     - 加权最小二乘法（WLS）与R实现
 :::
 
-## 线性回归的基本假设
+# 线性回归的基本假设
+
+##
+
 线性回归模型的基本假设包括：
 
 ::: incremental
@@ -45,6 +48,8 @@ library(palmerpenguins)
 4. 正态性：误差项服从正态分布。
 5. *无多重共线性(多元线性回归)：解释变量之间不存在高度相关性。*
 :::
+
+# 线性回归模型的理论基础
 
 ## 一元线性回归 {.scrollable}
 对于如下数据：
@@ -75,7 +80,9 @@ Cov(\varepsilon_i,\varepsilon_j) = \begin{cases}
 \end{cases} \qquad i, j = 1, \dots, n
 $$
 
-这个假定常称为高斯-马尔可夫假定（Gauss-Markov assumptions）。***$x_i$非随机变量***，易得：
+这个假定常称为高斯-马尔可夫假定（Gauss-Markov assumptions）。
+
+***$x_i$非随机变量***，易得：
 $$
 E(y_i) = \beta_0 + \beta_1 x_i \\
 Cov(y_i,y_j) = \begin{cases}
@@ -204,6 +211,21 @@ $$
 \sum_{i=1}^n x_i e_i = 0
 $$
 
+***残差的期望和方差***如下：
+$$
+E(e_i) = 0 \\
+var(e_i) = \sigma^2 (1 - h_{ii})
+$$
+其中$h_{ii}$是第$i$个观测值的杠杆值：
+$$
+h_{ii} = \frac{1}{n} + \frac{(x_i - \overline{x})^2}{\sum_{j=1}^n (x_j - \overline{x})^2}
+$$
+满足$\frac{1}{n} \leq h_{ii} < 1$。因此，残差的方差随杠杆值的增大而减小。
+
+::: callout-note
+杠杆值衡量的是观测值在自变量空间中的位置，杠杆值越大，说明该观测值在自变量空间中越偏离其他观测值。
+:::
+
 ## 最小二乘估计的性质：线性{.scrollable}
 
 由于：
@@ -217,6 +239,10 @@ $$
 所以$\hat{\beta_1}$是$y_i$的线性组合。同理可得$\hat{\beta_0}$也是$y_i$的线性组合。
 
 ## 最小二乘估计的性质：无偏性{.scrollable}
+已知：
+$$
+\hat{\beta_1} = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}y_i
+$$
 $\hat{\beta_1}$的期望：
 $$
 \begin{align*}
@@ -255,6 +281,7 @@ $$
 :::
 
 另外，两个估计值间的协方差为：
+
 $$
 cov(\hat{\beta_0}, \hat{\beta_1}) = -\frac
 {\overline{x}\sigma^2}{\sum_{i=1}^n (x_i - \overline{x})^2}
@@ -470,6 +497,8 @@ $$
 > 探索:
 最大似然估计法（Maximum Likelihood Estimation, MLE）是另一种常用的参数估计方法。对于一元线性回归模型，在满足正态假设的前提下，最小二乘估计和最大似然估计是等价的。
 
+# 线性回归模型的诊断与改进
+
 ## 异方差性 {.scrollable}
 对于随机误差项有如下假定：
 $$
@@ -502,14 +531,18 @@ $$
 
 > 如果满足同方差性假设，残差与拟合值之间或者和自变量之间应该呈现出怎样的关系?
 
-## 异方差性的诊断：残差图 {auto-animate="true"}
+## 异方差性的诊断：残差图 {.scrollable}
 
 残差的期望和方差如下：
 $$
 E(e_i) = 0 \\
 var(e_i) = \sigma^2 (1 - h_{ii})
 $$
-其中$h_{ii}$是第$i$个观测值的杠杆值，满足$0 \leq h_{ii} \leq 1$。因此，残差的方差随杠杆值的增大而减小。
+其中$h_{ii}$是第$i$个观测值的杠杆值：
+$$
+h_{ii} = \frac{1}{n} + \frac{(x_i - \overline{x})^2}{\sum_{j=1}^n (x_j - \overline{x})^2}
+$$
+满足$\frac{1}{n} \leq h_{ii} < 1$。因此，残差的方差随杠杆值的增大而减小。
 
 定义标准化残差如下：
 $$
@@ -585,12 +618,6 @@ cor_test
 
 > 探索：其它异方差的诊断方法。
 
-## 不同的残差
-
-- raw residuals：$e_i = y_i - \hat{y}_i$
-- standardized residuals：$r_i = \frac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}$
-- studentized residuals：$t_i = \frac{e_i}{\hat{\sigma}_{(i)} \sqrt{1 - h_{ii}}}$，其中$\hat{\sigma}_{(i)}$是去掉第$i$个观测值后的回归标准差。
-
 ## 异方差的处理：加权最小二乘法 {.scrollable}
 OLS最小化离差平方和：
 $$
@@ -621,43 +648,48 @@ $$
 
  为了消除异方差性的影响，使不同观测值的地位相同，权重通常取为观测值误差项方差的倒数，即$w_i = 1/\sigma_i^2$。
 
-$\sigma_i^2$通常是未知的，但当起随自变量（或其他变量）系统变化时，可以利用这种关系。例如，如果$\sigma_i^2$与$x_i$成正比，即$\sigma_i^2 = \sigma^2 x_i^2$，则可以取权重为$w_i = 1/x_i^2$。
+$\sigma_i$通常是未知的，但当其随自变量（或其他变量）系统变化时，可以利用这种关系。例如，如果$\sigma_i$与$x_i$成正比，即$\sigma_i^2 = \sigma^2 x_i^2$，则可以取权重为$w_i = 1/x_i^2$。
 
 ## 异方差的处理：`nlme`包的`gls()`函数 {.scrollable}
 
-在R中，可以使用`nlme`包的`gls()`函数来拟合加权最小二乘回归模型。该函数允许用户指定不同的权重结构，以处理异方差性问题。
+用`nlme`包[^1]的`gls()`函数来拟合WLS模型，指定不同的权重结构。例如：
 
-例如：
+[^1]: `nlme`包括在了base R中，无需而外安装。
+
 ```{r}
 #| echo: false
 penguins |>
-  select(body_mass_g, bill_length_mm) |>
-  drop_na() |>
-  mutate(
-    fitted = fitted(penguins_lm_m0),
-    resid_raw = resid(penguins_lm_m0),
-    resid_std = rstandard(penguins_lm_m0),
-    ratio = resid_raw / resid_std
-  ) |>
-  pivot_longer(
-    cols = c(resid_raw, resid_std),
-    names_to = "resid_type",
-    values_to = "resid"
-  ) |>
-  ggplot(aes(x = bill_length_mm, y = resid, color = resid_type)) +
-  geom_point() +
-  facet_wrap(
-    ~resid_type,
-    scales = "free_y",
-    labeller = as_labeller(c(
-      resid_raw = "Raw Residuals",
-      resid_std = "Standardized Residuals"
-    ))
-  ) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
-  labs(x = "Bill length (mm)", y = "Residuals") +
-  theme_bw() +
-  theme(legend.position = "none")
+    select(body_mass_g, bill_length_mm) |>
+    drop_na() |>
+    mutate(
+        fitted = fitted(penguins_lm_m0),
+        resid_raw = resid(penguins_lm_m0),
+        resid_std = rstandard(penguins_lm_m0),
+        ratio = resid_raw / resid_std
+    ) |>
+    pivot_longer(
+        cols = c(resid_raw, resid_std),
+        names_to = "resid_type",
+        values_to = "resid"
+    ) |>
+    ggplot(aes(x = bill_length_mm, y = resid, color = resid_type)) +
+    geom_point() +
+    facet_wrap(
+        ~resid_type,
+        scales = "free_y",
+        labeller = as_labeller(c(
+            resid_raw = "Raw Residuals",
+            resid_std = "Standardized Residuals"
+        ))
+    ) +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
+    labs(x = "Bill length (mm)", y = "Residuals") +
+    theme_bw() +
+    theme(
+        legend.position = "none",
+        axis.text = element_text(size = 16),
+        axis.title = element_text(size = 16)
+    )
 ```
 
 ## 异方差的处理：`nlme`包的`gls()`函数 {.scrollable}
@@ -750,10 +782,11 @@ model_comparison
 `nlme`包提供了多种`varFunc`函数来处理不同类型的异方差性问题：
 
 - `varIdent(form = ~1 | group)`：允许不同组别具有不同的方差。
-- `varExp(form = ~ covariate)`：方差随协变量的指数函数变化。
 - `varPower(form = ~ covariate)`：方差随协变量的幂函数变化。
-- `varConstPower(form = ~ covariate)`：方差随协变量的幂函数变化，但具有常数项。
-- `varFixed(value)`：方差为固定值，适用于已知方差结构的情况。
+- `varExp(form = ~ covariate)`：$var(\varepsilon_i) = \sigma^2e^{2\delta|covariate_i|}$。
+- `varConstPower(form = ~ covariate)`：$var(\varepsilon_i) = \sigma^2(\delta_1 + |covariate_i|^{\delta_2})^2$，其中$\delta_1$必须大于0，$\delta_2$无限制，都是需要拟合的参数。
+- `varFixed(~ covariate)`：$var(\varepsilon_i) = \sigma^2|covariate_i|$
+
 选择合适的`varFunc`函数取决于数据的特征和异方差性的类型，可以通过比较不同模型的拟合效果来确定最佳的处理方法。
 
 ## `varIdent()`函数的使用 {.scrollable}
@@ -826,3 +859,9 @@ iris |>
 - 应用回归分析（R语言版），何晓群，电子工业出版社，2017
 - Mixed effects Models in S and S-Plus(pages 206-214) by Pinheiro and Bates, Springer, 2000
 - Mixed Effects Models And Extensions in Ecology with R (pages 72 - 84), by Alain F. Zuur, Elena N. Ieno, Neil Walker, Anatoly A. Saveliev, Graham M. Smith, Springer, 2009
+
+## 不同的残差
+
+- raw residuals：$e_i = y_i - \hat{y}_i$
+- standardized residuals：$r_i = \frac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}$
+- studentized residuals：$t_i = \frac{e_i}{\hat{\sigma}_{(i)} \sqrt{1 - h_{ii}}}$，其中$\hat{\sigma}_{(i)}$是去掉第$i$个观测值后的回归标准差。

@@ -8,8 +8,9 @@ format:
     toc: true
     toc-depth: 3
     number-sections: true
+    df-print: tibble
 execute:
-  echo: false
+  echo: true
   warning: false
   message: false
 ---
@@ -83,14 +84,52 @@ execute:
 - 明确独立样本 t 检验的适用场景和基本用法。
 - 分析`Biscoe`岛上的`Adelie`企鹅和`Dream`岛上的`Adelie`企鹅在鳍长上是否存在显著差异。
 
+```{r}
+library(palmerpenguins)
+library(tidyverse)
+```
+
+```{r}
+# 分析`Biscoe`岛上的`Adelie`企鹅和`Dream`岛上的`Adelie`企鹅在鳍长上是否存在显著差异。
+penguins |>
+  filter(species == "Adelie", island %in% c("Biscoe", "Dream")) |> 
+  t.test(flipper_length_mm ~ island, data = _)
+```
 ### A2. 单样本 t 检验（8 分）
 - 自行学习单样本 t 检验的应用场景和基本用法。
 - 分析`sleep`数据集中`group`为`1`中受试者的睡眠是否有显著增加，并简要解释结果。
+
+```{r}
+sleep
+```
+
+```{r}
+# 分析`sleep`数据集中`group`为`1`中受试者的睡眠是否有显著增加，并简要解释结果。
+sleep |>
+  filter(group == 1) |>
+  pull(extra) |>
+  t.test(mu = 0, alternative = "greater")
+```
+
 
 ### A3. 配对样本 t 检验（10 分）
 
 - 自行学习配对样本 t 检验的应用场景和基本用法。
 - 分析`sleep`数据集中两种药物在增加睡眠时间上是否存在显著差异，并简要解释结果。
+
+
+```{r}
+# 分析`sleep`数据集中两种药物在增加睡眠时间上是否存在显著差异，并简要解释结果。
+sleep_wide <-
+  sleep |>
+    pivot_wider(names_from = group, values_from = extra, names_prefix = "group")
+sleep_wide
+
+sleep_1 <- sleep_wide$group1
+sleep_2 <- sleep_wide$group2
+t.test(sleep_1, sleep_2, paired = TRUE)
+```
+
 - 复现下图：
 
 ```{r}
@@ -121,11 +160,36 @@ sleep %>%
 ### B1. One-way ANOVA（5 分）
 - 明确单因素方差分析的适用场景和基本用法。
 - 分析`ToothGrowth`数据集中不同剂量的`VC`对牙本质细胞长度（length of odontoblasts）的影响是否存在显著差异，并简要解释结果。
+
+```{r}
+ToothGrowth
+```
+```{r}
+# 分析`ToothGrowth`数据集中不同剂量的`VC`对牙本质细胞长度（length of odontoblasts）的影响是否存在显著差异，并简要解释结果。
+ToothGrowth |>
+  filter(supp == "VC") |>
+  aov(len ~ factor(dose), data = _) |>
+  summary()
+```
 - 若存在差异，当剂量从 0.5 增加到 1 时，牙本质细胞长度是否有显著变化？当剂量从 1 增加到 2 时，牙本质细胞长度是否有显著变化？
+
+```{r}
+ToothGrowth |>
+  filter(supp == "VC") |>
+  aov(len ~ factor(dose), data = _) |>
+  TukeyHSD()
+```
 
 ### B2. Two-way ANOVA（10 分）
 - 自行学习双因素方差分析的应用场景和基本用法，重点理解交互作用的概念。
 - 分析`ToothGrowth`数据集中不同类型和剂量的补充剂对牙本质细胞长度的影响是否存在显著差异，并简要解释结果。
+
+```{r}
+ToothGrowth |>
+  aov(len ~ supp * factor(dose), data = _) |>
+  summary()
+```
+
 - 复现下图：柱状图，y轴为不同类型补充剂，x轴为牙本质细胞长度，柱子颜色区分补充剂剂量，柱子长度表示样本均值，并添加误差线表示样本标准差。
 
 ***提示：配色用`scale_fill_brewer(palette = "Set2")`***
@@ -156,6 +220,16 @@ ToothGrowth |>
 - 自行学习重复测量方差分析的应用场景和基本用法。
 - `CO2`数据集中，对于产自`Quebec`且未经过冷处理`nonchilled`的植物，分析不同浓度的二氧化碳对植物的CO<sub>2</sub>吸收速率的影响是否存在显著差异，并简要解释结果。***注意：这里将`conc`作为分类变量处理。***
 
+```{r}
+CO2
+```
+
+```{r}
+CO2 |>
+  filter(Type == "Quebec", Treatment == "nonchilled") |>
+  aov(uptake ~ factor(conc) + Error(conc/Plant), data = _) |>
+  summary()
+```
 
 
 ## 模块 C：相关分析（20 分）
@@ -164,11 +238,8 @@ ToothGrowth |>
 
 - 明确皮尔逊相关分析的适用场景和基本用法。
 - 计算`palmerpenguins`包`penguins`数据集中`bill_length_mm`，`bill_depth_mm`，`flipper_length_mm`和`body_mass_g`两两之间的皮尔逊相关系数，并进行显著性检验。
-- 复现下图：
 
 ```{r}
-library(corrplot)
-library(palmerpenguins)
 penguins_cor <-
   penguins |>
   select(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g) |>
@@ -180,6 +251,11 @@ penguins_cor <-
   ) |>
   drop_na() |>
   cor()
+penguins_cor
+```
+
+```{r}
+library(corrplot)
 penguins_test <-
   penguins |>
   select(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g) |>
@@ -191,6 +267,11 @@ penguins_test <-
   ) |>
   drop_na() |>
   cor.mtest()
+penguins_test
+```
+- 复现下图：
+
+```{r}
 
 corrplot(
   penguins_cor,
@@ -231,7 +312,6 @@ anscombe_tidy
 
 - 计算每套数据中 x 和 y 的均值、标准差、相关系数，你看到了什么？
 ```{r}
-#| eval: false
 anscombe_tidy |>
   group_by(set) |>
   summarise(
@@ -246,7 +326,6 @@ anscombe_tidy |>
 
 - 画出每套数据的散点图，你看到了什么？
 ```{r}
-#| eval: false
 anscombe_tidy |>
   ggplot() +
   geom_point(aes(x = x, y = y), color = "steelblue", size = 3) +
@@ -261,19 +340,19 @@ anscombe_tidy |>
 
 - 谈谈你对上述结果的理解：皮尔逊相关系数有哪些局限？在借助于图像之外，还有什么手段可以识别出相关分析中潜藏的异常情况？
 
----
 ## 模块 D：线性回归（20 分）
 
 ### D1. 数据读入（5 分）
 
 - 将储存在`data/mtcars.csv`中的数据读入 R 中，命名为`mtcars_data`，并展示前几行数据。
-
 > 注意:  
 - `mtcars.csv`文件头部以`#`开头的几行是关于数据的描述性文字，不是数据本身，正确读入数据需要跳过这些行。建议通过查阅`read_csv()`函数的文档来找到解决方案。  
 - 读入时通过参数设置指定`vs`、`am`两列为因子变量，`cyl`、`gear`和`carb`三列为整数型变量。
 
+
+
 ```{r}
-mtcars_data <- read_csv("data/mtcars.csv", skip = 3,
+mtcars_data <- read_csv("data/mtcars.csv", skip = 3, #comment = "#",
                         col_types = cols(
                           vs = col_factor(),
                           am = col_factor(),
@@ -281,11 +360,8 @@ mtcars_data <- read_csv("data/mtcars.csv", skip = 3,
                           gear = col_integer(),
                           carb = col_integer()
                         ))
-```
-
-```{r}
-#| echo: ture
 mtcars_data
+
 ```
 
 ### D2. 绘制如下`mpg`与`hp`的关系图（5 分）
@@ -313,14 +389,33 @@ lm_model <- lm(mpg ~ hp, data = mtcars_data)
 - 使用D3中建立的线性回归模型进行预测，在原散点图上叠加绘制回归线和**99%的预测区间**。
 
 ```{r}
-hp_new <- tibble(hp = seq(min(mtcars_data$hp), max(mtcars_data$hp), length.out = 100))
-mtcars_pred<- predict(lm_model, newdata = hp_new, interval = "prediction", level = 0.99) |> as_tibble() |> bind_cols(hp_new)
+hp_new <- tibble(
+  hp = seq(min(mtcars_data$hp), max(mtcars_data$hp), length.out = 100)
+)
+mtcars_pred <- predict(
+  lm_model,
+  newdata = hp_new,
+  interval = "prediction",
+  level = 0.99
+) |>
+  as_tibble() |>
+  bind_cols(hp_new)
 
 mtcars_data |>
   ggplot(aes(x = hp, y = mpg)) +
   geom_point(color = "steelblue", size = 3) +
-  geom_line(data = mtcars_pred, aes(x = hp, y = fit), color = "tomato", size = 1) +
-  geom_ribbon(data = mtcars_pred, aes(x = hp, y = fit, ymin = lwr, ymax = upr), alpha = 0.2, fill = "tomato") +
+  geom_line(
+    data = mtcars_pred,
+    aes(x = hp, y = fit),
+    color = "tomato",
+    size = 1
+  ) +
+  geom_ribbon(
+    data = mtcars_pred,
+    aes(x = hp, y = fit, ymin = lwr, ymax = upr),
+    alpha = 0.2,
+    fill = "tomato"
+  ) +
   labs(x = "Horsepower (hp)", y = "Miles per gallon (mpg)") +
   theme_bw() +
   theme(
@@ -339,6 +434,14 @@ mtcars_data |>
 ## Bonus： Repeated-measures ANOVA （可选，10分）
 
 - 在 B3 的基础上，分析对于产自`Quebec`的植物，冷处理是否对 CO<sub>2</sub> 吸收速率有显著影响，该影响在不同环境浓度CO<sub>2</sub>下是否存在差异。
+
+```{r}
+CO2 |>
+  filter(Type == "Quebec") |>
+  aov(uptake ~ Treatment * factor(conc) + Error(conc/Plant), data = _) |>
+  summary()
+```
+
 - 复现下图；了解如何显示上、下标、希腊字母等，推荐使用`ggtext`包。
 ```{r}
 library(ggtext)

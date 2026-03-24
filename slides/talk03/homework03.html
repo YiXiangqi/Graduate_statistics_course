@@ -252,6 +252,29 @@ Note
 <li>明确独立样本 t 检验的适用场景和基本用法。</li>
 <li>分析<code>Biscoe</code>岛上的<code>Adelie</code>企鹅和<code>Dream</code>岛上的<code>Adelie</code>企鹅在鳍长上是否存在显著差异。</li>
 </ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(palmerpenguins)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 分析`Biscoe`岛上的`Adelie`企鹅和`Dream`岛上的`Adelie`企鹅在鳍长上是否存在显著差异。</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>penguins <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(species <span class="sc">==</span> <span class="st">"Adelie"</span>, island <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Biscoe"</span>, <span class="st">"Dream"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t.test</span>(flipper_length_mm <span class="sc">~</span> island, <span class="at">data =</span> _)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  flipper_length_mm by island
+t = -0.69749, df = 91.536, p-value = 0.4873
+alternative hypothesis: true difference in means between group Biscoe and group Dream is not equal to 0
+95 percent confidence interval:
+ -3.604071  1.730695
+sample estimates:
+mean in group Biscoe  mean in group Dream 
+            188.7955             189.7321 </code></pre>
+</div>
+</div>
 </section>
 <section id="a2.-单样本-t-检验8-分" class="level3" data-number="4.2">
 <h3 data-number="4.2" class="anchored" data-anchor-id="a2.-单样本-t-检验8-分"><span class="header-section-number">4.2</span> A2. 单样本 t 检验（8 分）</h3>
@@ -259,19 +282,123 @@ Note
 <li>自行学习单样本 t 检验的应用场景和基本用法。</li>
 <li>分析<code>sleep</code>数据集中<code>group</code>为<code>1</code>中受试者的睡眠是否有显著增加，并简要解释结果。</li>
 </ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sleep</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 3
+   extra group ID   
+   &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt;
+ 1   0.7 1     1    
+ 2  -1.6 1     2    
+ 3  -0.2 1     3    
+ 4  -1.2 1     4    
+ 5  -0.1 1     5    
+ 6   3.4 1     6    
+ 7   3.7 1     7    
+ 8   0.8 1     8    
+ 9   0   1     9    
+10   2   1     10   
+11   1.9 2     1    
+12   0.8 2     2    
+13   1.1 2     3    
+14   0.1 2     4    
+15  -0.1 2     5    
+16   4.4 2     6    
+17   5.5 2     7    
+18   1.6 2     8    
+19   4.6 2     9    
+20   3.4 2     10   </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 分析`sleep`数据集中`group`为`1`中受试者的睡眠是否有显著增加，并简要解释结果。</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>sleep <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(group <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(extra) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t.test</span>(<span class="at">mu =</span> <span class="dv">0</span>, <span class="at">alternative =</span> <span class="st">"greater"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    One Sample t-test
+
+data:  pull(filter(sleep, group == 1), extra)
+t = 1.3257, df = 9, p-value = 0.1088
+alternative hypothesis: true mean is greater than 0
+95 percent confidence interval:
+ -0.2870553        Inf
+sample estimates:
+mean of x 
+     0.75 </code></pre>
+</div>
+</div>
 </section>
 <section id="a3.-配对样本-t-检验10-分" class="level3" data-number="4.3">
 <h3 data-number="4.3" class="anchored" data-anchor-id="a3.-配对样本-t-检验10-分"><span class="header-section-number">4.3</span> A3. 配对样本 t 检验（10 分）</h3>
 <ul>
 <li>自行学习配对样本 t 检验的应用场景和基本用法。</li>
 <li>分析<code>sleep</code>数据集中两种药物在增加睡眠时间上是否存在显著差异，并简要解释结果。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 分析`sleep`数据集中两种药物在增加睡眠时间上是否存在显著差异，并简要解释结果。</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>sleep_wide <span class="ot">&lt;-</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  sleep <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> group, <span class="at">values_from =</span> extra, <span class="at">names_prefix =</span> <span class="st">"group"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>sleep_wide</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 3
+   ID    group1 group2
+   &lt;fct&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1 1        0.7    1.9
+ 2 2       -1.6    0.8
+ 3 3       -0.2    1.1
+ 4 4       -1.2    0.1
+ 5 5       -0.1   -0.1
+ 6 6        3.4    4.4
+ 7 7        3.7    5.5
+ 8 8        0.8    1.6
+ 9 9        0      4.6
+10 10       2      3.4</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sleep_1 <span class="ot">&lt;-</span> sleep_wide<span class="sc">$</span>group1</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>sleep_2 <span class="ot">&lt;-</span> sleep_wide<span class="sc">$</span>group2</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(sleep_1, sleep_2, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Paired t-test
+
+data:  sleep_1 and sleep_2
+t = -4.0621, df = 9, p-value = 0.002833
+alternative hypothesis: true mean difference is not equal to 0
+95 percent confidence interval:
+ -2.4598858 -0.7001142
+sample estimates:
+mean difference 
+          -1.58 </code></pre>
+</div>
+</div>
+<ul>
 <li>复现下图：</li>
 </ul>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>sleep <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> group, <span class="at">y =</span> extra)) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">color =</span> <span class="fu">as.factor</span>(ID))) <span class="sc">+</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Drug 1"</span>, <span class="st">"Drug 2"</span>)) <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Subject ID"</span>, <span class="at">y =</span> <span class="st">"Increase in sleep time (hours)"</span>) <span class="sc">+</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"top"</span>,</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="homework03_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="homework03_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -289,22 +416,109 @@ Note
 <ul>
 <li>明确单因素方差分析的适用场景和基本用法。</li>
 <li>分析<code>ToothGrowth</code>数据集中不同剂量的<code>VC</code>对牙本质细胞长度（length of odontoblasts）的影响是否存在显著差异，并简要解释结果。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ToothGrowth</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 60 × 3
+     len supp   dose
+   &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt;
+ 1   4.2 VC      0.5
+ 2  11.5 VC      0.5
+ 3   7.3 VC      0.5
+ 4   5.8 VC      0.5
+ 5   6.4 VC      0.5
+ 6  10   VC      0.5
+ 7  11.2 VC      0.5
+ 8  11.2 VC      0.5
+ 9   5.2 VC      0.5
+10   7   VC      0.5
+# ℹ 50 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 分析`ToothGrowth`数据集中不同剂量的`VC`对牙本质细胞长度（length of odontoblasts）的影响是否存在显著差异，并简要解释结果。</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>ToothGrowth <span class="sc">|&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(supp <span class="sc">==</span> <span class="st">"VC"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aov</span>(len <span class="sc">~</span> <span class="fu">factor</span>(dose), <span class="at">data =</span> _) <span class="sc">|&gt;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+factor(dose)  2   1650   824.7   67.07 3.36e-11 ***
+Residuals    27    332    12.3                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
 <li>若存在差异，当剂量从 0.5 增加到 1 时，牙本质细胞长度是否有显著变化？当剂量从 1 增加到 2 时，牙本质细胞长度是否有显著变化？</li>
 </ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ToothGrowth <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(supp <span class="sc">==</span> <span class="st">"VC"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aov</span>(len <span class="sc">~</span> <span class="fu">factor</span>(dose), <span class="at">data =</span> _) <span class="sc">|&gt;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">TukeyHSD</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = len ~ factor(dose), data = filter(ToothGrowth, supp == "VC"))
+
+$`factor(dose)`
+       diff       lwr      upr    p adj
+1-0.5  8.79  4.901765 12.67824 1.75e-05
+2-0.5 18.16 14.271765 22.04824 0.00e+00
+2-1    9.37  5.481765 13.25824 6.60e-06</code></pre>
+</div>
+</div>
 </section>
 <section id="b2.-two-way-anova10-分" class="level3" data-number="5.2">
 <h3 data-number="5.2" class="anchored" data-anchor-id="b2.-two-way-anova10-分"><span class="header-section-number">5.2</span> B2. Two-way ANOVA（10 分）</h3>
 <ul>
 <li>自行学习双因素方差分析的应用场景和基本用法，重点理解交互作用的概念。</li>
 <li>分析<code>ToothGrowth</code>数据集中不同类型和剂量的补充剂对牙本质细胞长度的影响是否存在显著差异，并简要解释结果。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ToothGrowth <span class="sc">|&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aov</span>(len <span class="sc">~</span> supp <span class="sc">*</span> <span class="fu">factor</span>(dose), <span class="at">data =</span> _) <span class="sc">|&gt;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+supp               1  205.3   205.3  15.572 0.000231 ***
+factor(dose)       2 2426.4  1213.2  92.000  &lt; 2e-16 ***
+supp:factor(dose)  2  108.3    54.2   4.107 0.021860 *  
+Residuals         54  712.1    13.2                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
 <li>复现下图：柱状图，y轴为不同类型补充剂，x轴为牙本质细胞长度，柱子颜色区分补充剂剂量，柱子长度表示样本均值，并添加误差线表示样本标准差。</li>
 </ul>
 <p><strong><em>提示：配色用<code>scale_fill_brewer(palette = "Set2")</code></em></strong></p>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ToothGrowth <span class="sc">|&gt;</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">dose =</span> <span class="fu">factor</span>(dose, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="fl">0.5</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(supp, dose) <span class="sc">|&gt;</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">mean_len =</span> <span class="fu">mean</span>(len), <span class="at">sd_len =</span> <span class="fu">sd</span>(len), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean_len, <span class="at">y =</span> supp, <span class="at">fill =</span> dose)) <span class="sc">+</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>)) <span class="sc">+</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> mean_len <span class="sc">-</span> sd_len, <span class="at">xmax =</span> mean_len <span class="sc">+</span> sd_len), <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>), <span class="at">width =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Length of odontoblasts"</span>, <span class="at">fill =</span> <span class="st">"Dose"</span>) <span class="sc">+</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">guides</span>(<span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">title =</span> <span class="st">"Dose (mg/day)"</span>, <span class="at">reverse =</span> <span class="cn">TRUE</span>)) <span class="sc">+</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set2"</span>) <span class="sc">+</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>)</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="homework03_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="homework03_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -316,6 +530,48 @@ Note
 <li>自行学习重复测量方差分析的应用场景和基本用法。</li>
 <li><code>CO2</code>数据集中，对于产自<code>Quebec</code>且未经过冷处理<code>nonchilled</code>的植物，分析不同浓度的二氧化碳对植物的CO<sub>2</sub>吸收速率的影响是否存在显著差异，并简要解释结果。<strong><em>注意：这里将<code>conc</code>作为分类变量处理。</em></strong></li>
 </ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>CO2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 84 × 5
+   Plant Type   Treatment   conc uptake
+   &lt;ord&gt; &lt;fct&gt;  &lt;fct&gt;      &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Qn1   Quebec nonchilled    95   16  
+ 2 Qn1   Quebec nonchilled   175   30.4
+ 3 Qn1   Quebec nonchilled   250   34.8
+ 4 Qn1   Quebec nonchilled   350   37.2
+ 5 Qn1   Quebec nonchilled   500   35.3
+ 6 Qn1   Quebec nonchilled   675   39.2
+ 7 Qn1   Quebec nonchilled  1000   39.7
+ 8 Qn2   Quebec nonchilled    95   13.6
+ 9 Qn2   Quebec nonchilled   175   27.3
+10 Qn2   Quebec nonchilled   250   37.1
+# ℹ 74 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>CO2 <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Type <span class="sc">==</span> <span class="st">"Quebec"</span>, Treatment <span class="sc">==</span> <span class="st">"nonchilled"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aov</span>(uptake <span class="sc">~</span> <span class="fu">factor</span>(conc) <span class="sc">+</span> <span class="fu">Error</span>(conc<span class="sc">/</span>Plant), <span class="at">data =</span> _) <span class="sc">|&gt;</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Error: conc
+             Df Sum Sq Mean Sq
+factor(conc)  1  912.6   912.6
+
+Error: conc:Plant
+          Df Sum Sq Mean Sq F value Pr(&gt;F)
+Residuals  2  69.67   34.84               
+
+Error: Within
+             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+factor(conc)  5  821.3  164.27   51.53 1.07e-07 ***
+Residuals    12   38.3    3.19                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="模块-c相关分析20-分" class="level2" data-number="6">
@@ -325,13 +581,84 @@ Note
 <ul>
 <li>明确皮尔逊相关分析的适用场景和基本用法。</li>
 <li>计算<code>palmerpenguins</code>包<code>penguins</code>数据集中<code>bill_length_mm</code>，<code>bill_depth_mm</code>，<code>flipper_length_mm</code>和<code>body_mass_g</code>两两之间的皮尔逊相关系数，并进行显著性检验。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>penguins_cor <span class="ot">&lt;-</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  penguins <span class="sc">|&gt;</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g) <span class="sc">|&gt;</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">bill length</span><span class="st">`</span> <span class="ot">=</span> bill_length_mm,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">bill depth</span><span class="st">`</span> <span class="ot">=</span> bill_depth_mm,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">flipper length</span><span class="st">`</span> <span class="ot">=</span> flipper_length_mm,</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">body mass</span><span class="st">`</span> <span class="ot">=</span> body_mass_g</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>()</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>penguins_cor</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>               bill length bill depth flipper length  body mass
+bill length      1.0000000 -0.2350529      0.6561813  0.5951098
+bill depth      -0.2350529  1.0000000     -0.5838512 -0.4719156
+flipper length   0.6561813 -0.5838512      1.0000000  0.8712018
+body mass        0.5951098 -0.4719156      0.8712018  1.0000000</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>penguins_test <span class="ot">&lt;-</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  penguins <span class="sc">|&gt;</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g) <span class="sc">|&gt;</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">bill length</span><span class="st">`</span> <span class="ot">=</span> bill_length_mm,</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">bill depth</span><span class="st">`</span> <span class="ot">=</span> bill_depth_mm,</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">flipper length</span><span class="st">`</span> <span class="ot">=</span> flipper_length_mm,</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">body mass</span><span class="st">`</span> <span class="ot">=</span> body_mass_g</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor.mtest</span>()</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>penguins_test</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$p
+                bill length   bill depth flipper length     body mass
+bill length    0.000000e+00 1.119662e-05   1.743974e-43  3.808283e-34
+bill depth     1.119662e-05 0.000000e+00   1.232734e-32  2.276941e-20
+flipper length 1.743974e-43 1.232734e-32   0.000000e+00 4.370681e-107
+body mass      3.808283e-34 2.276941e-20  4.370681e-107  0.000000e+00
+
+$lowCI
+               bill length bill depth flipper length  body mass
+bill length      1.0000000 -0.3328072      0.5912769  0.5220040
+bill depth      -0.3328072  1.0000000     -0.6496752 -0.5504192
+flipper length   0.5912769 -0.6496752      1.0000000  0.8430410
+body mass        0.5220040 -0.5504192      0.8430410  1.0000000
+
+$uppCI
+               bill length bill depth flipper length  body mass
+bill length      1.0000000 -0.1323004      0.7126403  0.6595358
+bill depth      -0.1323004  1.0000000     -0.5093379 -0.3851403
+flipper length   0.7126403 -0.5093379      1.0000000  0.8945990
+body mass        0.6595358 -0.3851403      0.8945990  1.0000000</code></pre>
+</div>
+</div>
+<ul>
 <li>复现下图：</li>
 </ul>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  penguins_cor,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"circle"</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"upper"</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">tl.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">tl.srt =</span> <span class="dv">45</span>,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">p.mat =</span> penguins_test<span class="sc">$</span>p.value,</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">sig.level =</span> <span class="fl">0.05</span>,</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">insig =</span> <span class="st">"blank"</span>,</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">diag =</span> <span class="cn">FALSE</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="homework03_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="homework03_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -344,35 +671,37 @@ Note
 <li><code>anscombe</code>中记录了4套关于 x 和 y 的数据</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>anscombe</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>anscombe</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   x1 x2 x3 x4    y1   y2    y3    y4
-1  10 10 10  8  8.04 9.14  7.46  6.58
-2   8  8  8  8  6.95 8.14  6.77  5.76
-3  13 13 13  8  7.58 8.74 12.74  7.71
-4   9  9  9  8  8.81 8.77  7.11  8.84
-5  11 11 11  8  8.33 9.26  7.81  8.47
-6  14 14 14  8  9.96 8.10  8.84  7.04
-7   6  6  6  8  7.24 6.13  6.08  5.25
-8   4  4  4 19  4.26 3.10  5.39 12.50
-9  12 12 12  8 10.84 9.13  8.15  5.56
-10  7  7  7  8  4.82 7.26  6.42  7.91
-11  5  5  5  8  5.68 4.74  5.73  6.89</code></pre>
+<pre><code># A tibble: 11 × 8
+      x1    x2    x3    x4    y1    y2    y3    y4
+   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1    10    10    10     8  8.04  9.14  7.46  6.58
+ 2     8     8     8     8  6.95  8.14  6.77  5.76
+ 3    13    13    13     8  7.58  8.74 12.7   7.71
+ 4     9     9     9     8  8.81  8.77  7.11  8.84
+ 5    11    11    11     8  8.33  9.26  7.81  8.47
+ 6    14    14    14     8  9.96  8.1   8.84  7.04
+ 7     6     6     6     8  7.24  6.13  6.08  5.25
+ 8     4     4     4    19  4.26  3.1   5.39 12.5 
+ 9    12    12    12     8 10.8   9.13  8.15  5.56
+10     7     7     7     8  4.82  7.26  6.42  7.91
+11     5     5     5     8  5.68  4.74  5.73  6.89</code></pre>
 </div>
 </div>
 <ul>
 <li>对其进行如下整理，得到<code>anscombe_tidy</code></li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>anscombe_tidy <span class="ot">&lt;-</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  anscombe <span class="sc">|&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">everything</span>(),</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols_vary =</span> <span class="st">"slowest"</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".value"</span>, <span class="st">"set"</span>),</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_pattern =</span> <span class="st">"(.)(.)"</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>anscombe_tidy</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>anscombe_tidy <span class="ot">&lt;-</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  anscombe <span class="sc">|&gt;</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">everything</span>(),</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols_vary =</span> <span class="st">"slowest"</span>,</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".value"</span>, <span class="st">"set"</span>),</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_pattern =</span> <span class="st">"(.)(.)"</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>anscombe_tidy</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 44 × 3
    set       x     y
@@ -393,13 +722,52 @@ Note
 <ul>
 <li>计算每套数据中 x 和 y 的均值、标准差、相关系数，你看到了什么？</li>
 </ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>anscombe_tidy <span class="sc">|&gt;</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(set) <span class="sc">|&gt;</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">y_mean =</span> <span class="fu">mean</span>(y),</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x_mean =</span> <span class="fu">mean</span>(x),</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y_sd =</span> <span class="fu">sd</span>(y),</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x_sd =</span> <span class="fu">sd</span>(x),</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">cor_xy =</span> <span class="fu">cor</span>(x, y),</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 6
+  set   y_mean x_mean  y_sd  x_sd cor_xy
+  &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 1       7.50      9  2.03  3.32  0.816
+2 2       7.50      9  2.03  3.32  0.816
+3 3       7.5       9  2.03  3.32  0.816
+4 4       7.50      9  2.03  3.32  0.817</code></pre>
+</div>
+</div>
 <ul>
 <li>画出每套数据的散点图，你看到了什么？</li>
 </ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>anscombe_tidy <span class="sc">|&gt;</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>set) <span class="sc">+</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"x"</span>, <span class="at">y =</span> <span class="st">"y"</span>) <span class="sc">+</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>)</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="homework03_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <ul>
 <li>谈谈你对上述结果的理解：皮尔逊相关系数有哪些局限？在借助于图像之外，还有什么手段可以识别出相关分析中潜藏的异常情况？</li>
 </ul>
-<hr>
 </section>
 </section>
 <section id="模块-d线性回归20-分" class="level2" data-number="7">
@@ -407,15 +775,22 @@ Note
 <section id="d1.-数据读入5-分" class="level3" data-number="7.1">
 <h3 data-number="7.1" class="anchored" data-anchor-id="d1.-数据读入5-分"><span class="header-section-number">7.1</span> D1. 数据读入（5 分）</h3>
 <ul>
-<li>将储存在<code>data/mtcars.csv</code>中的数据读入 R 中，命名为<code>mtcars_data</code>，并展示前几行数据。</li>
+<li>将储存在<code>data/mtcars.csv</code>中的数据读入 R 中，命名为<code>mtcars_data</code>，并展示前几行数据。 &gt; 注意:<br>
+</li>
+<li><code>mtcars.csv</code>文件头部以<code>#</code>开头的几行是关于数据的描述性文字，不是数据本身，正确读入数据需要跳过这些行。建议通过查阅<code>read_csv()</code>函数的文档来找到解决方案。<br>
+</li>
+<li>读入时通过参数设置指定<code>vs</code>、<code>am</code>两列为因子变量，<code>cyl</code>、<code>gear</code>和<code>carb</code>三列为整数型变量。</li>
 </ul>
-<blockquote class="blockquote">
-<p>注意:<br>
-- <code>mtcars.csv</code>文件头部以<code>#</code>开头的几行是关于数据的描述性文字，不是数据本身，正确读入数据需要跳过这些行。建议通过查阅<code>read_csv()</code>函数的文档来找到解决方案。<br>
-- 读入时通过参数设置指定<code>vs</code>、<code>am</code>两列为因子变量，<code>cyl</code>、<code>gear</code>和<code>carb</code>三列为整数型变量。</p>
-</blockquote>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mtcars_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>mtcars_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/mtcars.csv"</span>, <span class="at">skip =</span> <span class="dv">3</span>, <span class="co">#comment = "#",</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_types =</span> <span class="fu">cols</span>(</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">vs =</span> <span class="fu">col_factor</span>(),</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">am =</span> <span class="fu">col_factor</span>(),</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">cyl =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">gear =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">carb =</span> <span class="fu">col_integer</span>()</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>                        ))</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>mtcars_data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 32 × 11
      mpg   cyl  disp    hp  drat    wt  qsec vs    am     gear  carb
@@ -437,10 +812,18 @@ Note
 <section id="d2.-绘制如下mpg与hp的关系图5-分" class="level3" data-number="7.2">
 <h3 data-number="7.2" class="anchored" data-anchor-id="d2.-绘制如下mpg与hp的关系图5-分"><span class="header-section-number">7.2</span> D2. 绘制如下<code>mpg</code>与<code>hp</code>的关系图（5 分）</h3>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mtcars_data, <span class="fu">aes</span>(<span class="at">x =</span> hp, <span class="at">y =</span> mpg)) <span class="sc">+</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Horsepower (hp)"</span>, <span class="at">y =</span> <span class="st">"Miles per gallon (mpg)"</span>) <span class="sc">+</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="homework03_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="homework03_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -452,6 +835,9 @@ Note
 <li>以<code>mpg</code>为响应变量（因变量），<code>hp</code>为解释变量（自变量），建立一元线性回归模型。</li>
 <li>输出回归结果，并简要分析。</li>
 </ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp, <span class="at">data =</span> mtcars_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
 <section id="d4.-预测和绘图5-分" class="level3" data-number="7.4">
 <h3 data-number="7.4" class="anchored" data-anchor-id="d4.-预测和绘图5-分"><span class="header-section-number">7.4</span> D4. 预测和绘图（5 分）</h3>
@@ -459,10 +845,43 @@ Note
 <li>使用D3中建立的线性回归模型进行预测，在原散点图上叠加绘制回归线和<strong>99%的预测区间</strong>。</li>
 </ul>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>hp_new <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">hp =</span> <span class="fu">seq</span>(<span class="fu">min</span>(mtcars_data<span class="sc">$</span>hp), <span class="fu">max</span>(mtcars_data<span class="sc">$</span>hp), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>mtcars_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  lm_model,</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">newdata =</span> hp_new,</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">interval =</span> <span class="st">"prediction"</span>,</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">level =</span> <span class="fl">0.99</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(hp_new)</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>mtcars_data <span class="sc">|&gt;</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> hp, <span class="at">y =</span> mpg)) <span class="sc">+</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> mtcars_pred,</span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> hp, <span class="at">y =</span> fit),</span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"tomato"</span>,</span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">1</span></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(</span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> mtcars_pred,</span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> hp, <span class="at">y =</span> fit, <span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr),</span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.2</span>,</span>
+<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"tomato"</span></span>
+<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Horsepower (hp)"</span>, <span class="at">y =</span> <span class="st">"Miles per gallon (mpg)"</span>) <span class="sc">+</span></span>
+<span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb45-30"><a href="#cb45-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb45-31"><a href="#cb45-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb45-32"><a href="#cb45-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>)</span>
+<span id="cb45-33"><a href="#cb45-33" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="homework03_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="homework03_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -482,13 +901,65 @@ Note
 <h2 data-number="9" class="anchored" data-anchor-id="bonus-repeated-measures-anova-可选10分"><span class="header-section-number">9</span> Bonus： Repeated-measures ANOVA （可选，10分）</h2>
 <ul>
 <li>在 B3 的基础上，分析对于产自<code>Quebec</code>的植物，冷处理是否对 CO<sub>2</sub> 吸收速率有显著影响，该影响在不同环境浓度CO<sub>2</sub>下是否存在差异。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>CO2 <span class="sc">|&gt;</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Type <span class="sc">==</span> <span class="st">"Quebec"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aov</span>(uptake <span class="sc">~</span> Treatment <span class="sc">*</span> <span class="fu">factor</span>(conc) <span class="sc">+</span> <span class="fu">Error</span>(conc<span class="sc">/</span>Plant), <span class="at">data =</span> _) <span class="sc">|&gt;</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Error: conc
+             Df Sum Sq Mean Sq
+factor(conc)  1   1936    1936
+
+Error: conc:Plant
+          Df Sum Sq Mean Sq F value Pr(&gt;F)
+Treatment  1  79.15   79.15    2.94  0.162
+Residuals  4 107.68   26.92               
+
+Error: Within
+                       Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+Treatment               1   57.1   57.13  10.853  0.00305 ** 
+factor(conc)            5 1516.9  303.37  57.632 1.39e-12 ***
+Treatment:factor(conc)  5   13.8    2.77   0.526  0.75436    
+Residuals              24  126.3    5.26                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<ul>
 <li>复现下图；了解如何显示上、下标、希腊字母等，推荐使用<code>ggtext</code>包。</li>
 </ul>
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggtext)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>CO2 <span class="sc">|&gt;</span> </span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Type, Treatment, conc) <span class="sc">|&gt;</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">mean_uptake =</span> <span class="fu">mean</span>(uptake), <span class="at">sd_uptake =</span> <span class="fu">sd</span>(uptake), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> conc, <span class="at">y =</span> mean_uptake, <span class="at">color =</span> Treatment)) <span class="sc">+</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> mean_uptake <span class="sc">-</span> sd_uptake, <span class="at">ymax =</span> mean_uptake <span class="sc">+</span> sd_uptake), <span class="at">width =</span> <span class="dv">25</span>) <span class="sc">+</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>Type) <span class="sc">+</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Treatment"</span>) <span class="sc">+</span></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">"CO&lt;sub&gt;2&lt;/sub&gt; concentration (mL L&lt;sup&gt;-1&lt;/sup&gt;)"</span>) <span class="sc">+</span></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">"CO&lt;sub&gt;2&lt;/sub&gt; uptake (&amp;mu;mol m&lt;sup&gt;-2&lt;/sup&gt; s&lt;sup&gt;-1&lt;/sup&gt;)"</span>) <span class="sc">+</span></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"steelblue"</span>, <span class="st">"tomato"</span>)) <span class="sc">+</span></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.y =</span> <span class="fu">element_markdown</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.x =</span> <span class="fu">element_markdown</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),</span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"inside"</span>,</span>
+<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position.inside =</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.8</span>),</span>
+<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.25</span>)</span>
+<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="homework03_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="homework03_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

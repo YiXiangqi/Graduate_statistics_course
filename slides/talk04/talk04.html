@@ -228,8 +228,13 @@
 </ul></li>
 </ol>
 </section>
-<section id="线性回归的基本假设" class="slide level2">
-<h2>线性回归的基本假设</h2>
+<section>
+<section id="线性回归的基本假设" class="title-slide slide level1 center">
+<h1>线性回归的基本假设</h1>
+
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
 <p>线性回归模型的基本假设包括：</p>
 <ol type="1">
 <li class="fragment">线性关系：响应变量与解释变量之间存在线性关系。</li>
@@ -238,6 +243,11 @@
 <li class="fragment">正态性：误差项服从正态分布。</li>
 <li class="fragment"><em>无多重共线性(多元线性回归)：解释变量之间不存在高度相关性。</em></li>
 </ol>
+</section></section>
+<section>
+<section id="线性回归模型的理论基础" class="title-slide slide level1 center">
+<h1>线性回归模型的理论基础</h1>
+
 </section>
 <section id="一元线性回归" class="slide level2 scrollable">
 <h2>一元线性回归</h2>
@@ -264,7 +274,8 @@ Cov(\varepsilon_i,\varepsilon_j) = \begin{cases}
   0, &amp; i \neq j
 \end{cases} \qquad i, j = 1, \dots, n
 \]</span></p>
-<p>这个假定常称为高斯-马尔可夫假定（Gauss-Markov assumptions）。<strong><em><span class="math inline">\(x_i\)</span>非随机变量</em></strong>，易得： <span class="math display">\[
+<p>这个假定常称为高斯-马尔可夫假定（Gauss-Markov assumptions）。</p>
+<p><strong><em><span class="math inline">\(x_i\)</span>非随机变量</em></strong>，易得： <span class="math display">\[
 E(y_i) = \beta_0 + \beta_1 x_i \\
 Cov(y_i,y_j) = \begin{cases}
   \sigma^2, &amp; i = j \\
@@ -363,6 +374,25 @@ e_i = y_i - \hat{y}_i
 \sum_{i=1}^n e_i = 0 \\
 \sum_{i=1}^n x_i e_i = 0
 \]</span></p>
+<p><strong><em>残差的期望和方差</em></strong>如下： <span class="math display">\[
+E(e_i) = 0 \\
+var(e_i) = \sigma^2 (1 - h_{ii})
+\]</span> 其中<span class="math inline">\(h_{ii}\)</span>是第<span class="math inline">\(i\)</span>个观测值的杠杆值： <span class="math display">\[
+h_{ii} = \frac{1}{n} + \frac{(x_i - \overline{x})^2}{\sum_{j=1}^n (x_j - \overline{x})^2}
+\]</span> 满足<span class="math inline">\(\frac{1}{n} \leq h_{ii} &lt; 1\)</span>。因此，残差的方差随杠杆值的增大而减小。</p>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Note</strong></p>
+</div>
+<div class="callout-content">
+<p>杠杆值衡量的是观测值在自变量空间中的位置，杠杆值越大，说明该观测值在自变量空间中越偏离其他观测值。</p>
+</div>
+</div>
+</div>
 </section>
 <section id="最小二乘估计的性质线性" class="slide level2 scrollable">
 <h2>最小二乘估计的性质：线性</h2>
@@ -376,7 +406,9 @@ e_i = y_i - \hat{y}_i
 </section>
 <section id="最小二乘估计的性质无偏性" class="slide level2 scrollable">
 <h2>最小二乘估计的性质：无偏性</h2>
-<p><span class="math inline">\(\hat{\beta_1}\)</span>的期望： <span class="math display">\[
+<p>已知： <span class="math display">\[
+\hat{\beta_1} = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}y_i
+\]</span> <span class="math inline">\(\hat{\beta_1}\)</span>的期望： <span class="math display">\[
 \begin{align*}
 E(\hat{\beta_1})  &amp; = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}E(y_i) \\
 &amp; = \sum_{i=1}^n \frac{x_i - \overline{x}}{\sum_{j=1}^n (x_j - \overline{x})^2}(\beta_0 + \beta_1 x_i)
@@ -422,7 +454,8 @@ var(\hat{\beta_0}) = \sigma^2 \left( \frac{1}{n} + \frac{\overline{x}^2}{\sum_{i
 </div>
 </div>
 </div>
-<p>另外，两个估计值间的协方差为： <span class="math display">\[
+<p>另外，两个估计值间的协方差为：</p>
+<p><span class="math display">\[
 cov(\hat{\beta_0}, \hat{\beta_1}) = -\frac
 {\overline{x}\sigma^2}{\sum_{i=1}^n (x_i - \overline{x})^2}
 \]</span></p>
@@ -660,6 +693,11 @@ P\left(-t_{\alpha/2,n-2} \leq \frac{y_0 - \hat{y_0}}{\sqrt{\hat{\sigma}^2 (1 + h
 <blockquote>
 <p>探索: 最大似然估计法（Maximum Likelihood Estimation, MLE）是另一种常用的参数估计方法。对于一元线性回归模型，在满足正态假设的前提下，最小二乘估计和最大似然估计是等价的。</p>
 </blockquote>
+</section></section>
+<section>
+<section id="线性回归模型的诊断与改进" class="title-slide slide level1 center">
+<h1>线性回归模型的诊断与改进</h1>
+
 </section>
 <section id="异方差性" class="slide level2 scrollable">
 <h2>异方差性</h2>
@@ -692,12 +730,14 @@ var(\varepsilon_i) \neq var(\varepsilon_j) \qquad i \neq j
 <p>如果满足同方差性假设，残差与拟合值之间或者和自变量之间应该呈现出怎样的关系?</p>
 </blockquote>
 </section>
-<section id="异方差性的诊断残差图-1" class="slide level2" data-auto-animate="true">
-<h2 data-id="quarto-animate-title">异方差性的诊断：残差图</h2>
+<section id="异方差性的诊断残差图-1" class="slide level2 scrollable">
+<h2>异方差性的诊断：残差图</h2>
 <p>残差的期望和方差如下： <span class="math display">\[
 E(e_i) = 0 \\
 var(e_i) = \sigma^2 (1 - h_{ii})
-\]</span> 其中<span class="math inline">\(h_{ii}\)</span>是第<span class="math inline">\(i\)</span>个观测值的杠杆值，满足<span class="math inline">\(0 \leq h_{ii} \leq 1\)</span>。因此，残差的方差随杠杆值的增大而减小。</p>
+\]</span> 其中<span class="math inline">\(h_{ii}\)</span>是第<span class="math inline">\(i\)</span>个观测值的杠杆值： <span class="math display">\[
+h_{ii} = \frac{1}{n} + \frac{(x_i - \overline{x})^2}{\sum_{j=1}^n (x_j - \overline{x})^2}
+\]</span> 满足<span class="math inline">\(\frac{1}{n} \leq h_{ii} &lt; 1\)</span>。因此，残差的方差随杠杆值的增大而减小。</p>
 <p>定义标准化残差如下： <span class="math display">\[
 r_i = \frac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}
 \]</span></p>
@@ -754,14 +794,6 @@ sample estimates:
 <p>探索：其它异方差的诊断方法。</p>
 </blockquote>
 </section>
-<section id="不同的残差" class="slide level2">
-<h2>不同的残差</h2>
-<ul>
-<li>raw residuals：<span class="math inline">\(e_i = y_i - \hat{y}_i\)</span></li>
-<li>standardized residuals：<span class="math inline">\(r_i = \frac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}\)</span></li>
-<li>studentized residuals：<span class="math inline">\(t_i = \frac{e_i}{\hat{\sigma}_{(i)} \sqrt{1 - h_{ii}}}\)</span>，其中<span class="math inline">\(\hat{\sigma}_{(i)}\)</span>是去掉第<span class="math inline">\(i\)</span>个观测值后的回归标准差。</li>
-</ul>
-</section>
 <section id="异方差的处理加权最小二乘法" class="slide level2 scrollable">
 <h2>异方差的处理：加权最小二乘法</h2>
 <p>OLS最小化离差平方和： <span class="math display">\[
@@ -784,14 +816,21 @@ Q_w(\beta_0,\beta_1)
 \end{align*}
 \]</span> 其中<span class="math inline">\(\overline{x}_w = \frac{\sum_{i=1}^n w_i x_i}{\sum_{i=1}^n w_i}\)</span>，<span class="math inline">\(\overline{y}_w = \frac{\sum_{i=1}^n w_i y_i}{\sum_{i=1}^n w_i}\)</span>。</p>
 <p>为了消除异方差性的影响，使不同观测值的地位相同，权重通常取为观测值误差项方差的倒数，即<span class="math inline">\(w_i = 1/\sigma_i^2\)</span>。</p>
-<p><span class="math inline">\(\sigma_i^2\)</span>通常是未知的，但当起随自变量（或其他变量）系统变化时，可以利用这种关系。例如，如果<span class="math inline">\(\sigma_i^2\)</span>与<span class="math inline">\(x_i\)</span>成正比，即<span class="math inline">\(\sigma_i^2 = \sigma^2 x_i^2\)</span>，则可以取权重为<span class="math inline">\(w_i = 1/x_i^2\)</span>。</p>
+<p><span class="math inline">\(\sigma_i\)</span>通常是未知的，但当其随自变量（或其他变量）系统变化时，可以利用这种关系。例如，如果<span class="math inline">\(\sigma_i\)</span>与<span class="math inline">\(x_i\)</span>成正比，即<span class="math inline">\(\sigma_i^2 = \sigma^2 x_i^2\)</span>，则可以取权重为<span class="math inline">\(w_i = 1/x_i^2\)</span>。</p>
 </section>
 <section id="异方差的处理nlme包的gls函数" class="slide level2 scrollable">
 <h2>异方差的处理：<code>nlme</code>包的<code>gls()</code>函数</h2>
-<p>在R中，可以使用<code>nlme</code>包的<code>gls()</code>函数来拟合加权最小二乘回归模型。该函数允许用户指定不同的权重结构，以处理异方差性问题。</p>
-<p>例如：</p>
-
-<img data-src="talk04_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section>
+<p>用<code>nlme</code>包<sup>1</sup>的<code>gls()</code>函数来拟合WLS模型，指定不同的权重结构。例如：</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk04_files/figure-revealjs/unnamed-chunk-6-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p><code>nlme</code>包括在了base R中，无需而外安装。</p></li></ol></aside></section>
 <section id="异方差的处理nlme包的gls函数-1" class="slide level2 scrollable">
 <h2>异方差的处理：<code>nlme</code>包的<code>gls()</code>函数</h2>
 <p>通过指定<code>weights</code>参数，以反映误差项方差的结构：</p>
@@ -892,11 +931,12 @@ penguins_gls_m0     2  4 5314.586 5329.902 -2653.293 1 vs 2 72.90073  &lt;.0001<
 <p><code>nlme</code>包提供了多种<code>varFunc</code>函数来处理不同类型的异方差性问题：</p>
 <ul>
 <li><code>varIdent(form = ~1 | group)</code>：允许不同组别具有不同的方差。</li>
-<li><code>varExp(form = ~ covariate)</code>：方差随协变量的指数函数变化。</li>
 <li><code>varPower(form = ~ covariate)</code>：方差随协变量的幂函数变化。</li>
-<li><code>varConstPower(form = ~ covariate)</code>：方差随协变量的幂函数变化，但具有常数项。</li>
-<li><code>varFixed(value)</code>：方差为固定值，适用于已知方差结构的情况。 选择合适的<code>varFunc</code>函数取决于数据的特征和异方差性的类型，可以通过比较不同模型的拟合效果来确定最佳的处理方法。</li>
+<li><code>varExp(form = ~ covariate)</code>：<span class="math inline">\(var(\varepsilon_i) = \sigma^2e^{2\delta|covariate_i|}\)</span>。</li>
+<li><code>varConstPower(form = ~ covariate)</code>：<span class="math inline">\(var(\varepsilon_i) = \sigma^2(\delta_1 + |covariate_i|^{\delta_2})^2\)</span>，其中<span class="math inline">\(\delta_1\)</span>必须大于0，<span class="math inline">\(\delta_2\)</span>无限制，都是需要拟合的参数。</li>
+<li><code>varFixed(~ covariate)</code>：<span class="math inline">\(var(\varepsilon_i) = \sigma^2|covariate_i|\)</span></li>
 </ul>
+<p>选择合适的<code>varFunc</code>函数取决于数据的特征和异方差性的类型，可以通过比较不同模型的拟合效果来确定最佳的处理方法。</p>
 </section>
 <section id="varident函数的使用" class="slide level2 scrollable">
 <h2><code>varIdent()</code>函数的使用</h2>
@@ -942,8 +982,17 @@ penguins_gls_m0     2  4 5314.586 5329.902 -2653.293 1 vs 2 72.90073  &lt;.0001<
 <li>Mixed effects Models in S and S-Plus(pages 206-214) by Pinheiro and Bates, Springer, 2000</li>
 <li>Mixed Effects Models And Extensions in Ecology with R (pages 72 - 84), by Alain F. Zuur, Elena N. Ieno, Neil Walker, Anatoly A. Saveliev, Graham M. Smith, Springer, 2009</li>
 </ul>
-
 </section>
+<section id="不同的残差" class="slide level2">
+<h2>不同的残差</h2>
+<ul>
+<li>raw residuals：<span class="math inline">\(e_i = y_i - \hat{y}_i\)</span></li>
+<li>standardized residuals：<span class="math inline">\(r_i = \frac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}\)</span></li>
+<li>studentized residuals：<span class="math inline">\(t_i = \frac{e_i}{\hat{\sigma}_{(i)} \sqrt{1 - h_{ii}}}\)</span>，其中<span class="math inline">\(\hat{\sigma}_{(i)}\)</span>是去掉第<span class="math inline">\(i\)</span>个观测值后的回归标准差。</li>
+</ul>
+
+</section></section>
+
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="images/JMU_logo.jpg" class="slide-logo"></p>
