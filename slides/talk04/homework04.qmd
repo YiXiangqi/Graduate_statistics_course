@@ -8,6 +8,7 @@ format:
     toc: true
     toc-depth: 3
     number-sections: true
+    df-print: tibble
 execute:
   echo: true
   warning: false
@@ -156,58 +157,208 @@ $$
 
 ## Part 2：线性回归模型中的残差
 
-本节聚焦于一元线性回归模型中的残差类型、计算方法与杠杆值的直观理解。
+本节聚焦于一元线性回归模型中常用到的3种残差，在了解基本概念和计算公式的基础上，结合实际数据进行手动计算和比对，最后通过可视化加深对不同类型残差的理解。
 
-### 1. 残差类型与杠杆值
+### 原始残差
+如果没有特别强调，残差既指原始残差（Raw Residual），也叫普通残差（Ordinary Residual）。对于第 $i$ 个观测值，原始残差定义为观测值与回归拟合值的差：
+$$
+e_i = y_i - \hat{y}_i
+$$
 
-- **原始残差（Raw Residual）**  
-  $e_i = y_i - \hat{y}_i$，即观测值与拟合值之差。
+仍以`palmerpenguins::penguins`数据集为例，建立体重（body_mass_g）对鳍长（flipper_length_mm）的一元线性回归模型后，原始残差可以通过 `residuals(fit)` 获取。
 
-- **杠杆值（Leverage）**  
-  杠杆值 $h_{ii}$ 衡量第 $i$ 个观测值对自身拟合值的影响。高杠杆点对回归直线影响大，容易成为异常点。
-  
-  $h_{ii} = \mathbf{x}_i^T (\mathbf{X}^T \mathbf{X})^{-1} \mathbf{x}_i$，一元回归下 $h_{ii}$ 只与自变量 $x_i$ 距均值的远近有关。
+```{r}
+library(palmerpenguins)
+penguins_lm_m0 <- lm(body_mass_g ~ flipper_length_mm, data = penguins)
+raw_residuals <- residuals(penguins_lm_m0)
+raw_residuals
+```
+
+另外，也可以通过`fitted(fit)` 获取拟合值，结合观测值手动计算原始残差：
+```{r}
+fitted_values <- fitted(penguins_lm_m0)
+# 这里通过`penguins_lm_m0$model$body_mass_g`获取观测值，而没有从数据框中直接提取，是为了避免NA的影响。
+raw_residuals_man <- penguins_lm_m0$model$body_mass_g - fitted_values 
+raw_residuals_man
+```
 
 - **标准化残差（Standardized Residual）**  
-  $r_i = \dfrac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}$，其中 $\hat{\sigma}$ 为回归标准差。标准化残差考虑了不同观测点的杠杆效应，使残差具有可比性。
+标准化残差被有些人称为internally studentized residual，定义如下：
+$$
+r_i = \dfrac{e_i}{\hat{\sigma} \sqrt{1 - h_{ii}}}
+$$
+
+这里 $\hat{\sigma}$ 为MSE，也就是均方误差，计算公式为：
+$$
+\hat{\sigma}^2 = \frac{1}{n-2} \sum_{i=1}^n e_i^2
+$$
+ 
+$h_{ii}$ 是第 $i$ 个观测值的杠杆值，一元线性回归中计算公式为：
+$$
+h_{ii} = \frac{1}{n} + \frac{(x_i - \bar{x})^2}{\sum_{j=1}^n (x_j - \bar{x})^2}
+$$
+
+标准化残差可以使用 `rstandard(fit)` 获取：
+```{r}
+standardized_residuals <- rstandard(penguins_lm_m0)
+standardized_residuals
+```
+
+尝试手动计算：
+```{r}
+n <- nrow(penguins_lm_m0$model)
+x <- penguins_lm_m0$model$flipper_length_mm
+h_ii <- 1/n + (x - mean(x))^2 / sum((x - mean(x))^2)
+sigma_hat <- sqrt(sum(raw_residuals^2) / (n - 2))
+standardized_residuals_man <- raw_residuals / (sigma_hat * sqrt(1 - h_ii))
+standardized_residuals_man
+```
+
+```{r}
+sum(abs(standardized_residuals - standardized_residuals_man))
+```
 
 - **学生化残差（Studentized Residual）**  
-  $t_i = \dfrac{e_i}{\hat{\sigma}_{(i)} \sqrt{1 - h_{ii}}}$，$\hat{\sigma}_{(i)}$ 是去掉第 $i$ 个观测值后重新拟合模型得到的标准差。学生化残差对异常值更敏感。
+学生化残差又叫 externally studentized residual，定义如下：
+$$
+t_i = \dfrac{e_i}{\hat{\sigma}_{(i)} \sqrt{1 - h_{ii}}}
+$$
 
+这里$\hat{\sigma}_{(i)}$是去掉第 $i$ 个观测值后重新拟合模型得到的均方误差。学生化残差可以使用 `rstudent(fit)` 获取：
+```{r}
+studentized_residuals <- rstudent(penguins_lm_m0)
+studentized_residuals[1]
+```
 
-### 2. 案例：penguins 数据集一元线性回归
+尝试手动计算：
+第一步，计算第一个观测值的学生化残差：
+```{r}
+# 去掉第一个观测值重新拟合模型
+fit_minus_1 <- lm(body_mass_g ~ flipper_length_mm, data = penguins[-1, ])
+# 计算新的均方误差
+sigma_hat_minus_1 <- sqrt(sum(residuals(fit_minus_1)^2) / (n - 3))
+# 计算第一个观测值的学生化残差
+t_1 <- raw_residuals[1] / (sigma_hat_minus_1 * sqrt(1 - h_ii[1]))
+t_1
+```
+第二步，使用循环或 apply 计算所有观测值的学生化残差：
+```{r}
+# 你的代码
+```
 
-使用 `palmerpenguins::penguins` 数据集，建立体重（body_mass_g）对鳍长（flipper_length_mm）的一元线性回归模型。
-手动计算原始残差、杠杆值和标准化残差（不直接用 `rstandard()`）。
+第三步，比较手动计算的学生化残差与 `rstudent(fit)` 的结果：
+```{r}
+# 你的代码
+```
 
+### 残差图
+- `ggplot2`画出原始残差、标准化残差和学生化残差与拟合值的散点图，观察是否存在异方差性或异常值。
 
-### 3. 学生化残差的手动计算与比对
-
-要求：
-- 手动计算每个观测的学生化残差（即去掉该点后重新拟合，得到 $\hat{\sigma}_{(i)}$）。
-- 与 `rstudent(fit)` 的结果比对。
-- 用 `ggplot2` 绘制学生化残差与鳍长的散点图。
-- 结合`talk04.qmd`内容，给出典型残差图示例。
-
-*提示：手动计算时可用循环或 apply，效率不重要，重在理解。*
-
-
-### 4. 补充说明
-
-- 有时“标准化残差”指 $e_i/\hat{\sigma}$，有时指 $e_i/(\hat{\sigma}\sqrt{1-h_{ii}})$，有时又叫 internally studentized residual。
-- “学生化残差”通常指 externally studentized residual，即 $e_i/(\hat{\sigma}_{(i)}\sqrt{1-h_{ii}})$。
-- 注意辨别不同教材和软件的定义。
-
-
+```{r}
+#你的代码
+```
 ## Part 3：异方差性与`nlme`包的`varFunc`建模
 
-- 解释异方差性的概念、成因及其对回归分析的影响。
-- 介绍异方差性的诊断方法（如残差图、等级相关系数法等）。
-- 说明加权最小二乘法（WLS）的基本思想。
-- 重点介绍`nlme`包中`gls()`函数的用法，如何通过`weights`参数指定不同的`varFunc`类函数（如`varIdent`、`varPower`、`varExp`等）来建模不同的误差项方差结构。
-- 给出典型的 R 代码示例，说明如何拟合、比较和诊断带有异方差结构的回归模型。
-- 总结如何根据数据特征选择合适的`varFunc`函数。
+这部分将使用模拟数据来联系如何使用`nlme`包的`varFunc`类函数定义不同误差项方差结构以处理异方差性问题。
 
+### 示例
+我们要生成一个数据框`Homework04_dataset_0`，其中包括因变量$y$, 自变量$x_1$和$x_2$，满足以下关系：
+$$
+y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \varepsilon
+$$
+$\beta_0,\beta_1,\beta_2$分别为-10，5和7。同时，数据框中还有一个分类变量`type`, 包括两个水平`type1`和`type2`，对于误差项，我们令：
+$$
+var(\varepsilon_{ij}) = \sigma^2\ |x_2|^{2\delta_j}
+$$
+这里j表示不同的`type`，`type_1`对应的$\delta$为1.3，`type_2`对应的$\delta$为1.8。下面的代码生成`Homework02_dataset_0`:
+```{r}
+library(tidyverse)
+set.seed(10) #设置随机种子，生成的随机数可再现
+Homework02_dataset_0 <-
+  tibble(x1 = runif(200, 1, 10), # 在1到10范围内，生成200个随机数，服从均匀分布（uniform distribution）
+         x2 = runif(200, 1, 10),
+         y = -10 + x1*5 + x2*7,
+         type = sample(factor(c("type1","type2")), size = 200, replace = T), # 生成长度为200的因子向量，随机从两个水平中挑选
+         sigma = rnorm(200, mean = 0, sd = 1), # 生成200个随机数，服从正态分布
+         noise = if_else(type == "type1", sigma * x2^1.3, sigma*x2^1.8),
+         y_observed = y + noise)
+```
+
+加入我们不知道数据生成的具体过程，只知道数据框`Homework04_dataset_0`，我们大致会按照如下步骤来分析数据：
+1. 画出`y_observed`与`x_1`、`x_2`的散点图，对数据有初步认识：
+```{r}
+Homework02_dataset_0 |>
+  pivot_longer(cols = c(x1, x2), names_to = "x", values_to = "x_value") |>
+  ggplot(aes(x = x_value, y = y_observed)) +
+  geom_point() +
+  facet_wrap(~x) +
+  labs(x = "自变量值", y = "观测的因变量值", title = "y_observed与x1、x2的散点图")
+```
+
+2. 观察到`y_observed`与`x_1`和`x_2`都有线性关系，构建一个线性模型：
+```{r}
+#虽然之前到讲解和演示局限于一元线性回归，但是多元线性回归的建模方法是类似的。
+lm_fit <- lm(y_observed ~ x1 + x2, data = Homework02_dataset_0) 
+summary(lm_fit)
+```
+
+3. 进行模型诊断，本次作业主要是诊断是否存在异方差性：
+```{r}
+# 画出拟合值 vs 残差图，观察是否存在异方差性
+resid_df <-
+  tibble(
+    y_fitted = fitted(lm_fit),
+    x_1 = lm_fit$model$x1,
+    x_2 = lm_fit$model$x2,
+    residuals = residuals(lm_fit),
+    residuals_std = rstandard(lm_fit),
+    residuals_student = rstudent(lm_fit)
+  )
+resid_df |>
+  pivot_longer(
+    cols = c(residuals, residuals_std, residuals_student),
+    names_to = "residual_type",
+    values_to = "residual_value"
+  ) |>
+  ggplot(aes(x = y_fitted, y = residual_value)) +
+  geom_point() +
+  facet_wrap(~residual_type, scales = "free_y") +
+  labs(x = "拟合值", y = "残差", title = "残差图")
+```
+
+```{r}
+# 画出残差与x1、x2的散点图，观察是否存在异方差性
+resid_df |>
+  pivot_longer(
+    cols = c(residuals, residuals_std, residuals_student),
+    names_to = "residual_type",
+    values_to = "residual_value"
+  ) |>
+  ggplot(aes(x = x_1, y = residual_value)) +
+  geom_point() +
+  facet_wrap(~residual_type, scales = "free_y") +
+  labs(x = "拟合值", y = "残差", title = "残差图")
+
+resid_df |>
+  pivot_longer(
+    cols = c(residuals, residuals_std, residuals_student),
+    names_to = "residual_type",
+    values_to = "residual_value"
+  ) |>
+  ggplot(aes(x = x_2, y = residual_value)) +
+  geom_point() +
+  facet_wrap(~residual_type, scales = "free_y") +
+  labs(x = "拟合值", y = "残差", title = "残差图")
+```
+4. 观察到存在异方差性，方差随着x_1或者拟合值的增加而增大，考虑使用`varPower()`或者`varExp()`函数建模异方差性：
+```{r}
+library(nlme)
+# 定义一个varFunc类函数，假设方差随着x_1的增加而增大
+var_func <- varPower(form = ~ x_1)
+# 将varFunc类函数加入线性模型中，拟合一个广义线性模型
+gls_fit <- gls(y_observed ~ x1 + x2, data = Homework02_dataset_0, weights = var_func)
+summary(gls_fit)
+```
 
 
 ## 文档表达与规范
