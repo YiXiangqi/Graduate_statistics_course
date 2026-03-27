@@ -1,0 +1,141 @@
+---
+title: "高等数据统计分析"
+subtitle: "第五讲：自相关（Temporal Correlation）"
+author: "易湘琦"
+format:
+  revealjs:
+    slide-number: true
+    chalkboard:
+      buttons: false
+    preview-links: auto
+    logo: images/JMU_logo.jpg
+    css: styles.css
+    footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
+---
+
+## 你将学到
+
+::: incremental
+- 复习线性回归的基本假设，重点是误差项的独立性假设。
+- 两种常见自相关场景：
+  - 时间自相关：残差随时间相关，常见于时间序列数据。
+  - 空间自相关：残差随空间位置相关，常见于地理数据。
+- 时间自相关诊断与应对
+- 时间自相关诊断与应对
+:::
+
+
+## 一元线性回归：独立与同方差性假设 {.scrollable}
+$$
+y_i = \beta_0 + \beta_1 x_{i}+ \varepsilon_i\qquad i=1,\dots,n
+$$ 
+ 
+对于误差项$\varepsilon_i$，通常假设为独立同分布的随机变量，满足：
+$$
+E(\varepsilon_i) = 0 \\ 
+Cov(\varepsilon_i,\varepsilon_j) = \begin{cases}
+  \sigma^2, & i = j \\
+  0, & i \neq j
+\end{cases} \qquad i, j = 1, \dots, n
+$$
+
+这个假定常称为高斯-马尔可夫假定（Gauss-Markov assumptions）。
+
+但实际问题中，可能存在：
+$$
+Cov(\varepsilon_i,\varepsilon_j) \neq 0 \quad \text{for some } i \neq j
+$$
+
+即存误差项之间存在自相关。
+
+## 自相关带来的问题
+
+
+
+# 诊断工作流程（简要）
+
+1. 可视化残差（随时间或空间）
+2. 时序：ACF / PACF / Durbin–Watson / Ljung–Box
+3. 空间：经验变差函数（variogram）/ Moran's I
+4. 根据结果选择模型或稳健 SE
+
+
+# 时序诊断示例（Hawaii）
+
+```{r}
+#| echo: false
+library(readr); library(dplyr)
+library(nlme); library(lmtest); library(sandwich); library(ggplot2)
+Hawaii <- read_table("data/Hawaii.txt") %>%
+  mutate(Birds = sqrt(Moorhen.Kauai))
+
+Birds_lm0 <- gls(Birds ~ Rainfall + Year, data=Hawaii, na.action=na.omit)
+E <- residuals(Birds_lm0, type="normalized")
+```
+
+- 残差图、ACF/PACF：
+
+```{r}
+#| echo: false
+plot(Hawaii$Year[!is.na(Hawaii$Birds)], E, type='p', main='Residuals vs Year', xlab='Year', ylab='Normalized residuals')
+acf(E, na.action = na.pass, main='Residual ACF')
+pacf(E, na.action = na.pass, main='Residual PACF')
+```
+
+
+# 时序：正式检验
+
+- Durbin–Watson（AR(1) 检测）
+- Ljung–Box（高阶滞后）
+
+```{r}
+#| echo: false
+dw <- dwtest(Birds ~ Rainfall + Year, data = na.omit(Hawaii))
+box <- Box.test(E, lag=10, type='Ljung-Box')
+print(dw); print(box)
+```
+
+
+# 时序：模型化相关结构与补救
+
+- 使用 nlme::gls() 指定 corAR1 / corARMA
+- Cochrane–Orcutt（可用作教学示例）
+- Newey–West HAC 标准误（稳健 SE）
+
+```{r}
+#| echo: false
+Birds_gls_ar1 <- update(Birds_lm0, correlation = corAR1(form = ~ Year))
+print(summary(Birds_gls_ar1))
+
+# Newey-West on lm for comparison
+lm0 <- lm(Birds ~ Rainfall + Year, data = na.omit(Hawaii))
+vcov_nw <- NeweyWest(lm0)
+print(lmtest::coeftest(lm0, vcov.=vcov_nw))
+```
+
+
+# 注：空间相关部分已移除，本讲聚焦时间序列自相关
+
+
+
+
+# 课堂练习（简短）
+
+- 使用 Hawaii：检测时序自相关；对 Rainfall 估计比较 OLS vs GLS AR(1) 的 p 值和信赖区间变化。
+- 进阶：尝试 Newey–West 标准误并比较结果。
+
+
+# 附录：可显示完整 runnable 代码（供作业/复现）
+
+```{r}
+#| echo: true
+# Put here the full code blocks (same as above) with comments for students
+```
+
+
+# 参考文献
+
+- Zuur et al., Mixed Effects Models and Extensions in Ecology with R
+- Cressie, Statistics for Spatial Data
+- Newey & West (HAC SEs)
+
