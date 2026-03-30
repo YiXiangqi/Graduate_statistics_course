@@ -193,6 +193,9 @@
       margin-right: 0; 
     }
   </style>
+  <script src="talk05_files/libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="talk05_files/libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="talk05_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -200,7 +203,7 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">高等数据统计分析</h1>
-  <p class="subtitle">第五讲：自相关（Temporal Correlation）</p>
+  <p class="subtitle">第五讲：自相关的诊断与应对</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -214,15 +217,32 @@
 <section id="你将学到" class="slide level2">
 <h2>你将学到</h2>
 <ul>
-<li class="fragment">复习线性回归的基本假设，重点是误差项的独立性假设。</li>
-<li class="fragment">两种常见自相关场景：
-<ul>
-<li class="fragment">时间自相关：残差随时间相关，常见于时间序列数据。</li>
-<li class="fragment">空间自相关：残差随空间位置相关，常见于地理数据。</li>
-</ul></li>
+<li class="fragment">回顾线性回归的基本假设</li>
+<li class="fragment">了解自相关的基本概念及其对回归分析的影响</li>
 <li class="fragment">时间自相关诊断与应对</li>
-<li class="fragment">时间自相关诊断与应对</li>
+<li class="fragment">空间自相关诊断与应对</li>
 </ul>
+</section>
+<section>
+<section id="回顾线性回归的基本假设" class="title-slide slide level1 center">
+<h1>回顾：线性回归的基本假设</h1>
+
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
+<p>线性回归模型的基本假设包括：</p>
+<ol type="1">
+<li class="fragment">线性关系：响应变量与解释变量之间存在线性关系。</li>
+<li class="fragment">独立性：观测值之间相互独立。</li>
+<li class="fragment">同方差性：误差项的方差在所有水平上是相同的。</li>
+<li class="fragment">正态性：误差项服从正态分布。</li>
+<li class="fragment"><em>无多重共线性(多元线性回归)：解释变量之间不存在高度相关性。</em></li>
+</ol>
+</section></section>
+<section>
+<section id="误差项间的相关性" class="title-slide slide level1 center">
+<h1>误差项间的相关性</h1>
+
 </section>
 <section id="一元线性回归独立与同方差性假设" class="slide level2 scrollable">
 <h2>一元线性回归：独立与同方差性假设</h2>
@@ -238,98 +258,613 @@ Cov(\varepsilon_i,\varepsilon_j) = \begin{cases}
 \]</span></p>
 <p>这个假定常称为高斯-马尔可夫假定（Gauss-Markov assumptions）。</p>
 <p>但实际问题中，可能存在： <span class="math display">\[
-Cov(\varepsilon_i,\varepsilon_j) \neq 0 \quad \text{for some } i \neq j
+Cov(\varepsilon_i,\varepsilon_j) \neq 0, \quad  \exists i \neq j
 \]</span></p>
 <p>即存误差项之间存在相关性。</p>
 </section>
-<section id="复习独立性假定" class="title-slide slide level1 center">
-<h1>复习：独立性假定</h1>
-<p>线性模型：</p>
-<p>y = X+ , E()=0, Var()=^2 I</p>
-<p>若 Cov() ^2 I，OLS 仍一致但标准误不再可靠。</p>
-</section>
-
-<section id="影响直观" class="title-slide slide level1 center">
-<h1>影响（直观）</h1>
+<section id="带来的问题" class="slide level2">
+<h2>带来的问题</h2>
+<p>当线性模型的随机误差项存在相关性时，若仍直接用OLS做参数估计，可能会导致：</p>
 <ul>
-<li>错误的标准误 -&gt; 错误的 p 值</li>
-<li>预测与区间估计受影响</li>
+<li class="fragment">OLS估计量仍然是无偏的，但不再是最优的（不再是BLUE）。</li>
+<li class="fragment">均方误差（MSE）可能严重低估误差项的方差。</li>
+<li class="fragment">t检验和F检验的结果不可靠，可能出现过度拒绝原假设的情况（即增加第一类错误率）。</li>
+<li class="fragment">OLS估计量对抽样波动非常敏感，即在任一特定样本中，<span class="math inline">\(\hat{\beta}\)</span> 可能偏离真实值较远。</li>
 </ul>
 </section>
-
-<section id="诊断工作流程简要" class="title-slide slide level1 center">
-<h1>诊断工作流程（简要）</h1>
-<ol type="1">
-<li>可视化残差（随时间或空间）</li>
-<li>时序：ACF / PACF / Durbin–Watson / Ljung–Box</li>
-<li>空间：经验变差函数（variogram）/ Moran’s I</li>
-<li>根据结果选择模型或稳健 SE</li>
-</ol>
-</section>
-
-<section id="时序诊断示例hawaii" class="title-slide slide level1 center">
-<h1>时序诊断示例（Hawaii）</h1>
+<section id="自相关产生的原因" class="slide level2">
+<h2>自相关产生的原因</h2>
 <ul>
-<li>残差图、ACF/PACF：</li>
+<li>遗漏关键变量</li>
+<li>模型设定错误（如遗漏非线性关系）</li>
+<li>遗漏滞后项（时间序列） 。。。</li>
 </ul>
+<blockquote>
+<p>探索：自相关产生的原因</p>
+</blockquote>
+</section></section>
+<section>
+<section id="时间自相关诊断与应对" class="title-slide slide level1 center">
+<h1>时间自相关诊断与应对</h1>
+
+</section>
+<section id="hawaii数据集节选" class="slide level2 scrollable">
+<h2><code>Hawaii</code>数据集（节选）</h2>
+<p><code>Hawaii</code><sup>1</sup>：夏威夷群岛的降雨量和海鸟数量<sup>2</sup>的逐年数据：</p>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">数据框</a></li><li><a href="#tabset-1-2">图像</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
 <div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-2-1.png" width="960"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-2-2.png" width="960"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-2-3.png" width="960"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-
-<section id="时序正式检验" class="title-slide slide level1 center">
-<h1>时序：正式检验</h1>
-<ul>
-<li>Durbin–Watson（AR(1) 检测）</li>
-<li>Ljung–Box（高阶滞后）</li>
-</ul>
-<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>Hawaii</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-    Durbin-Watson test
-
-data:  Birds ~ Rainfall + Year
-DW = 0.66979, p-value = 5.921e-08
-alternative hypothesis: true autocorrelation is greater than 0</code></pre>
+<pre><code># A tibble: 48 × 4
+    Year Birds Rainfall Rainfall_type
+   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;        
+ 1  1956  1.41     15.2 Low          
+ 2  1957 NA        15.5 Low          
+ 3  1958  1.41     16.3 Low          
+ 4  1959  3.16     21.2 High         
+ 5  1960  2        10.9 Low          
+ 6  1961  3.16     19.9 High         
+ 7  1962  3.46     12.6 Low          
+ 8  1963  3.16     20.1 High         
+ 9  1964  2.83     10.0 Low          
+10  1965 NA        30.9 High         
+# ℹ 38 more rows</code></pre>
 </div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-5-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>数据来源：Zuur et al., Mixed Effects Models and Extensions in Ecology with R, 2009.</p></li><li id="fn2"><p>海鸟数量取平方根，以满足误差项的同方差性假设，便于专注于自相关问题。</p></li></ol></aside></section>
+<section id="hawaii数据集线性回归模型" class="slide level2">
+<h2><code>Hawaii</code>数据集：线性回归模型</h2>
+<p>构建线性回归模型：</p>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">建模</a></li><li><a href="#tabset-2-2">模型结果</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
+<p><span class="math display">\[
+Birds_i = \beta_0 + \beta_1 \text{Rainfall}_i + \beta_2 \text{Year}_i + \varepsilon_i \\
+E(\varepsilon_i) = 0 \\
+Cov(\varepsilon_i,\varepsilon_j) = \begin{cases}
+  \sigma^2, &amp; i = j \\
+  0, &amp; i \neq j
+\end{cases} \qquad i, j = 1, \dots, n
+\]</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">library</span>(nlme)</span>
+<span id="cb3-2"><a href=""></a>Hawaii_gls_m0 <span class="ot">&lt;-</span> </span>
+<span id="cb3-3"><a href=""></a>  <span class="fu">gls</span>(Birds <span class="sc">~</span> Rainfall <span class="sc">+</span> Year, <span class="at">data =</span> Hawaii, <span class="at">na.action =</span> na.omit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-2-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="fu">summary</span>(Hawaii_gls_m0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-    Box-Ljung test
+<pre><code>Generalized least squares fit by REML
+  Model: Birds ~ Rainfall + Year 
+  Data: Hawaii 
+       AIC      BIC    logLik
+  228.4798 235.4305 -110.2399
 
-data:  E
-X-squared = 66.082, df = 10, p-value = 2.516e-10</code></pre>
+Coefficients:
+                Value Std.Error   t-value p-value
+(Intercept) -477.6634  56.41907 -8.466346  0.0000
+Rainfall       0.0009   0.04989  0.017245  0.9863
+Year           0.2450   0.02847  8.604858  0.0000
+
+ Correlation: 
+         (Intr) Ranfll
+Rainfall -0.036       
+Year     -1.000  0.020
+
+Standardized residuals:
+        Min          Q1         Med          Q3         Max 
+-1.91985793 -0.58712230 -0.03223775  0.38320859  2.77801077 
+
+Residual standard error: 2.608391 
+Degrees of freedom: 45 total; 42 residual</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </section>
-
-<section id="时序模型化相关结构与补救" class="title-slide slide level1 center">
-<h1>时序：模型化相关结构与补救</h1>
-<ul>
-<li>使用 nlme::gls() 指定 corAR1 / corARMA</li>
-<li>Cochrane–Orcutt（可用作教学示例）</li>
-<li>Newey–West HAC 标准误（稳健 SE）</li>
-</ul>
+<section id="自相关诊断残差图" class="slide level2">
+<h2>自相关诊断：残差图</h2>
+<p>可以通过观察残差随时间的变化来初步诊断自相关：</p>
+<div class="panel-tabset">
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">代码</a></li><li><a href="#tabset-3-2">残差图</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1">
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a>Hawaii_resid_plot <span class="ot">&lt;-</span></span>
+<span id="cb6-2"><a href=""></a>  Hawaii <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href=""></a>  <span class="fu">drop_na</span>() <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">resid =</span> <span class="fu">resid</span>(Hawaii_gls_m0, <span class="at">type =</span> <span class="st">"normalized"</span>)) <span class="sc">|&gt;</span> <span class="co"># 注意这里用了normalized residuals</span></span>
+<span id="cb6-5"><a href=""></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb6-6"><a href=""></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(Year, resid), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb6-7"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Normalized residuals"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-3-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>Hawaii_resid_plot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-9-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="残差自相关系数" class="slide level2">
+<h2>残差自相关系数</h2>
+<p>计算时间滞后为1的残差自相关系数：</p>
+<div class="panel-tabset">
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">计算公式</a></li><li><a href="#tabset-4-2">代码</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1">
+<p><span class="math display">\[
+r_1 = \frac{\sum_{i=2}^n (e_i - \bar{e})(e_{i-1} - \bar{e})}{\sum_{i=1}^n (e_i - \bar{e})^2}
+\]</span></p>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>两个随机变量的样本相关系数计算：</strong></p>
+</div>
+<div class="callout-content">
+<p><span class="math display">\[
+r = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^n (x_i - \bar{x})^2} \sqrt{\sum_{i=1}^n (y_i - \bar{y})^2}}
+\]</span></p>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-4-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="co"># 探索：手动计算时间滞后为1的残差自相关系数</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="acf函数" class="slide level2 scrollable">
+<h2><code>acf()</code>函数</h2>
+<p>base R 中的<code>acf()</code>函数计算不同滞后阶数的自相关系数：</p>
+<div class="panel-tabset">
+<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1"><code>acf()</code>用法</a></li><li><a href="#tabset-5-2">图像</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>Hawaii_gls_m0_resid <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="fu">nrow</span>(Hawaii))</span>
+<span id="cb9-2"><a href=""></a>Hawaii_gls_m0_resid[<span class="sc">!</span><span class="fu">is.na</span>(Hawaii<span class="sc">$</span>Birds)] <span class="ot">&lt;-</span> <span class="fu">resid</span>(Hawaii_gls_m0, <span class="at">type =</span> <span class="st">"normalized"</span>)</span>
+<span id="cb9-3"><a href=""></a>Hawaii_gls_m0_resid_acf <span class="ot">&lt;-</span></span>
+<span id="cb9-4"><a href=""></a>  <span class="fu">acf</span>(Hawaii_gls_m0_resid, <span class="at">na.action =</span> na.pass, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb9-5"><a href=""></a></span>
+<span id="cb9-6"><a href=""></a>Hawaii_gls_m0_resid_acf<span class="sc">$</span>acf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, , 1
+
+             [,1]
+ [1,]  1.00000000
+ [2,]  0.71019652
+ [3,]  0.25949190
+ [4,]  0.04380340
+ [5,] -0.08746698
+ [6,] -0.30857946
+ [7,] -0.45802211
+ [8,] -0.49620491
+ [9,] -0.43483817
+[10,] -0.24102255
+[11,] -0.13182887
+[12,] -0.12971662
+[13,] -0.09019824
+[14,]  0.10236043
+[15,]  0.24591478
+[16,]  0.29272767
+[17,]  0.26292824</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-5-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="co">#acf(Hawaii_gls_m0_resid, na.action = na.pass, plot = TRUE)</span></span>
+<span id="cb11-2"><a href=""></a><span class="fu">plot</span>(Hawaii_gls_m0_resid_acf, <span class="at">main =</span> <span class="st">"ACF of GLS residuals"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-12-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="自相关的应对使用correlation参数指定误差项的自相关结构" class="slide level2 scrollable">
+<h2>自相关的应对：使用<code>correlation</code>参数指定误差项的自相关结构</h2>
+<div class="panel-tabset">
+<ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">AR(1)模型</a></li><li><a href="#tabset-6-2">代码</a></li></ul>
+<div class="tab-content">
+<div id="tabset-6-1">
+<p><code>Hawaii</code>：通过对残差的分析，显示误差项间存在自相关： <span class="math display">\[
+\varepsilon_i = \rho \varepsilon_{i-1} + \eta_i
+\]</span> 其中<span class="math inline">\(\eta_i\)</span>为白噪声误差项，<span class="math inline">\(\rho\)</span>为自相关系数。</p>
+<p>这种自相关结构称为阶数为 1 的自回归模型，AR(1)模型。</p>
+<p>此时的误差项之间的协方差和相关系数分别为： <span class="math display">\[
+Cov(\varepsilon_i,\varepsilon_j) = \sigma^2 \rho^{|i-j|} \qquad i, j = 1, \dots, n \\
+Cor(\varepsilon_i,\varepsilon_j) = \rho^{|i-j|} \qquad i, j = 1, \dots, n
+\]</span></p>
+</div>
+<div id="tabset-6-2">
+<p><code>nlme</code>包中的<code>gls()</code>函数允许我们指定误差项的自相关结构：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a>Hawaii_gls_m1 <span class="ot">&lt;-</span> </span>
+<span id="cb12-2"><a href=""></a>  <span class="fu">gls</span>(Birds <span class="sc">~</span> Rainfall <span class="sc">+</span> Year, <span class="at">data =</span> Hawaii, <span class="at">na.action =</span> na.omit,</span>
+<span id="cb12-3"><a href=""></a>      <span class="at">correlation =</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> Year))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>另一种写法：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>Hawaii_gls_m1 <span class="ot">&lt;-</span> </span>
+<span id="cb13-2"><a href=""></a>  <span class="fu">update</span>(Hawaii_gls_m0, <span class="at">correlation =</span> <span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> Year))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="验证ar1模型的效果" class="slide level2">
+<h2>验证AR(1)模型的效果：</h2>
+<div class="panel-tabset">
+<ul id="tabset-7" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-7-1">残差计算</a></li><li><a href="#tabset-7-2">残差图</a></li><li><a href="#tabset-7-3">模型比较</a></li></ul>
+<div class="tab-content">
+<div id="tabset-7-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a>Hawaii_gls_m1_resid <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="fu">nrow</span>(Hawaii))</span>
+<span id="cb14-2"><a href=""></a>Hawaii_gls_m1_resid[<span class="sc">!</span><span class="fu">is.na</span>(Hawaii<span class="sc">$</span>Birds)] <span class="ot">&lt;-</span> <span class="fu">resid</span>(Hawaii_gls_m1, <span class="at">type =</span> <span class="st">"normalized"</span>)</span>
+<span id="cb14-3"><a href=""></a>Hawaii_gls_m1_resid_acf <span class="ot">&lt;-</span></span>
+<span id="cb14-4"><a href=""></a>  <span class="fu">acf</span>(Hawaii_gls_m1_resid, <span class="at">na.action =</span> na.pass, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb14-5"><a href=""></a>Hawaii_gls_m1_resid_acf<span class="sc">$</span>acf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, , 1
+
+             [,1]
+ [1,]  1.00000000
+ [2,]  0.23825200
+ [3,] -0.15643895
+ [4,] -0.16325672
+ [5,]  0.04304345
+ [6,] -0.06688227
+ [7,] -0.14109336
+ [8,] -0.16873064
+ [9,] -0.27746892
+[10,]  0.07410939
+[11,]  0.05312717
+[12,] -0.08312558
+[13,] -0.21420328
+[14,]  0.01667231
+[15,]  0.13014135
+[16,]  0.16295402
+[17,]  0.06684058</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-7-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a><span class="fu">plot</span>(Hawaii_gls_m1_resid_acf, <span class="at">main =</span> <span class="st">"ACF of GLS residuals with AR(1) correlation"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-16-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-7-3">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a><span class="fu">anova</span>(Hawaii_gls_m0, Hawaii_gls_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Model df      AIC      BIC     logLik   Test  L.Ratio p-value
+Hawaii_gls_m0     1  4 228.4798 235.4305 -110.23991                        
+Hawaii_gls_m1     2  5 199.1394 207.8277  -94.56969 1 vs 2 31.34043  &lt;.0001</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="误差项的相关结构" class="slide level2">
+<h2>误差项的相关结构</h2>
+<p>当误差项之间不满足独立性假设，通过引入函数<span class="math inline">\(h(.)\)</span>来对不同时间点残差之间的自相关性进行建模：</p>
+<p><span class="math display">\[
+cor(\varepsilon_s, \varepsilon_t) =  h(d(\mathbf{p_s}, \mathbf{p_t}), \mathbf{\rho})
+\]</span> 函数<span class="math inline">\(h(.)\)</span>称为相关函数，其取值范围在 -1 到 1 之间，<span class="math inline">\(\rho\)</span>是一个相关参数（correlation parameters）向量，<span class="math inline">\(p_s, p_t\)</span>是位置向量（position vectors），<span class="math inline">\(d(p_s, p_t)\)</span>表示两者间的<em>距离</em>。</p>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>isotropic correlation structure</strong></p>
+</div>
+<div class="callout-content">
+<p>假定相关结构（correlation structure）为各向同性（isotropic），即相关函数<span class="math inline">\(h(.)\)</span>仅依赖于位置向量之间的距离，而与具体位置无关。</p>
+</div>
+</div>
+</div>
+</section>
+<section id="corcomsymm" class="slide level2">
+<h2><code>corComSymm()</code></h2>
+<div class="panel-tabset">
+<ul id="tabset-8" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-8-1">复合对称结构</a></li><li><a href="#tabset-8-2">残差计算</a></li><li><a href="#tabset-8-3">残差图</a></li><li><a href="#tabset-8-4">模型比较</a></li></ul>
+<div class="tab-content">
+<div id="tabset-8-1">
+<p><code>nlme</code>包中提供了多种相关结构函数，最简单的序列相关结构是复合对称结构(compound symmetry structure)。它假设无论两个观测值之间的时间距离如何，它们的残差相关性都是相同的: <span class="math display">\[
+cor(\varepsilon_s, \varepsilon_t) =  \rho, \quad\; \forall  s \neq t
+\]</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a>Hawaii_gls_m2 <span class="ot">&lt;-</span> </span>
+<span id="cb19-2"><a href=""></a>  <span class="fu">update</span>(Hawaii_gls_m0, <span class="at">correlation =</span> <span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> Year))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-8-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>Hawaii_gls_m2_resid <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="fu">nrow</span>(Hawaii))</span>
+<span id="cb20-2"><a href=""></a>Hawaii_gls_m2_resid[<span class="sc">!</span><span class="fu">is.na</span>(Hawaii<span class="sc">$</span>Birds)] <span class="ot">&lt;-</span> <span class="fu">resid</span>(Hawaii_gls_m2, <span class="at">type =</span> <span class="st">"normalized"</span>)</span>
+<span id="cb20-3"><a href=""></a>Hawaii_gls_m2_resid_acf <span class="ot">&lt;-</span></span>
+<span id="cb20-4"><a href=""></a>  <span class="fu">acf</span>(Hawaii_gls_m2_resid, <span class="at">na.action =</span> na.pass, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb20-5"><a href=""></a>Hawaii_gls_m2_resid_acf<span class="sc">$</span>acf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, , 1
+
+             [,1]
+ [1,]  1.00000000
+ [2,]  0.71108526
+ [3,]  0.26125469
+ [4,]  0.04875784
+ [5,] -0.08199507
+ [6,] -0.30429918
+ [7,] -0.45696126
+ [8,] -0.49702958
+ [9,] -0.43729085
+[10,] -0.24411898
+[11,] -0.13395277
+[12,] -0.13664710
+[13,] -0.10173008
+[14,]  0.08880206
+[15,]  0.23387266
+[16,]  0.28122806
+[17,]  0.25871972</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-8-3">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a><span class="fu">plot</span>(Hawaii_gls_m2_resid_acf, <span class="at">main =</span> <span class="st">"ACF of GLS residuals with compound symmetry correlation"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-20-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-8-4">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a><span class="fu">anova</span>(Hawaii_gls_m0, Hawaii_gls_m2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Model df      AIC      BIC    logLik   Test      L.Ratio p-value
+Hawaii_gls_m0     1  4 228.4798 235.4305 -110.2399                            
+Hawaii_gls_m2     2  5 230.4798 239.1682 -110.2399 1 vs 2 2.273737e-13       1</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="corsymm" class="slide level2">
+<h2><code>corSymm</code></h2>
+<p><code>corSymm</code>用来构建最一般的结构，这种结构在复杂性上是与复合对称结构相对的另一个极端。数据中的每个相关性均由不同的参数表示。这种结构过于复杂（尤其数据量大的时候），很少使用</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>Hawaii_gls_m3 <span class="ot">&lt;-</span></span>
+<span id="cb25-2"><a href=""></a>  <span class="fu">update</span>(Hawaii_gls_m0, <span class="at">correlation =</span> <span class="fu">corSymm</span>()) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in `gls()`:
+! function evaluation limit reached without convergence (9)</code></pre>
+</div>
+</div>
+</section>
+<section id="corarma" class="slide level2 scrollable">
+<h2><code>corARMA</code></h2>
+<p>ARMA模型（autoregressive-moving average correlation model）由两个参数定义其阶数：</p>
+<ul>
+<li>自回归参数的数量（p）</li>
+<li>移动平均参数的数量（q）。</li>
+</ul>
+<p>ARMA(1, 0) 表示前述的AR(1)模型。<code>ARMA(p, 0)</code>结构由如下： <span class="math display">\[
+\varepsilon_s = \phi_1\varepsilon_{s-1} +\phi_2\varepsilon_{s-2} +\dots + \phi_p\varepsilon_{s-p} + \eta_s
+\]</span></p>
+<p>ARMA(0, p) 的结构由如下： <span class="math display">\[
+\varepsilon_s = \theta_1\eta_{s-1} +\theta_2\eta_{s-2} +\dots + \theta_p\eta_{s-p} + \eta_s
+\]</span></p>
+<p><code>ARMA(p, q)</code>由上面两个结构组合而成： <span class="math display">\[
+\varepsilon_s = \sum^p_{i=1}\phi_i\varepsilon_{s-i} + \sum^{q}_{j=i}\theta_j\eta_{s-j} + \eta_s
+\]</span></p>
+</section>
+<section id="corarma的使用" class="slide level2">
+<h2><code>corARMA</code>的使用</h2>
+<div class="panel-tabset">
+<ul id="tabset-9" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-9-1">corARMA模型</a></li><li><a href="#tabset-9-2">模型比较</a></li></ul>
+<div class="tab-content">
+<div id="tabset-9-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a>Hawaii_gls_m4 <span class="ot">&lt;-</span></span>
+<span id="cb27-2"><a href=""></a>  <span class="fu">update</span>(Hawaii_gls_m0, <span class="at">correlation =</span> <span class="fu">corARMA</span>(<span class="at">form =</span> <span class="sc">~</span> Year, <span class="at">p =</span> <span class="dv">2</span>,  <span class="at">q =</span> <span class="dv">0</span>)) </span>
+<span id="cb27-3"><a href=""></a></span>
+<span id="cb27-4"><a href=""></a>Hawaii_gls_m5 <span class="ot">&lt;-</span></span>
+<span id="cb27-5"><a href=""></a>  <span class="fu">update</span>(Hawaii_gls_m0, <span class="at">correlation =</span> <span class="fu">corARMA</span>(<span class="at">form =</span> <span class="sc">~</span> Year, <span class="at">p =</span> <span class="dv">0</span>,  <span class="at">q =</span> <span class="dv">2</span>)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-9-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a><span class="fu">anova</span>(Hawaii_gls_m0, Hawaii_gls_m4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Model df      AIC      BIC     logLik   Test L.Ratio p-value
+Hawaii_gls_m0     1  4 228.4798 235.4305 -110.23991                       
+Hawaii_gls_m4     2  6 196.8777 207.3037  -92.43886 1 vs 2 35.6021  &lt;.0001</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a><span class="fu">anova</span>(Hawaii_gls_m0, Hawaii_gls_m5)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Model df      AIC      BIC     logLik   Test  L.Ratio p-value
+Hawaii_gls_m0     1  4 228.4798 235.4305 -110.23991                        
+Hawaii_gls_m5     2  6 196.3058 206.7318  -92.15288 1 vs 2 36.17406  &lt;.0001</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href=""></a><span class="fu">anova</span>(Hawaii_gls_m1, Hawaii_gls_m4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Model df      AIC      BIC    logLik   Test  L.Ratio p-value
+Hawaii_gls_m1     1  5 199.1394 207.8277 -94.56969                        
+Hawaii_gls_m4     2  6 196.8777 207.3037 -92.43886 1 vs 2 4.261669   0.039</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="如何确认arma的p和q" class="slide level2">
+<h2>如何确认ARMA的p和q</h2>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p>Citing from Schabenberger and Pierce (2002):</p>
+<p>“In our experience it is more important to model the correlation structure in a reasonable and meaningful way rather than to model the correlation structure perfectly”.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="partial-autocorrelation-function-pacf" class="slide level2">
+<h2>partial autocorrelation function (pacf)</h2>
+<p>pacf（partial autocorrelation function）用于衡量一个序列中一个特定滞后阶数的自相关性，同时控制其他滞后阶数的影响。</p>
+<div class="cell" data-reveal="true" data-fig-width="7.5" data-fig-height="4" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A["&amp;epsilon;&lt;sub&gt;t&lt;/sub&gt;"] --&gt; C["&amp;epsilon;&lt;sub&gt;t-2&lt;/sub&gt;"]
+  A --&gt; B["&amp;epsilon;&lt;sub&gt;t-1&lt;/sub&gt;"]
+  B --&gt; C
+  A --&gt; C
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="acf和pacf来确定arma的p和q" class="slide level2">
+<h2>acf()<code>和</code>pacf()`来确定ARMA的p和q</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th></th>
+<th>acf</th>
+<th>pacf</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AR(p)</td>
+<td>逐渐衰减</td>
+<td>在p阶截断</td>
+</tr>
+<tr class="even">
+<td>MA(q)</td>
+<td>在q阶截断</td>
+<td>逐渐衰减</td>
+</tr>
+<tr class="odd">
+<td>ARMA(p, q)</td>
+<td>逐渐衰减在max(0, q-p)阶之后</td>
+<td>逐渐衰减在max(0, p-q)阶之后</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="acf和pacf来确定arma的p和q-1" class="slide level2">
+<h2>acf()<code>和</code>pacf()`来确定ARMA的p和q</h2>
+<div class="panel-tabset">
+<ul id="tabset-10" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-10-1">acf</a></li><li><a href="#tabset-10-2">pacf</a></li></ul>
+<div class="tab-content">
+<div id="tabset-10-1">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-26-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-10-2">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-27-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="比较不同p和q的arma模型" class="slide level2 scrollable">
+<h2>比较不同p和q的ARMA模型</h2>
+<div class="panel-tabset">
+<ul id="tabset-11" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-11-1">AR(1)和AR(4)</a></li><li><a href="#tabset-11-2">AR(1)结果</a></li><li><a href="#tabset-11-3">AR(4)结果</a></li><li><a href="#tabset-11-4">模型比较</a></li></ul>
+<div class="tab-content">
+<div id="tabset-11-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a>Hawaii_gls_p1 <span class="ot">&lt;-</span></span>
+<span id="cb34-2"><a href=""></a>  <span class="fu">update</span>(Hawaii_gls_m0, <span class="at">correlation =</span> <span class="fu">corARMA</span>(<span class="at">form =</span> <span class="sc">~</span> Year, <span class="at">p =</span> <span class="dv">1</span>,  <span class="at">q =</span> <span class="dv">0</span>))</span>
+<span id="cb34-3"><a href=""></a>Hawaii_gls_p4 <span class="ot">&lt;-</span></span>
+<span id="cb34-4"><a href=""></a>  <span class="fu">update</span>(Hawaii_gls_m0, <span class="at">correlation =</span> <span class="fu">corARMA</span>(<span class="at">form =</span> <span class="sc">~</span> Year, <span class="at">p =</span> <span class="dv">4</span>,  <span class="at">q =</span> <span class="dv">0</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-11-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a><span class="fu">summary</span>(Hawaii_gls_p1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Generalized least squares fit by REML
   Model: Birds ~ Rainfall + Year 
@@ -361,49 +896,405 @@ Standardized residuals:
 Residual standard error: 2.928588 
 Degrees of freedom: 45 total; 42 residual</code></pre>
 </div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a><span class="fu">intervals</span>(Hawaii_gls_p1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Approximate 95% confidence intervals
+
+ Coefficients:
+                    lower          est.         upper
+(Intercept) -716.44039500 -4.364326e+02 -156.42483095
+Rainfall      -0.07578684 -9.835567e-03    0.05611571
+Year           0.08268720  2.241325e-01    0.36557774
+
+ Correlation structure:
+        lower      est.     upper
+Phi1 0.394473 0.7734303 0.9275469
+
+ Residual standard error:
+   lower     est.    upper 
+1.709144 2.928588 5.018083 </code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-11-3">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a><span class="fu">summary</span>(Hawaii_gls_p4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generalized least squares fit by REML
+  Model: Birds ~ Rainfall + Year 
+  Data: Hawaii 
+       AIC      BIC    logLik
+  200.7468 214.6481 -92.37339
+
+Correlation Structure: ARMA(4,0)
+ Formula: ~Year 
+ Parameter estimate(s):
+       Phi1        Phi2        Phi3        Phi4 
+ 0.97807391 -0.38366569  0.09498221 -0.06093227 
+
+Coefficients:
+                Value Std.Error   t-value p-value
+(Intercept) -474.7764  90.99220 -5.217770  0.0000
+Rainfall      -0.0153   0.02722 -0.563526  0.5761
+Year           0.2437   0.04597  5.300541  0.0000
+
+ Correlation: 
+         (Intr) Ranfll
+Rainfall  0.005       
+Year     -1.000 -0.011
+
+Standardized residuals:
+        Min          Q1         Med          Q3         Max 
+-1.86058332 -0.50806563 -0.01591368  0.47719838  2.87365915 
+
+Residual standard error: 2.636828 
+Degrees of freedom: 45 total; 42 residual</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href=""></a><span class="fu">intervals</span>(Hawaii_gls_p4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Approximate 95% confidence intervals
+
+ Coefficients:
+                    lower          est.         upper
+(Intercept) -658.40608468 -474.77639247 -291.14670027
+Rainfall      -0.07026668   -0.01533817    0.03959035
+Year           0.15088602    0.24365195    0.33641787
+
+ Correlation structure:
+           lower        est.      upper
+Phi1  0.48675817  0.97807391  0.7767507
+Phi2 -0.41757007 -0.38366569 -0.2703467
+Phi3 -0.09372554  0.09498221  0.1448770
+Phi4 -0.39200385 -0.06093227  0.2841123
+
+ Residual standard error:
+   lower     est.    upper 
+1.872715 2.636828 3.712716 </code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-11-4">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href=""></a><span class="fu">anova</span>(Hawaii_gls_m0, Hawaii_gls_p1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Model df      AIC      BIC     logLik   Test  L.Ratio p-value
+Hawaii_gls_m0     1  4 228.4798 235.4305 -110.23991                        
+Hawaii_gls_p1     2  5 199.1394 207.8277  -94.56969 1 vs 2 31.34043  &lt;.0001</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href=""></a><span class="fu">anova</span>(Hawaii_gls_m0, Hawaii_gls_p4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Model df      AIC      BIC     logLik   Test  L.Ratio p-value
+Hawaii_gls_m0     1  4 228.4798 235.4305 -110.23991                        
+Hawaii_gls_p4     2  8 200.7468 214.6481  -92.37339 1 vs 2 35.73304  &lt;.0001</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href=""></a><span class="fu">anova</span>(Hawaii_gls_m1, Hawaii_gls_p4)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Model df      AIC      BIC    logLik   Test  L.Ratio p-value
+Hawaii_gls_m1     1  5 199.1394 207.8277 -94.56969                        
+Hawaii_gls_p4     2  8 200.7468 214.6481 -92.37339 1 vs 2 4.392607  0.2221</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="空间相关的诊断与应对" class="title-slide slide level1 center">
+<h1>空间相关的诊断与应对</h1>
+
+</section>
+<section id="boreality数据集节选" class="slide level2 scrollable">
+<h2><code>Boreality</code>数据集（节选）</h2>
+<p><code>Boreality</code><sup>1</sup>：俄罗斯某个区域的森林指数和湿度，以及空间坐标：</p>
+<div class="panel-tabset">
+<ul id="tabset-12" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-12-1">数据框</a></li><li><a href="#tabset-12-2">图像</a></li></ul>
+<div class="tab-content">
+<div id="tabset-12-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href=""></a>Boreality</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 533 × 4
+       x     y   Bor     Wet
+   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+ 1 2110. 2094. 15.2  -0.0264
+ 2 2190. 2106. 15.4  -0.0234
+ 3 2064. 2053. 15.3  -0.0189
+ 4 2277. 2103. 15.2  -0.0280
+ 5 2348. 2075.  8.77 -0.0292
+ 6 2437. 2087. 18.3  -0.0229
+ 7 2550  2052. 13.7  -0.0182
+ 8 2457. 2059. 16.9  -0.0179
+ 9 2103. 2020. 16.7  -0.0266
+10 2550  1947. 12.4  -0.0153
+# ℹ 523 more rows</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-12-2">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-34-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn3"><p>数据来源：Zuur et al., Mixed Effects Models and Extensions in Ecology with R, 2009.</p></li></ol></aside></section>
+<section id="boreality数据集线性回归模型" class="slide level2">
+<h2><code>Boreality</code>数据集：线性回归模型</h2>
+<div class="panel-tabset">
+<ul id="tabset-13" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-13-1">lm模型</a></li><li><a href="#tabset-13-2">模型结果</a></li></ul>
+<div class="tab-content">
+<div id="tabset-13-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href=""></a>Boreality_lm_m0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Bor <span class="sc">~</span> Wet, <span class="at">data =</span> Boreality)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-13-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href=""></a><span class="fu">summary</span>(Boreality_lm_m0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-t test of coefficients:
+Call:
+lm(formula = Bor ~ Wet, data = Boreality)
 
-               Estimate  Std. Error t value Pr(&gt;|t|)   
-(Intercept) -459.568249  141.768971 -3.2417 0.002398 **
-Rainfall       0.006494    0.069415  0.0936 0.925931   
-Year           0.235777    0.071409  3.3018 0.002029 **
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-9.0918 -2.4214 -0.1382  1.9783 17.6054 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  18.4880     0.3787   48.82   &lt;2e-16 ***
+Wet         165.8036    10.5991   15.64   &lt;2e-16 ***
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 3.491 on 531 degrees of freedom
+Multiple R-squared:  0.3155,    Adjusted R-squared:  0.3142 
+F-statistic: 244.7 on 1 and 531 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
 </section>
-
-<section id="注空间相关部分已移除本讲聚焦时间序列自相关" class="title-slide slide level1 center">
-<h1>注：空间相关部分已移除，本讲聚焦时间序列自相关</h1>
-
-</section>
-
-<section id="课堂练习简短" class="title-slide slide level1 center">
-<h1>课堂练习（简短）</h1>
-<ul>
-<li>使用 Hawaii：检测时序自相关；对 Rainfall 估计比较 OLS vs GLS AR(1) 的 p 值和信赖区间变化。</li>
-<li>进阶：尝试 Newey–West 标准误并比较结果。</li>
-</ul>
-</section>
-
-<section id="附录可显示完整-runnable-代码供作业复现" class="title-slide slide level1 center">
-<h1>附录：可显示完整 runnable 代码（供作业/复现）</h1>
+<section id="残差的空间分布" class="slide level2">
+<h2>残差的空间分布</h2>
+<div class="panel-tabset">
+<ul id="tabset-14" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-14-1">代码</a></li><li><a href="#tabset-14-2">图</a></li></ul>
+<div class="tab-content">
+<div id="tabset-14-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="co"># Put here the full code blocks (same as above) with comments for students</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href=""></a>Boreality_resid_plot <span class="ot">&lt;-</span></span>
+<span id="cb54-2"><a href=""></a>  Boreality <span class="sc">|&gt;</span></span>
+<span id="cb54-3"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">resid =</span> <span class="fu">rstandard</span>(Boreality_lm_m0)) <span class="sc">|&gt;</span></span>
+<span id="cb54-4"><a href=""></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb54-5"><a href=""></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(x, y, <span class="at">color =</span> resid), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">height =</span> <span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb54-6"><a href=""></a>  <span class="fu">scale_color_gradient2</span>(<span class="at">low =</span> <span class="st">"blue"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb54-7"><a href=""></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Residuals"</span>) <span class="sc">+</span></span>
+<span id="cb54-8"><a href=""></a>  <span class="fu">coord_fixed</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-14-2">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-38-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </section>
+<section id="variogram图" class="slide level2">
+<h2>variogram图</h2>
 
-<section id="参考文献" class="title-slide slide level1 center">
-<h1>参考文献</h1>
+<img data-src="images/variogram.png" class="r-stretch"></section>
+<section id="variogram图-1" class="slide level2">
+<h2>variogram图</h2>
+<div class="panel-tabset">
+<ul id="tabset-15" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-15-1">代码</a></li><li><a href="#tabset-15-2">图</a></li></ul>
+<div class="tab-content">
+<div id="tabset-15-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href=""></a><span class="fu">library</span>(gstat)</span>
+<span id="cb55-2"><a href=""></a><span class="fu">library</span>(sp)</span>
+<span id="cb55-3"><a href=""></a>Boreality_variogram_df <span class="ot">&lt;-</span></span>
+<span id="cb55-4"><a href=""></a>  Boreality <span class="sc">|&gt;</span></span>
+<span id="cb55-5"><a href=""></a>    <span class="fu">mutate</span>(<span class="at">resid =</span> <span class="fu">rstandard</span>(Boreality_lm_m0)) <span class="sc">|&gt;</span></span>
+<span id="cb55-6"><a href=""></a>    <span class="fu">select</span>(resid, x, y)</span>
+<span id="cb55-7"><a href=""></a></span>
+<span id="cb55-8"><a href=""></a><span class="fu">coordinates</span>(Boreality_variogram_df) <span class="ot">&lt;-</span> <span class="er">~</span>x<span class="sc">+</span>y</span>
+<span id="cb55-9"><a href=""></a></span>
+<span id="cb55-10"><a href=""></a>Boreality_variogram <span class="ot">&lt;-</span> <span class="fu">variogram</span>(resid <span class="sc">~</span> <span class="dv">1</span>, Boreality_variogram_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-15-2">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-40-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="variogram图-2" class="slide level2">
+<h2>variogram图</h2>
+<p>variogram通常假定误差项的空间相关结构为各向同性（isotropic）。 通过绘制不同方向的variogram图，可以检查误差项的空间相关结构是否满足各向同性假设：</p>
+<div class="panel-tabset">
+<ul id="tabset-16" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-16-1">代码</a></li><li><a href="#tabset-16-2">图</a></li></ul>
+<div class="tab-content">
+<div id="tabset-16-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href=""></a>Boreality_variogram_alpha <span class="ot">&lt;-</span></span>
+<span id="cb56-2"><a href=""></a>  <span class="fu">variogram</span>(</span>
+<span id="cb56-3"><a href=""></a>    resid <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb56-4"><a href=""></a>    Boreality_variogram_df,</span>
+<span id="cb56-5"><a href=""></a>    <span class="at">alpha =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">45</span>, <span class="dv">90</span>, <span class="dv">135</span>)</span>
+<span id="cb56-6"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb56-7"><a href=""></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-16-2">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-42-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="空间相关结构" class="slide level2 scrollable">
+<h2>空间相关结构</h2>
+<p>通过引入函数<span class="math inline">\(h(.)\)</span>来对不同位置的误差项之间的空间相关性进行建模： <span class="math display">\[
+cor(\varepsilon_s, \varepsilon_t) =  h(d(\mathbf{p_s}, \mathbf{p_t}), \mathbf{\rho})
+\]</span> 函数<span class="math inline">\(h(.)\)</span>称为相关函数，其取值范围在 -1 到 1 之间，<span class="math inline">\(\rho\)</span>是一个相关参数（correlation parameters）向量，<span class="math inline">\(p_s, p_t\)</span>是位置向量（position vectors），<span class="math inline">\(d(p_s, p_t)\)</span>表示两者间的<em>距离</em>。</p>
+<p><code>nlme</code>包中提供了多种相关结构函数:</p>
 <ul>
-<li>Zuur et al., Mixed Effects Models and Extensions in Ecology with R</li>
-<li>Cressie, Statistics for Spatial Data</li>
-<li>Newey &amp; West (HAC SEs)</li>
+<li><code>corExp()</code>: 指数相关结构</li>
+<li><code>corGaus()</code>: 高斯相关结构</li>
+<li><code>corSpher()</code>: 球面相关结构</li>
+<li><code>corLin()</code>: 线性相关结构 …</li>
+</ul>
+</section>
+<section id="corexp的使用" class="slide level2">
+<h2><code>corExp()</code>的使用</h2>
+<div class="panel-tabset">
+<ul id="tabset-17" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-17-1">代码</a></li><li><a href="#tabset-17-2">结果</a></li></ul>
+<div class="tab-content">
+<div id="tabset-17-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href=""></a>Boreality_gls_m0 <span class="ot">&lt;-</span> </span>
+<span id="cb57-2"><a href=""></a>  <span class="fu">gls</span>(Bor <span class="sc">~</span> Wet, <span class="at">data =</span> Boreality)</span>
+<span id="cb57-3"><a href=""></a>Boreality_gls_m1 <span class="ot">&lt;-</span> </span>
+<span id="cb57-4"><a href=""></a>  <span class="fu">update</span>(Boreality_gls_m0, <span class="at">correlation =</span> <span class="fu">corExp</span>(<span class="at">form =</span> <span class="sc">~</span> x <span class="sc">+</span> y, <span class="at">nugget =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-17-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href=""></a><span class="fu">summary</span>(Boreality_gls_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generalized least squares fit by REML
+  Model: Bor ~ Wet 
+  Data: Boreality 
+       AIC      BIC    logLik
+  2732.224 2753.597 -1361.112
+
+Correlation Structure: Exponential spatial correlation
+ Formula: ~x + y 
+ Parameter estimate(s):
+      range      nugget 
+481.1720765   0.4849349 
+
+Coefficients:
+               Value Std.Error   t-value p-value
+(Intercept) 15.02343  0.825323 18.203090       0
+Wet         75.43165 13.541701  5.570323       0
+
+ Correlation: 
+    (Intr)
+Wet 0.571 
+
+Standardized residuals:
+       Min         Q1        Med         Q3        Max 
+-2.1902927 -0.5385566  0.1088981  0.7354905  5.0260467 
+
+Residual standard error: 3.707339 
+Degrees of freedom: 533 total; 531 residual</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<h3 id="模型比较-4">模型比较</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href=""></a><span class="fu">anova</span>(Boreality_gls_m0, Boreality_gls_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 Model df      AIC      BIC    logLik   Test  L.Ratio p-value
+Boreality_gls_m0     1  3 2844.541 2857.365 -1419.271                        
+Boreality_gls_m1     2  5 2732.224 2753.597 -1361.112 1 vs 2 116.3175  &lt;.0001</code></pre>
+</div>
+</div>
+</section>
+<section id="corexp的使用-1" class="slide level2">
+<h2><code>corExp()</code>的使用</h2>
+<div class="panel-tabset">
+<ul id="tabset-18" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-18-1">代码</a></li><li><a href="#tabset-18-2">varigram图</a></li></ul>
+<div class="tab-content">
+<div id="tabset-18-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href=""></a>Boreality_gls_m1_variogram <span class="ot">&lt;-</span></span>
+<span id="cb62-2"><a href=""></a>  <span class="fu">Variogram</span>(</span>
+<span id="cb62-3"><a href=""></a>    Boreality_gls_m1,</span>
+<span id="cb62-4"><a href=""></a>    <span class="at">form =</span> <span class="sc">~</span> x <span class="sc">+</span> y,</span>
+<span id="cb62-5"><a href=""></a>    <span class="at">robust =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb62-6"><a href=""></a>    <span class="at">maxDist =</span> <span class="dv">2000</span>,</span>
+<span id="cb62-7"><a href=""></a>    <span class="at">resType =</span> <span class="st">"normalized"</span></span>
+<span id="cb62-8"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb62-9"><a href=""></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-18-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href=""></a>Boreality_gls_m1_variogram</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-47-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="资料" class="slide level2">
+<h2>资料</h2>
+<ul>
+<li>Zuur et al., Mixed Effects Models and Extensions in Ecology with R, 2009</li>
+<li>Pinheiro and Bates, Mixed-Effects Models in S and S-PLUS, 2002</li>
 </ul>
 
-</section>
+</section></section>
+
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="images/JMU_logo.jpg" class="slide-logo"></p>
