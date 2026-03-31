@@ -6,8 +6,8 @@
 <script src="talk05_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="talk05_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="talk05_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="talk05_files/libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.9.35">
+<link href="talk05_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.36">
 
   <meta name="author" content="易湘琦">
   <title>高等数据统计分析</title>
@@ -216,21 +216,23 @@
 </section>
 <section id="你将学到" class="slide level2">
 <h2>你将学到</h2>
+<div style="font-size: 1.4em;">
 <ul>
 <li class="fragment">回顾线性回归的基本假设</li>
 <li class="fragment">了解自相关的基本概念及其对回归分析的影响</li>
 <li class="fragment">时间自相关诊断与应对</li>
 <li class="fragment">空间自相关诊断与应对</li>
 </ul>
+</div>
 </section>
 <section>
 <section id="回顾线性回归的基本假设" class="title-slide slide level1 center">
 <h1>回顾：线性回归的基本假设</h1>
 
 </section>
-<section id="section" class="slide level2">
-<h2></h2>
-<p>线性回归模型的基本假设包括：</p>
+<section id="线性回归模型的基本假设包括" class="slide level2">
+<h2>线性回归模型的基本假设包括</h2>
+<div style="font-size: 1.2em;">
 <ol type="1">
 <li class="fragment">线性关系：响应变量与解释变量之间存在线性关系。</li>
 <li class="fragment">独立性：观测值之间相互独立。</li>
@@ -238,6 +240,7 @@
 <li class="fragment">正态性：误差项服从正态分布。</li>
 <li class="fragment"><em>无多重共线性(多元线性回归)：解释变量之间不存在高度相关性。</em></li>
 </ol>
+</div>
 </section></section>
 <section>
 <section id="误差项间的相关性" class="title-slide slide level1 center">
@@ -383,7 +386,7 @@ Degrees of freedom: 45 total; 42 residual</code></pre>
 </div>
 </div>
 </section>
-<section id="自相关诊断残差图" class="slide level2">
+<section id="自相关诊断残差图" class="slide level2 scrollable">
 <h2>自相关诊断：残差图</h2>
 <p>可以通过观察残差随时间的变化来初步诊断自相关：</p>
 <div class="panel-tabset">
@@ -417,7 +420,7 @@ Degrees of freedom: 45 total; 42 residual</code></pre>
 </section>
 <section id="残差自相关系数" class="slide level2">
 <h2>残差自相关系数</h2>
-<p>计算时间滞后为1的残差自相关系数：</p>
+<p>计算时间滞后为 1 的残差自相关系数：</p>
 <div class="panel-tabset">
 <ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">计算公式</a></li><li><a href="#tabset-4-2">代码</a></li></ul>
 <div class="tab-content">
@@ -704,13 +707,13 @@ Hawaii_gls_m2     2  5 230.4798 239.1682 -110.2399 1 vs 2 2.273737e-13       1</
 <li>自回归参数的数量（p）</li>
 <li>移动平均参数的数量（q）。</li>
 </ul>
-<p>ARMA(1, 0) 表示前述的AR(1)模型。<code>ARMA(p, 0)</code>结构由如下： <span class="math display">\[
+<p>ARMA(1, 0) 表示前述的AR(1)模型。ARMA(p, 0)结构由如下： <span class="math display">\[
 \varepsilon_s = \phi_1\varepsilon_{s-1} +\phi_2\varepsilon_{s-2} +\dots + \phi_p\varepsilon_{s-p} + \eta_s
 \]</span></p>
 <p>ARMA(0, p) 的结构由如下： <span class="math display">\[
 \varepsilon_s = \theta_1\eta_{s-1} +\theta_2\eta_{s-2} +\dots + \theta_p\eta_{s-p} + \eta_s
 \]</span></p>
-<p><code>ARMA(p, q)</code>由上面两个结构组合而成： <span class="math display">\[
+<p>ARMA(p, q) 由上面两个结构组合而成： <span class="math display">\[
 \varepsilon_s = \sum^p_{i=1}\phi_i\varepsilon_{s-i} + \sum^{q}_{j=i}\theta_j\eta_{s-j} + \eta_s
 \]</span></p>
 </section>
@@ -772,26 +775,41 @@ Hawaii_gls_m4     2  6 196.8777 207.3037 -92.43886 1 vs 2 4.261669   0.039</code
 </section>
 <section id="partial-autocorrelation-function-pacf" class="slide level2">
 <h2>partial autocorrelation function (pacf)</h2>
-<p>pacf（partial autocorrelation function）用于衡量一个序列中一个特定滞后阶数的自相关性，同时控制其他滞后阶数的影响。</p>
-<div class="cell" data-reveal="true" data-fig-width="7.5" data-fig-height="4" data-layout-align="default">
+<p>pacf 用于测量在控制了所有较短滞后阶数的自相关之后，特定滞后阶数的自相关程度。</p>
+<div style="zoom: 1.8">
+<div class="cell" data-reveal="true" data-layout-align="center">
 <div class="cell-output-display">
 <div>
 <p></p><figure class=""><p></p>
 <div>
 <pre class="mermaid mermaid-js">flowchart LR
-  A["&amp;epsilon;&lt;sub&gt;t&lt;/sub&gt;"] --&gt; C["&amp;epsilon;&lt;sub&gt;t-2&lt;/sub&gt;"]
+  %% 0: First arrow (Red + pacf on top)
+  A["&amp;epsilon;&lt;sub&gt;t&lt;/sub&gt;"] -- "pacf" --&gt; C["&amp;epsilon;&lt;sub&gt;t-2&lt;/sub&gt;"]
+  
+  %% 1 &amp; 2: Middle arrows (Blue)
   A --&gt; B["&amp;epsilon;&lt;sub&gt;t-1&lt;/sub&gt;"]
   B --&gt; C
-  A --&gt; C
+  
+  %% 3: Last arrow (Blue + acf under)
+  %% Note: &lt;br/&gt; is used to push the text below the line
+  A --"acf"--&gt; C
+
+  %% Styling the arrows and their text
+  linkStyle 0 stroke:red,color:red;
+  linkStyle 1 stroke:blue,color:blue;
+  linkStyle 2 stroke:blue,color:blue;
+  linkStyle 3 stroke:blue,color:blue;
+
 </pre>
 </div>
 <p></p></figure><p></p>
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="acf和pacf来确定arma的p和q" class="slide level2">
-<h2>acf()<code>和</code>pacf()`来确定ARMA的p和q</h2>
+<h2><code>acf()</code>和<code>pacf()</code>来确定ARMA的p和q</h2>
 <table class="caption-top">
 <thead>
 <tr class="header">
@@ -820,7 +838,7 @@ Hawaii_gls_m4     2  6 196.8777 207.3037 -92.43886 1 vs 2 4.261669   0.039</code
 </table>
 </section>
 <section id="acf和pacf来确定arma的p和q-1" class="slide level2">
-<h2>acf()<code>和</code>pacf()`来确定ARMA的p和q</h2>
+<h2><code>acf()</code>和<code>pacf()</code>来确定ARMA的p和q</h2>
 <div class="panel-tabset">
 <ul id="tabset-10" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-10-1">acf</a></li><li><a href="#tabset-10-2">pacf</a></li></ul>
 <div class="tab-content">
@@ -1085,11 +1103,11 @@ F-statistic: 244.7 on 1 and 531 DF,  p-value: &lt; 2.2e-16</code></pre>
 <section id="残差的空间分布" class="slide level2">
 <h2>残差的空间分布</h2>
 <div class="panel-tabset">
-<ul id="tabset-14" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-14-1">代码</a></li><li><a href="#tabset-14-2">图</a></li></ul>
+<ul id="tabset-14" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-14-1">ggplot2 代码</a></li><li><a href="#tabset-14-2">ggplot2图</a></li><li><a href="#tabset-14-3">gstat 代码</a></li><li><a href="#tabset-14-4">gstat 图</a></li></ul>
 <div class="tab-content">
 <div id="tabset-14-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href=""></a>Boreality_resid_plot <span class="ot">&lt;-</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href=""></a>Boreality_resid_ggplot <span class="ot">&lt;-</span></span>
 <span id="cb54-2"><a href=""></a>  Boreality <span class="sc">|&gt;</span></span>
 <span id="cb54-3"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">resid =</span> <span class="fu">rstandard</span>(Boreality_lm_m0)) <span class="sc">|&gt;</span></span>
 <span id="cb54-4"><a href=""></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
@@ -1110,34 +1128,24 @@ F-statistic: 244.7 on 1 and 531 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div>
-</div>
-</div>
-</section>
-<section id="variogram图" class="slide level2">
-<h2>variogram图</h2>
-
-<img data-src="images/variogram.png" class="r-stretch"></section>
-<section id="variogram图-1" class="slide level2">
-<h2>variogram图</h2>
-<div class="panel-tabset">
-<ul id="tabset-15" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-15-1">代码</a></li><li><a href="#tabset-15-2">图</a></li></ul>
-<div class="tab-content">
-<div id="tabset-15-1">
+<div id="tabset-14-3">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href=""></a><span class="fu">library</span>(gstat)</span>
 <span id="cb55-2"><a href=""></a><span class="fu">library</span>(sp)</span>
-<span id="cb55-3"><a href=""></a>Boreality_variogram_df <span class="ot">&lt;-</span></span>
+<span id="cb55-3"><a href=""></a>Boreality_resid_bubble_df <span class="ot">&lt;-</span></span>
 <span id="cb55-4"><a href=""></a>  Boreality <span class="sc">|&gt;</span></span>
-<span id="cb55-5"><a href=""></a>    <span class="fu">mutate</span>(<span class="at">resid =</span> <span class="fu">rstandard</span>(Boreality_lm_m0)) <span class="sc">|&gt;</span></span>
-<span id="cb55-6"><a href=""></a>    <span class="fu">select</span>(resid, x, y)</span>
+<span id="cb55-5"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">resid =</span> <span class="fu">rstandard</span>(Boreality_lm_m0)) <span class="sc">|&gt;</span></span>
+<span id="cb55-6"><a href=""></a>  <span class="fu">select</span>(resid, x, y)</span>
 <span id="cb55-7"><a href=""></a></span>
-<span id="cb55-8"><a href=""></a><span class="fu">coordinates</span>(Boreality_variogram_df) <span class="ot">&lt;-</span> <span class="er">~</span>x<span class="sc">+</span>y</span>
+<span id="cb55-8"><a href=""></a><span class="fu">coordinates</span>(Boreality_resid_bubble_df) <span class="ot">&lt;-</span> <span class="er">~</span> x <span class="sc">+</span> y <span class="co"># coordinates 来自 sp 包</span></span>
 <span id="cb55-9"><a href=""></a></span>
-<span id="cb55-10"><a href=""></a>Boreality_variogram <span class="ot">&lt;-</span> <span class="fu">variogram</span>(resid <span class="sc">~</span> <span class="dv">1</span>, Boreality_variogram_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb55-10"><a href=""></a>Boreality_resid_bubble_plot <span class="ot">&lt;-</span></span>
+<span id="cb55-11"><a href=""></a>  <span class="fu">bubble</span>(Boreality_resid_bubble_df, <span class="st">"resid"</span>, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"grey"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<div id="tabset-15-2">
+<div id="tabset-14-4">
 <div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href=""></a>Boreality_resid_bubble_plot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
@@ -1150,29 +1158,106 @@ F-statistic: 244.7 on 1 and 531 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </section>
-<section id="variogram图-2" class="slide level2">
-<h2>variogram图</h2>
-<p>variogram通常假定误差项的空间相关结构为各向同性（isotropic）。 通过绘制不同方向的variogram图，可以检查误差项的空间相关结构是否满足各向同性假设：</p>
+<section id="变异函数variogram" class="slide level2 scrollable">
+<h2>变异函数（variogram）</h2>
+<p>变异函数，(semi-)variogram，是空间统计学中用于描述空间相关性的工具，表示空间数据中变量值之间的差异程度随空间距离的变化情况。 通常有如下定义： <span class="math display">\[
+\gamma(\mathbf{h}) = \frac{1}{2} Var[Z(\mathbf{x}) - Z(\mathbf{x} + \mathbf{h})]
+\]</span> 其中<span class="math inline">\(h\)</span>表示空间距离（lag distance），<span class="math inline">\(\mathbf{x}\)</span>表示空间位置向量，<span class="math inline">\(Z(\mathbf{x})\)</span>表示位置<span class="math inline">\(\mathbf{x}\)</span>处的变量值。 变异函数需要假定 intrinsic stationarity： <span class="math display">\[
+E[Z(\mathbf{x}+\mathbf{h}) - Z(\mathbf{x})] = 0  \\
+Var[Z(\mathbf{x}+\mathbf{h}) - Z(\mathbf{x})] = 2\gamma(\mathbf{h})
+\]</span> 这个假定确保变异函数只是位置之间距离的函数，而与具体位置无关，且不需要假定数据的均值是常数或者有限方差。</p>
+</section>
+<section id="变异函数与协方差" class="slide level2 scrollable">
+<h2>变异函数与协方差</h2>
+<p>如果进一步假定weak(second-order) stationarity： <span class="math display">\[
+E[Z(\mathbf{x})] = \mu \\
+Cov(Z(\mathbf{x}), Z(\mathbf{x}+\mathbf{h})) = C(\mathbf{h})
+\]</span> 可以将变异函数表示为协方差函数的函数： <span class="math display">\[
+\gamma(\mathbf{h}) = C(0) - C(\mathbf{h})
+\]</span> 其中<span class="math inline">\(C(0)\)</span>表示位置之间距离为0时的协方差，即变量的方差。</p>
+</section>
+<section id="变异函数的估算" class="slide level2">
+<h2>变异函数的估算</h2>
+<p>当我们假定 ergodicity 时, <span class="math inline">\(\gamma(\mathbf{h})\)</span>的估计值：</p>
+<p><span class="math display">\[
+\hat{\gamma}(\mathbf{h}) = \frac{1}{2N(\mathbf{h})} \sum_{i = 1}^{N(\mathbf{h})} (Z(\mathbf{x_i}+\mathbf{h}) - Z(\mathbf{x_i}))^2
+\]</span> 其中<span class="math inline">\(N(\mathbf{h})\)</span>表示距离为<span class="math inline">\(h\)</span>的观测对的数量。</p>
+</section>
+<section id="变异函数的典型图像" class="slide level2 scrollable">
+<h2>变异函数的典型图像</h2>
+<div class="panel-tabset">
+<ul id="tabset-15" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-15-1">典型variogram图</a><sup>1</sup></li><li><a href="#tabset-15-2">variogram图说明</a></li></ul>
+<div class="tab-content">
+<div id="tabset-15-1">
+<p><img data-src="images/variogram.png"></p>
+</div>
+<div id="tabset-15-2">
+<ul>
+<li>横轴表示位置之间的距离（lag distance），纵轴表示变异函数的估计值<span class="math inline">\(\hat{\gamma}(h)\)</span>。</li>
+<li>nugget：？？？</li>
+<li>sill：？？？</li>
+<li>range：？？？</li>
+</ul>
+</div>
+</div>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn4"><p>图像来源：Zuur et al., Mixed Effects Models and Extensions in Ecology with R, 2009.</p></li></ol></aside></section>
+<section id="残差的变异函数图" class="slide level2 scrollable">
+<h2>残差的变异函数图</h2>
+<p>在线性回归模型中，误差项满足的假设条件是比 intrinsic stationary 和 weak stationary 更严格的条件，因此残差的变异函数图可以用来诊断误差项的空间相关结构：</p>
 <div class="panel-tabset">
 <ul id="tabset-16" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-16-1">代码</a></li><li><a href="#tabset-16-2">图</a></li></ul>
 <div class="tab-content">
 <div id="tabset-16-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href=""></a>Boreality_variogram_alpha <span class="ot">&lt;-</span></span>
-<span id="cb56-2"><a href=""></a>  <span class="fu">variogram</span>(</span>
-<span id="cb56-3"><a href=""></a>    resid <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb56-4"><a href=""></a>    Boreality_variogram_df,</span>
-<span id="cb56-5"><a href=""></a>    <span class="at">alpha =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">45</span>, <span class="dv">90</span>, <span class="dv">135</span>)</span>
-<span id="cb56-6"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb56-7"><a href=""></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href=""></a>Boreality_variogram_df <span class="ot">&lt;-</span></span>
+<span id="cb57-2"><a href=""></a>  Boreality <span class="sc">|&gt;</span></span>
+<span id="cb57-3"><a href=""></a>    <span class="fu">mutate</span>(<span class="at">resid =</span> <span class="fu">rstandard</span>(Boreality_lm_m0)) <span class="sc">|&gt;</span></span>
+<span id="cb57-4"><a href=""></a>    <span class="fu">select</span>(resid, x, y)</span>
+<span id="cb57-5"><a href=""></a></span>
+<span id="cb57-6"><a href=""></a><span class="fu">coordinates</span>(Boreality_variogram_df) <span class="ot">&lt;-</span> <span class="er">~</span>x<span class="sc">+</span>y</span>
+<span id="cb57-7"><a href=""></a></span>
+<span id="cb57-8"><a href=""></a>Boreality_variogram <span class="ot">&lt;-</span> <span class="fu">variogram</span>(resid <span class="sc">~</span> <span class="dv">1</span>, Boreality_variogram_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-16-2">
+<p>当误差限之间不存在相关性时，残差的变异函数图应该近似为一个水平线。如果变异函数图显示出随距离增加而增加的趋势，或者存在明显的模式（如周期性），则表明误差项之间存在空间相关性。</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
 <p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-42-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="各向同性" class="slide level2 scrollable">
+<h2>各向同性</h2>
+<p>变异函数通常假定误差项的空间相关结构为各向同性（isotropic）。 通过绘制不同方向的variogram图，可以检查误差项的空间相关结构是否满足各向同性假设：</p>
+<div class="panel-tabset">
+<ul id="tabset-17" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-17-1">代码</a></li><li><a href="#tabset-17-2">图</a></li></ul>
+<div class="tab-content">
+<div id="tabset-17-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href=""></a>Boreality_variogram_alpha <span class="ot">&lt;-</span></span>
+<span id="cb58-2"><a href=""></a>  <span class="fu">variogram</span>(</span>
+<span id="cb58-3"><a href=""></a>    resid <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb58-4"><a href=""></a>    Boreality_variogram_df,</span>
+<span id="cb58-5"><a href=""></a>    <span class="at">alpha =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">45</span>, <span class="dv">90</span>, <span class="dv">135</span>)</span>
+<span id="cb58-6"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb58-7"><a href=""></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-17-2">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-44-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1197,19 +1282,20 @@ cor(\varepsilon_s, \varepsilon_t) =  h(d(\mathbf{p_s}, \mathbf{p_t}), \mathbf{\r
 <section id="corexp的使用" class="slide level2">
 <h2><code>corExp()</code>的使用</h2>
 <div class="panel-tabset">
-<ul id="tabset-17" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-17-1">代码</a></li><li><a href="#tabset-17-2">结果</a></li></ul>
+<ul id="tabset-18" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-18-1">代码</a></li><li><a href="#tabset-18-2">结果</a></li><li><a href="#tabset-18-3">模型比较</a></li></ul>
 <div class="tab-content">
-<div id="tabset-17-1">
+<div id="tabset-18-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href=""></a>Boreality_gls_m0 <span class="ot">&lt;-</span> </span>
-<span id="cb57-2"><a href=""></a>  <span class="fu">gls</span>(Bor <span class="sc">~</span> Wet, <span class="at">data =</span> Boreality)</span>
-<span id="cb57-3"><a href=""></a>Boreality_gls_m1 <span class="ot">&lt;-</span> </span>
-<span id="cb57-4"><a href=""></a>  <span class="fu">update</span>(Boreality_gls_m0, <span class="at">correlation =</span> <span class="fu">corExp</span>(<span class="at">form =</span> <span class="sc">~</span> x <span class="sc">+</span> y, <span class="at">nugget =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href=""></a>Boreality_gls_m0 <span class="ot">&lt;-</span></span>
+<span id="cb59-2"><a href=""></a>  <span class="fu">gls</span>(Bor <span class="sc">~</span> Wet, <span class="at">data =</span> Boreality)</span>
+<span id="cb59-3"><a href=""></a></span>
+<span id="cb59-4"><a href=""></a>Boreality_gls_m1 <span class="ot">&lt;-</span></span>
+<span id="cb59-5"><a href=""></a>  <span class="fu">update</span>(Boreality_gls_m0, <span class="at">correlation =</span> <span class="fu">corExp</span>(<span class="at">form =</span> <span class="sc">~</span> x <span class="sc">+</span> y, <span class="at">nugget =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<div id="tabset-17-2">
+<div id="tabset-18-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href=""></a><span class="fu">summary</span>(Boreality_gls_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href=""></a><span class="fu">summary</span>(Boreality_gls_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Generalized least squares fit by REML
   Model: Bor ~ Wet 
@@ -1241,43 +1327,47 @@ Degrees of freedom: 533 total; 531 residual</code></pre>
 </div>
 </div>
 </div>
-</div>
-</div>
-<h3 id="模型比较-4">模型比较</h3>
+<div id="tabset-18-3">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href=""></a><span class="fu">anova</span>(Boreality_gls_m0, Boreality_gls_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href=""></a><span class="fu">anova</span>(Boreality_gls_m0, Boreality_gls_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 Model df      AIC      BIC    logLik   Test  L.Ratio p-value
 Boreality_gls_m0     1  3 2844.541 2857.365 -1419.271                        
 Boreality_gls_m1     2  5 2732.224 2753.597 -1361.112 1 vs 2 116.3175  &lt;.0001</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
 </section>
 <section id="corexp的使用-1" class="slide level2">
 <h2><code>corExp()</code>的使用</h2>
 <div class="panel-tabset">
-<ul id="tabset-18" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-18-1">代码</a></li><li><a href="#tabset-18-2">varigram图</a></li></ul>
+<ul id="tabset-19" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-19-1">指数相关结构</a></li><li><a href="#tabset-19-2">代码</a></li><li><a href="#tabset-19-3">varigram图</a></li></ul>
 <div class="tab-content">
-<div id="tabset-18-1">
+<div id="tabset-19-1">
+<p>指数相关结构（exponential correlation structure）是一种常用的空间相关结构，假设误差项之间的相关性随着距离的增加而以指数方式衰减，可以通过<code>nlme</code>包中的<code>corExp()</code>函数来指定：</p>
+</div>
+<div id="tabset-19-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href=""></a>Boreality_gls_m1_variogram <span class="ot">&lt;-</span></span>
-<span id="cb62-2"><a href=""></a>  <span class="fu">Variogram</span>(</span>
-<span id="cb62-3"><a href=""></a>    Boreality_gls_m1,</span>
-<span id="cb62-4"><a href=""></a>    <span class="at">form =</span> <span class="sc">~</span> x <span class="sc">+</span> y,</span>
-<span id="cb62-5"><a href=""></a>    <span class="at">robust =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb62-6"><a href=""></a>    <span class="at">maxDist =</span> <span class="dv">2000</span>,</span>
-<span id="cb62-7"><a href=""></a>    <span class="at">resType =</span> <span class="st">"normalized"</span></span>
-<span id="cb62-8"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb62-9"><a href=""></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href=""></a>Boreality_gls_m1_variogram <span class="ot">&lt;-</span></span>
+<span id="cb64-2"><a href=""></a>  <span class="fu">Variogram</span>(</span>
+<span id="cb64-3"><a href=""></a>    Boreality_gls_m1,</span>
+<span id="cb64-4"><a href=""></a>    <span class="at">form =</span> <span class="sc">~</span> x <span class="sc">+</span> y,</span>
+<span id="cb64-5"><a href=""></a>    <span class="at">robust =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb64-6"><a href=""></a>    <span class="at">maxDist =</span> <span class="dv">2000</span>,</span>
+<span id="cb64-7"><a href=""></a>    <span class="at">resType =</span> <span class="st">"normalized"</span></span>
+<span id="cb64-8"><a href=""></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb64-9"><a href=""></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<div id="tabset-18-2">
+<div id="tabset-19-3">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href=""></a>Boreality_gls_m1_variogram</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href=""></a>Boreality_gls_m1_variogram</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-47-1.png" width="960"></p>
+<p><img data-src="talk05_files/figure-revealjs/unnamed-chunk-49-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1291,6 +1381,7 @@ Boreality_gls_m1     2  5 2732.224 2753.597 -1361.112 1 vs 2 116.3175  &lt;.0001
 <ul>
 <li>Zuur et al., Mixed Effects Models and Extensions in Ecology with R, 2009</li>
 <li>Pinheiro and Bates, Mixed-Effects Models in S and S-PLUS, 2002</li>
+<li>应用回归分析（R语言版），何晓群，电子工业出版社，2017</li>
 </ul>
 
 </section></section>

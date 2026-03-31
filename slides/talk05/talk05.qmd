@@ -18,7 +18,7 @@ execute:
 
 ## 你将学到
 
-::: incremental
+::: {.incremental style="font-size: 1.4em;"}
 - 回顾线性回归的基本假设
 - 了解自相关的基本概念及其对回归分析的影响
 - 时间自相关诊断与应对
@@ -26,11 +26,10 @@ execute:
 :::
 
 # 回顾：线性回归的基本假设
-##
 
-线性回归模型的基本假设包括：
+## 线性回归模型的基本假设包括
 
-::: incremental
+::: {.incremental style="font-size: 1.2em;"}
 1. 线性关系：响应变量与解释变量之间存在线性关系。
 2. 独立性：观测值之间相互独立。
 3. 同方差性：误差项的方差在所有水平上是相同的。
@@ -163,7 +162,7 @@ summary(Hawaii_gls_m0)
 
 :::
 
-## 自相关诊断：残差图
+## 自相关诊断：残差图 {.scrollable}
 可以通过观察残差随时间的变化来初步诊断自相关：
 
 ::: {.panel-tabset}
@@ -189,7 +188,7 @@ Hawaii_resid_plot
 :::
 
 ## 残差自相关系数
-计算时间滞后为1的残差自相关系数：
+计算时间滞后为 1 的残差自相关系数：
 
 ::: {.panel-tabset}
 
@@ -365,7 +364,7 @@ ARMA模型（autoregressive-moving average correlation model）由两个参数�
 - 自回归参数的数量（p）
 - 移动平均参数的数量（q）。
 
-ARMA(1, 0) 表示前述的AR(1)模型。`ARMA(p, 0)`结构由如下：
+ARMA(1, 0) 表示前述的AR(1)模型。ARMA(p, 0)结构由如下：
 $$
 \varepsilon_s = \phi_1\varepsilon_{s-1} +\phi_2\varepsilon_{s-2} +\dots + \phi_p\varepsilon_{s-p} + \eta_s
 $$
@@ -375,7 +374,7 @@ $$
 \varepsilon_s = \theta_1\eta_{s-1} +\theta_2\eta_{s-2} +\dots + \theta_p\eta_{s-p} + \eta_s
 $$
 
-`ARMA(p, q)`由上面两个结构组合而成：
+ARMA(p, q) 由上面两个结构组合而成：
 $$
 \varepsilon_s = \sum^p_{i=1}\phi_i\varepsilon_{s-i} + \sum^{q}_{j=i}\theta_j\eta_{s-j} + \eta_s
 $$
@@ -411,20 +410,36 @@ Citing from Schabenberger and Pierce (2002):
 :::
 
 ## partial autocorrelation function (pacf)
-pacf（partial autocorrelation function）用于衡量一个序列中一个特定滞后阶数的自相关性，同时控制其他滞后阶数的影响。
+pacf 用于测量在控制了所有较短滞后阶数的自相关之后，特定滞后阶数的自相关程度。
+
+::: {style="zoom: 1.8"}
 
 ```{mermaid}
 %%| echo: false
-%%| fig-width: 7.5
-%%| fig-height: 4
+%%| fig-align: center
 flowchart LR
-  A["&epsilon;<sub>t</sub>"] --> C["&epsilon;<sub>t-2</sub>"]
+  %% 0: First arrow (Red + pacf on top)
+  A["&epsilon;<sub>t</sub>"] -- "pacf" --> C["&epsilon;<sub>t-2</sub>"]
+  
+  %% 1 & 2: Middle arrows (Blue)
   A --> B["&epsilon;<sub>t-1</sub>"]
   B --> C
-  A --> C
+  
+  %% 3: Last arrow (Blue + acf under)
+  %% Note: <br/> is used to push the text below the line
+  A --"acf"--> C
+
+  %% Styling the arrows and their text
+  linkStyle 0 stroke:red,color:red;
+  linkStyle 1 stroke:blue,color:blue;
+  linkStyle 2 stroke:blue,color:blue;
+  linkStyle 3 stroke:blue,color:blue;
+
 ```
 
-## acf()`和`pacf()`来确定ARMA的p和q
+:::
+
+## `acf()`和`pacf()`来确定ARMA的p和q
 
 ||acf|pacf|
 |-----------|--------|------------|
@@ -433,7 +448,7 @@ flowchart LR
 |ARMA(p, q)|逐渐衰减在max(0, q-p)阶之后|逐渐衰减在max(0, p-q)阶之后|
 
 
-## acf()`和`pacf()`来确定ARMA的p和q
+## `acf()`和`pacf()`来确定ARMA的p和q
 
 ::: {.panel-tabset}
 ### acf
@@ -535,10 +550,10 @@ summary(Boreality_lm_m0)
 
 ::: {.panel-tabset}
 
-### 代码
+### ggplot2 代码 {.scrollable}
 
 ```{r}
-Boreality_resid_plot <-
+Boreality_resid_ggplot <-
   Boreality |>
   mutate(resid = rstandard(Boreality_lm_m0)) |>
   ggplot() +
@@ -548,29 +563,102 @@ Boreality_resid_plot <-
   coord_fixed()
 
 ```
-### 图
+### ggplot2图
 
 ```{r}
 #| echo: false
-Boreality_resid_plot
+Boreality_resid_ggplot
+```
+
+### gstat 代码
+
+```{r}
+library(gstat)
+library(sp)
+Boreality_resid_bubble_df <-
+  Boreality |>
+  mutate(resid = rstandard(Boreality_lm_m0)) |>
+  select(resid, x, y)
+
+coordinates(Boreality_resid_bubble_df) <- ~ x + y # coordinates 来自 sp 包
+
+Boreality_resid_bubble_plot <-
+  bubble(Boreality_resid_bubble_df, "resid", col = c("black", "grey"))
+```
+
+
+### gstat 图
+
+```{r}
+Boreality_resid_bubble_plot
 ```
 
 :::
 
-## variogram图
+## 变异函数（variogram） {.scrollable}
+
+变异函数，(semi-)variogram，是空间统计学中用于描述空间相关性的工具，表示空间数据中变量值之间的差异程度随空间距离的变化情况。
+通常有如下定义：
+$$
+\gamma(\mathbf{h}) = \frac{1}{2} Var[Z(\mathbf{x}) - Z(\mathbf{x} + \mathbf{h})]
+$$
+其中$h$表示空间距离（lag distance），$\mathbf{x}$表示空间位置向量，$Z(\mathbf{x})$表示位置$\mathbf{x}$处的变量值。
+变异函数需要假定 intrinsic stationarity：
+$$
+E[Z(\mathbf{x}+\mathbf{h}) - Z(\mathbf{x})] = 0  \\
+Var[Z(\mathbf{x}+\mathbf{h}) - Z(\mathbf{x})] = 2\gamma(\mathbf{h})
+$$
+这个假定确保变异函数只是位置之间距离的函数，而与具体位置无关，且不需要假定数据的均值是常数或者有限方差。
+
+## 变异函数与协方差 {.scrollable}
+如果进一步假定weak(second-order) stationarity：
+$$
+E[Z(\mathbf{x})] = \mu \\
+Cov(Z(\mathbf{x}), Z(\mathbf{x}+\mathbf{h})) = C(\mathbf{h})
+$$
+可以将变异函数表示为协方差函数的函数：
+$$
+\gamma(\mathbf{h}) = C(0) - C(\mathbf{h})
+$$
+其中$C(0)$表示位置之间距离为0时的协方差，即变量的方差。
+
+## 变异函数的估算 
+
+当我们假定 ergodicity 时, $\gamma(\mathbf{h})$的估计值：
+
+$$
+\hat{\gamma}(\mathbf{h}) = \frac{1}{2N(\mathbf{h})} \sum_{i = 1}^{N(\mathbf{h})} (Z(\mathbf{x_i}+\mathbf{h}) - Z(\mathbf{x_i}))^2
+$$
+其中$N(\mathbf{h})$表示距离为$h$的观测对的数量。
+
+
+## 变异函数的典型图像 {.scrollable}
+
+::: {.panel-tabset}
+
+### 典型variogram图[^5]
+
+[^5]: 图像来源：Zuur et al., Mixed Effects Models and Extensions in Ecology with R, 2009.
 
 ![](images/variogram.png)
 
+### variogram图说明
+- 横轴表示位置之间的距离（lag distance），纵轴表示变异函数的估计值$\hat{\gamma}(h)$。
+- nugget：？？？
+- sill：？？？
+- range：？？？
 
-## variogram图
+:::
+
+## 残差的变异函数图 {.scrollable}
+
+在线性回归模型中，误差项满足的假设条件是比 intrinsic stationary 和 weak stationary 更严格的条件，因此残差的变异函数图可以用来诊断误差项的空间相关结构：
 
 ::: {.panel-tabset}
 
 ### 代码
 
 ```{r}
-library(gstat)
-library(sp)
 Boreality_variogram_df <-
   Boreality |>
     mutate(resid = rstandard(Boreality_lm_m0)) |>
@@ -582,6 +670,8 @@ Boreality_variogram <- variogram(resid ~ 1, Boreality_variogram_df)
 ```
 ### 图
 
+当误差限之间不存在相关性时，残差的变异函数图应该近似为一个水平线。如果变异函数图显示出随距离增加而增加的趋势，或者存在明显的模式（如周期性），则表明误差项之间存在空间相关性。
+
 ```{r}
 #| echo: false
 plot(Boreality_variogram)
@@ -589,8 +679,8 @@ plot(Boreality_variogram)
 
 :::
 
-## variogram图
-variogram通常假定误差项的空间相关结构为各向同性（isotropic）。 
+## 各向同性 {.scrollable}
+变异函数通常假定误差项的空间相关结构为各向同性（isotropic）。 
 通过绘制不同方向的variogram图，可以检查误差项的空间相关结构是否满足各向同性假设：
 
 ::: {.panel-tabset}
@@ -635,9 +725,10 @@ $$
 
 ### 代码
 ```{r}
-Boreality_gls_m0 <- 
+Boreality_gls_m0 <-
   gls(Bor ~ Wet, data = Boreality)
-Boreality_gls_m1 <- 
+
+Boreality_gls_m1 <-
   update(Boreality_gls_m0, correlation = corExp(form = ~ x + y, nugget = TRUE))
 ```
 
@@ -647,16 +738,23 @@ Boreality_gls_m1 <-
 summary(Boreality_gls_m1)
 
 ```
-:::
+
 
 ### 模型比较
 
 ```{r}
 anova(Boreality_gls_m0, Boreality_gls_m1)
 ```
+
+:::
+
 ## `corExp()`的使用
 
 ::: {.panel-tabset}
+
+### 指数相关结构
+指数相关结构（exponential correlation structure）是一种常用的空间相关结构，假设误差项之间的相关性随着距离的增加而以指数方式衰减，可以通过`nlme`包中的`corExp()`函数来指定：
+
 ### 代码
 ```{r}
 Boreality_gls_m1_variogram <-
@@ -682,5 +780,6 @@ Boreality_gls_m1_variogram
 
 - Zuur et al., Mixed Effects Models and Extensions in Ecology with R, 2009
 - Pinheiro and Bates, Mixed-Effects Models in S and S-PLUS, 2002
+- 应用回归分析（R语言版），何晓群，电子工业出版社，2017
 
 
