@@ -7,7 +7,9 @@
 
 ## Technical Stack
 - **Environment:** R, Quarto (.qmd).
-- **R Style:** Use the native pipe `|>` instead of `%>%`. Prefer `_` for variable names (snake_case).
+- **R Style:** 
+  - Use the native pipe `|>` instead of `%>%`. 
+  - `lower_snake_case` for objects/files; avoid dots in names.
 - **Libraries:** `tidyverse` (primary), `patchwork`, `nlme`, `lme4`, `mgcv`.
 - **Standards:** Graduate-level rigor, tidyverse-first, LaTeX for all math.
 

@@ -2,6 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+*.Rproj
+*/*/*_cache
 slides/talk01/talk01_files/
 slides/talk02/talk02_files/
 slides/talk03/talk03_files/

@@ -1,0 +1,185 @@
+---
+title: "作业06：多元线性回归与多重共线性诊断"
+subtitle: "复习第六讲内容，掌握多元线性回归与共线性诊断方法"
+author: 易湘琦
+author-title: ""
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    df-print: tibble
+execute:
+  echo: true
+  warning: false
+  message: false
+params:
+  show_solutions: false
+---
+
+## 作业目标
+
+本次作业对应第六讲 `talk06.qmd`，目标是：
+
+1. 理解多元线性回归模型中回归系数的含义。
+2. 学会使用散点矩阵、相关矩阵、VIF 和条件数诊断多重共线性。
+3. 认识多重共线性对系数估计、标准误和显著性检验的影响。
+4. 思考如何在实际建模中缓解多重共线性问题。
+
+预计完成时间：**3–4 小时**。
+
+## 提交要求（必须遵守）
+
+- 提交：
+  - `homework06.qmd`
+  - `homework06.html`
+  - ***渲染后生成的同名文件夹***
+- 所有代码必须可运行，渲染后 HTML 不报错。
+- 文末必须包含 **AI 使用声明**（按模板填写；未使用也要填写）。
+- 报告完成本次作业花费的时间。
+
+## 本次作业会用到的 R 包
+
+```{r}
+library(tidyverse)
+library(car)
+```
+
+## Part 1：多元线性回归基础
+
+本部分使用 `mtcars` 数据集。
+
+### 数据整理
+
+```{r}
+mtcars_df <-
+  mtcars |>
+  rownames_to_column("car")
+
+mtcars_df |>
+  select(mpg, hp, wt, disp) |>
+  head()
+```
+
+### 初始模型
+
+考虑油耗 `mpg` 与发动机功率 `hp`、重量 `wt`、排量 `disp` 的关系：
+
+$$
+mpg_i = \beta_0 + \beta_1 hp_i + \beta_2 wt_i + \beta_3 disp_i + \varepsilon_i
+$$
+
+```{r}
+mtcars_lm_m0 <- lm(mpg ~ hp + wt + disp, data = mtcars_df)
+summary(mtcars_lm_m0)
+```
+
+### 第1题：解释回归系数
+
+请用自己的话解释 `hp`、`wt` 和 `disp` 三个系数的含义，说明它们分别对应什么样的“控制其他变量不变”的条件效应。
+
+::: {.content-visible when-meta="show_solutions"}
+**Solution：** 回归系数应解释为在其他变量保持不变时，自变量每增加 1 个单位，响应变量的平均变化量。例如 `hp` 的系数表示在 `wt` 和 `disp` 不变时，功率每增加 1，`mpg` 的平均变化。
+:::
+
+### 第2题：比较简单回归与多元回归
+
+分别拟合下面两个模型，并比较 `hp` 的系数符号、大小和显著性：
+
+1. `mpg ~ hp`
+2. `mpg ~ hp + wt + disp`
+
+请简要说明为什么两个模型中 `hp` 的结果可能不同。
+
+```{r}
+mtcars_lm_hp <- lm(mpg ~ hp, data = mtcars_df)
+summary(mtcars_lm_hp)
+summary(mtcars_lm_m0)
+```
+
+::: {.content-visible when-meta="show_solutions"}
+**Solution：** 简单回归中 `hp` 吸收了更多与 `wt`、`disp` 相关的信息，因此系数反映的是“总关联”；在多元回归中，`hp` 的系数变成条件效应。若解释变量高度相关，系数、标准误和显著性都可能明显变化。
+:::
+
+## Part 2：多重共线性诊断
+
+### 第3题：相关矩阵与散点矩阵
+
+请计算 `hp`、`wt` 和 `disp` 的相关矩阵，并绘制散点矩阵。结合结果说明哪些变量之间可能存在较强共线性。
+
+```{r}
+mtcars_df |>
+  select(hp, wt, disp) |>
+  cor()
+```
+
+```{r}
+mtcars_df |>
+  select(hp, wt, disp) |>
+  pairs(pch = 19, col = "steelblue")
+```
+
+::: {.content-visible when-meta="show_solutions"}
+**Solution：** 如果相关矩阵中出现较大的绝对相关系数，且散点图呈明显线性趋势，就提示可能存在共线性。`hp`、`wt`、`disp` 在汽车数据中通常会有较明显的相关性。
+:::
+
+### 第4题：VIF 诊断
+
+请对 `mtcars_lm_m0` 计算 VIF，并解释结果。结合课上经验规则，判断该模型是否存在需要关注的多重共线性。
+
+```{r}
+vif(mtcars_lm_m0)
+```
+
+::: {.content-visible when-meta="show_solutions"}
+**Solution：** VIF 反映某个解释变量被其他解释变量线性解释的程度。若 VIF 明显大于 5 或 10，说明标准误可能被放大，模型存在较明显的共线性风险。
+:::
+
+### 第5题：条件数与模型稳定性
+
+请计算模型矩阵的条件数，并简要解释其含义。然后尝试删除一个你认为信息最冗余的变量，比较删前删后模型的条件数是否有改善。
+
+```{r}
+kappa(model.matrix(mtcars_lm_m0))
+```
+
+::: {.content-visible when-meta="show_solutions"}
+**Solution：** 条件数越大，矩阵越接近奇异，估计越不稳定。删除高度冗余的变量后，条件数通常会下降，说明模型数值稳定性有所改善。
+:::
+
+## Part 3：思考与总结
+
+### 第6题：如何缓解共线性
+
+请结合本次作业中的分析结果，回答：
+
+1. 你认为在 `mtcars` 这个例子中，哪些变量可以考虑删去或合并？
+2. 如果研究问题要求保留这些变量，你会考虑哪些替代方法？
+3. 多重共线性与“变量重要性”之间有什么关系？
+
+### 第7题：简短总结
+
+请用 5–8 句话总结本次作业中你对多元线性回归与多重共线性的理解。
+
+## 文档表达与规范
+
+1. 文档结构清晰：有分节标题、列表、必要文字说明。
+2. 代码与结果对应，可复现。
+3. 每个部分有结论文字，而不只给代码。
+4. `qmd` 成功渲染出 `html`。
+
+## AI 使用声明（必填模板）
+
+请在文末保留并填写以下模板（未使用也要填写）。
+
+### 情况 1：我使用了 AI 工具
+
+- 工具名称：
+- 具体使用环节（如：报错排查 / 语法查询 / 代码草稿）：
+- 我做的人工核查与修改：
+- 我确认并对最终提交内容负责：是
+
+### 情况 2：我未使用 AI 工具
+
+- 本次作业未使用任何 AI 工具。
+- 我确认并对最终提交内容负责：是
