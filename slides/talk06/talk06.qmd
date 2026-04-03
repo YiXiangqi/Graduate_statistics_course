@@ -8,8 +8,8 @@ format:
     chalkboard:
       buttons: false
     preview-links: auto
+    scrollable: true
     logo: images/JMU_logo.jpg
-    css: styles.css
     footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
 execute:
   echo: true
@@ -29,7 +29,8 @@ library(car)
 - 会在 R 中拟合多元线性回归，并读取系数、拟合值与残差
 - 理解“研究问题 $\rightarrow$ 线性假设 $\rightarrow$ 嵌套模型比较”的逻辑链条
 - 掌握一般线性 F 检验，并统一理解整体检验、部分检验和单个系数检验
-- 理解 $R^2$、调整 $R^2$、部分 $R^2$ 之间的联系
+- 会写出单个斜率参数的置信区间，并把区间估计与 t / F 检验联系起来
+- 理解 $R^2$、调整 $R^2$、顺序平方和、部分 $R^2$ 之间的联系
 - 理解多重共线性为什么会影响系数解释与假设检验，并掌握常见诊断方法
 :::
 
@@ -163,6 +164,20 @@ $$
 \text{在 } X_2 \text{ 固定时，} X_1 \text{ 每增加 1 个单位，} E(Y \mid X_1, X_2) \text{ 的平均变化量。}
 $$
 
+## 系数解释的语言模板
+
+看到多元回归系数时，可以直接套用下面这个句式：
+
+> 在其他解释变量保持不变时，$x_j$ 每增加 1 个单位，响应变量的条件均值平均改变 $\hat{\beta}_j$ 个单位。
+
+注意三点：
+
+::: {.incremental}
+- 要说“**在其他变量保持不变时**”
+- 要说“**条件均值**”或“平均响应”
+- 不要把它误说成单纯的相关关系
+:::
+
 ## 模型作用范围
 
 模型作用范围（scope of the model）指当前模型中纳入了哪些解释变量。
@@ -175,11 +190,26 @@ $$
 - 假设检验中的原假设究竟在检验什么
 :::
 
+::: {.fragment}
 在 R 中，模型作用范围通常由 `lm()` 的公式给出：
 
 ```{r}
 formula(mtcars_lm_full)
 ```
+:::
+
+## 相同变量，不同作用范围，解释也会变
+
+```{r}
+formula(mtcars_lm_hp)
+formula(mtcars_lm_full)
+```
+
+在 `mpg ~ hp` 中，`hp` 的系数是在**没有控制其他变量**时解释的；
+
+在 `mpg ~ hp + wt + disp` 中，`hp` 的系数是在**控制 `wt` 和 `disp`** 后解释的。
+
+所以，模型作用范围一旦改变，同一个变量系数回答的研究问题也会改变。
 
 ## 研究问题与假设
 
@@ -193,6 +223,28 @@ formula(mtcars_lm_full)
 - 整个模型是否有解释力：$H_0: \beta_1 = \cdots = \beta_p = 0$
 :::
 
+## 从研究问题到原假设与备择假设
+
+写假设时，先问自己三个问题：
+
+::: {.incremental}
+1. 我关心的是**单个变量**、**一组变量**，还是**整个模型**？
+2. 原假设中，哪些斜率要被设为 0？
+3. 完整模型和简化模型分别是什么？
+:::
+
+::: {.fragment}
+例如，若研究问题是“在已经控制 `hp` 后，`wt` 和 `disp` 是否还有贡献？”，则可写成
+
+$$
+H_0: \beta_{\text{wt}} = \beta_{\text{disp}} = 0,
+\qquad
+H_A: \text{至少有一个不为 } 0
+$$
+
+对应的简化模型是 `mpg ~ hp`，完整模型是 `mpg ~ hp + wt + disp`。
+:::
+
 ## 关键连接：三类问题其实都可写成同一种模型比较
 
 这三类问题表面不同，但本质上都在比较：
@@ -203,7 +255,9 @@ formula(mtcars_lm_full)
 - 看完整模型比简化模型是否显著多解释了一部分变异
 :::
 
+::: {.fragment}
 这正是一般线性 F 检验的统一视角。
+:::
 
 # 一般线性 F 检验：统一三类假设检验
 
@@ -271,6 +325,17 @@ $$
 - “整体 F 检验、部分 F 检验、单个系数 t 检验”是同一条逻辑链上的不同特例
 :::
 
+## 看软件输出时，到底要报告什么
+
+面对 `summary()`、`anova()`、`drop1()` 的输出，至少要明确四件事：
+
+::: {.incremental}
+1. 原假设 $H_0$ 和备择假设 $H_A$
+2. 比较的是哪两个模型，或删除的是哪一个变量（组）
+3. 检验统计量与 p 值
+4. 用学术语言写出结论：**是否有证据说明新增变量带来了额外解释力**
+:::
+
 # 三类检验在 R 中的实现
 
 ## 1：整体模型检验
@@ -290,6 +355,17 @@ summary(mtcars_lm_full)
 
 `summary()` 底部的 F 检验，与 `anova(mtcars_lm_null, mtcars_lm_full)` 的结论是一致的。
 
+## 如何写整体 F 检验的结论
+
+对于完整模型 `mpg ~ hp + wt + disp`：
+
+::: {.incremental}
+- $H_0: \beta_{\text{hp}} = \beta_{\text{wt}} = \beta_{\text{disp}} = 0$
+- $H_A:$ 至少有一个斜率不为 0
+- 若 p 值很小，则结论是：**该模型整体上对 `mpg` 具有解释力**
+- 这并不等于“每一个单独变量都显著”
+:::
+
 ## 2：部分 F 检验
 
 例如，想检验在已经包含 `hp` 后，`wt` 和 `disp` 是否还能整体提升拟合：
@@ -306,6 +382,20 @@ anova(mtcars_lm_reduced, mtcars_lm_full)
 
 如果 p 值很小，说明 `wt` 和 `disp` 作为一个变量组，能在 `hp` 的基础上显著提高解释力。
 
+## 如何写部分 F 检验的结论
+
+这里的假设是
+
+$$
+H_0: \beta_{\text{wt}} = \beta_{\text{disp}} = 0,
+\qquad
+H_A: \text{至少有一个不为 } 0
+$$
+
+因此结论的关键词不是“`wt` 显著”或“`disp` 显著”，而是：
+
+> 在控制 `hp` 后，`wt` 和 `disp` 作为一个变量组，是否还能提供额外解释力。
+
 ## 3：单个系数检验是部分 F 检验的特例
 
 ```{r}
@@ -314,6 +404,17 @@ summary(mtcars_lm_full)$coefficients
 ```
 
 `drop1(..., test = "F")` 逐个删除变量，给出每个变量对应的一自由度 F 检验。
+
+## 单个系数检验的原假设与解释
+
+以 `disp` 为例：
+
+::: {.incremental}
+- 原假设：$H_0: \beta_{\text{disp}} = 0$
+- 备择假设：$H_A: \beta_{\text{disp}} \neq 0$
+- 它检验的是：**在已经调整 `hp` 和 `wt` 后，`disp` 是否还有边际贡献**
+- 所以单个系数 t 检验反映的是“控制其他变量后的显著性”，不是简单相关
+:::
 
 ## 验证 $F = t^2$
 
@@ -329,7 +430,48 @@ drop1(mtcars_lm_full, test = "F")
 
 你会看到 `disp` 对应的一自由度 F 值与其 t 值平方一致。
 
-## 顺序平方和与部分 F 检验的联系
+## 回归平方和的分解
+
+若变量按 $x_1, x_2, \dots, x_p$ 的顺序进入模型，则
+
+$$
+\mathrm{SSR}(x_1, \dots, x_p)
+= \mathrm{SSR}(x_1)
++ \mathrm{SSR}(x_2 \mid x_1)
++ \cdots
++ \mathrm{SSR}(x_p \mid x_1, \dots, x_{p-1})
+$$
+
+这里每一项都是**顺序平方和**（sequential sum of squares, Type I SS）。
+
+## 符号提醒：这里的平方和到底在算什么
+
+::: {.incremental}
+- $\mathrm{SST}$：响应变量的总变异
+- $\mathrm{SSE}$：模型还**没解释掉**的变异
+- $\mathrm{SSR}$：模型**解释掉**的变异
+- 顺序平方和 $\mathrm{SSR}(B \mid A)$：在已有变量组 $A$ 后，再加入变量组 $B$ 新解释的那一部分
+:::
+
+## 顺序平方和的两个等价定义
+
+对新加入的变量组 $B$，在已有变量组 $A$ 的基础上，其顺序平方和可写为
+
+$$
+\mathrm{SSR}(B \mid A)
+= \mathrm{SSE}(A) - \mathrm{SSE}(A, B)
+$$
+
+也可写为“加入 $B$ 后，拟合值多解释的变异”：
+
+$$
+\mathrm{SSR}(B \mid A)
+= \sum_{i=1}^n \bigl(\hat{y}_{i,\; A,B} - \hat{y}_{i,\; A}\bigr)^2
+$$
+
+前者是**用残差平方和之差定义**，后者是**用拟合值变化定义**，两者等价。
+
+## 顺序平方和的 R 示例
 
 ```{r}
 mtcars_lm_m1 <- lm(mpg ~ hp, data = mtcars_df)
@@ -341,12 +483,71 @@ anova(mtcars_lm_m1, mtcars_lm_m2, mtcars_lm_m3)
 
 这个输出展示的是**按进入顺序**计算的平方和，因此它与变量进入模型的顺序有关。
 
+## 手工计算一个顺序平方和
+
+例如，
+
+$$
+\mathrm{SSR}(\texttt{wt} \mid \texttt{hp})
+= \mathrm{SSE}(\texttt{hp}) - \mathrm{SSE}(\texttt{hp}, \texttt{wt})
+$$
+
+```{r}
+deviance(mtcars_lm_m1) - deviance(mtcars_lm_m2)
+```
+
+这个值应与 `anova(mtcars_lm_m1, mtcars_lm_m2, mtcars_lm_m3)` 中第二步加入 `wt` 的平方和一致。
+
+## 用“拟合值变化”再算一次同一个顺序平方和
+
+```{r}
+yhat_m1 <- fitted(mtcars_lm_m1)
+yhat_m2 <- fitted(mtcars_lm_m2)
+
+sum((yhat_m2 - yhat_m1)^2)
+```
+
+这验证了
+
+$$
+\mathrm{SSR}(\texttt{wt} \mid \texttt{hp})
+= \sum_{i=1}^n \bigl(\hat{y}_{i,\; \texttt{hp}, \texttt{wt}} - \hat{y}_{i,\; \texttt{hp}}\bigr)^2
+$$
+
+也就是说，**顺序平方和既可以看作残差平方和减少了多少，也可以看作拟合值多解释了多少**。
+
+## 两个以上自由度的顺序平方和
+
+如果想得到变量组 `wt + disp` 在 `hp` 之后进入时的顺序平方和，就把它们作为一个整体比较：
+
+$$
+\mathrm{SSR}(\texttt{wt}, \texttt{disp} \mid \texttt{hp})
+= \mathrm{SSE}(\texttt{hp}) - \mathrm{SSE}(\texttt{hp}, \texttt{wt}, \texttt{disp})
+$$
+
+```{r}
+deviance(mtcars_lm_m1) - deviance(mtcars_lm_m3)
+anova(mtcars_lm_m1, mtcars_lm_m3)
+```
+
+这就是一个**两自由度**的顺序平方和，也是对应变量组的总体贡献。
+
 ## 顺序平方和与一般线性 F 检验的区别
 
 ::: {.incremental}
 - `anova(m1, m2, m3)` 强调的是“按顺序加入变量”时，每一步新增了多少解释力
 - `anova(reduced, full)` 强调的是“针对某个明确原假设”，完整模型是否优于简化模型
 - 因此，回答具体研究问题时，通常优先写出原假设，再构造对应的简化模型与完整模型
+:::
+
+## 遇到问题时，应该看哪个量
+
+::: {.incremental}
+- 想问“模型整体有没有解释力？”：看**整体 F 检验**
+- 想问“一组变量一起有没有贡献？”：看**一般线性 F 检验 / 部分 F 检验**
+- 想问“单个变量在控制其他变量后是否还有贡献？”：看**t 检验**或对应的一自由度 **F 检验**
+- 想问“按某个进入顺序，这一步新解释了多少？”：看**顺序平方和**
+- 想问“新增变量解释了剩余变异中的多少比例？”：看**部分 $R^2$**
 :::
 
 # 区间估计与模型拟合优度
@@ -365,6 +566,16 @@ $$
 confint(mtcars_lm_full, level = 0.95)
 ```
 
+## 如何解释单个斜率的置信区间
+
+例如，若 `wt` 的 95% 置信区间完全落在 0 的同一侧，则说明：
+
+::: {.incremental}
+- 在控制其他变量后，`wt` 对 `mpg` 的条件效应方向比较稳定
+- 与 $H_0: \beta_{\text{wt}} = 0$ 的双侧 t 检验结论一致
+- 因此区间估计给出的不仅是“显著/不显著”，还有**效应大小的合理范围**
+:::
+
 ## 置信区间与假设检验的联系
 
 对于双侧检验：
@@ -375,7 +586,9 @@ confint(mtcars_lm_full, level = 0.95)
 - 而这个 t 检验又等价于一自由度的 F 检验
 :::
 
+::: {.fragment}
 这说明区间估计与假设检验也是互相连通的。
+:::
 
 ## $R^2$ 的定义
 
@@ -425,6 +638,12 @@ sse_full <- deviance(mtcars_lm_full)
 (sse_reduced - sse_full) / sse_reduced
 ```
 
+## 部分 $R^2$ 如何解释
+
+若这里把 `hp` 视为已有变量，而把 `wt + disp` 视为新增变量组，则部分 $R^2$ 描述的是：
+
+> 在 `hp` 尚未解释掉的那部分变异中，`wt + disp` 又额外解释了多大比例。
+
 ## 三个拟合优度概念的联系
 
 ::: {.incremental}
@@ -433,7 +652,9 @@ sse_full <- deviance(mtcars_lm_full)
 - 部分 $R^2$ 关注“新增变量相对剩余变异又解释了多少”
 :::
 
+::: {.fragment}
 因此，部分 $R^2$ 与部分 F 检验天然对应，都是围绕嵌套模型比较展开的。
+:::
 
 # 多重共线性的诊断
 
@@ -447,7 +668,9 @@ sse_full <- deviance(mtcars_lm_full)
 - 模型比较依赖新增变量是否能带来稳定、可识别的额外信息
 :::
 
+::: {.fragment}
 而多重共线性恰好会同时影响这三件事。
+:::
 
 ## 什么是多重共线性
 
@@ -490,19 +713,143 @@ $$
 \mathrm{VIF}_j = \frac{1}{1 - R_j^2}
 $$
 
+其中，$R_j^2$ 不是原始回归模型的 $R^2$，而是下面这个**辅助回归**的决定系数：
+
+> 把第 $j$ 个解释变量当作响应变量，用其余所有解释变量去回归它。
+
+也就是说，若我们关心 `hp` 的 VIF，就先拟合
+
+$$
+\texttt{hp} = \gamma_0 + \gamma_1 \texttt{wt} + \gamma_2 \texttt{disp} + e
+$$
+
+再把这个辅助回归的 $R^2$ 代回
+
+$$
+\mathrm{VIF}_{\texttt{hp}} = \frac{1}{1 - R_{\texttt{hp}}^2}
+$$
+
+## 手工计算一个 VIF
+
+```{r}
+aux_lm_hp <- lm(hp ~ wt + disp, data = mtcars_df)
+aux_r2_hp <- summary(aux_lm_hp)$r.squared
+
+aux_r2_hp
+1 / (1 - aux_r2_hp)
+vif(mtcars_lm_full)["hp"]
+```
+
+上面第三个输出与 `vif()` 中 `hp` 的结果应一致。
+
+## VIF 到底在衡量什么
+
+由
+
+$$
+\mathrm{Var}(\hat{\beta}_j)
+\propto \frac{1}{1 - R_j^2}
+$$
+
+可见：当 $x_j$ 能被其他解释变量解释得越好时，$R_j^2$ 越接近 1，$\hat{\beta}_j$ 的方差就越大，标准误也越大。
+
+所以 VIF 描述的是：
+
+> **由于与其他解释变量线性重叠，某个系数标准误被放大了多少倍。**
+
 ```{r}
 vif(mtcars_lm_full)
 ```
 
-一般来说，VIF 越大，说明该变量的标准误被放大的程度越明显。
+## 什么时候 VIF 算“大”
 
-## 条件数
+常见经验规则是：
+
+::: {.incremental}
+- VIF 接近 1：几乎没有共线性问题
+- VIF 在 1 到 5 之间：通常还可以接受，但要结合研究背景看
+- VIF 大于 5：常作为需要警惕的信号
+- VIF 大于 10：常被视为较严重的共线性问题
+:::
+
+::: {.fragment}
+这些都只是经验规则，不是机械阈值。若研究重点是**解释单个系数**和做显著性检验，就要更警惕较大的 VIF；若重点是**整体预测**，问题有时没那么严重。
+:::
+
+## 条件数 kappa
+
+VIF 是**逐个变量**地看“它是否能被其他变量解释”；条件数则是从**整个设计矩阵**角度看，共线性是否让某些方向几乎无法区分。
+
+在线性代数上，若设计矩阵（通常去掉截距并做标准化）记为 $\mathbf{X}$，则条件数可写成
+
+$$
+\kappa(\mathbf{X}) = \frac{\sigma_{\max}(\mathbf{X})}{\sigma_{\min}(\mathbf{X})}
+$$
+
+其中 $\sigma_{\max}$ 和 $\sigma_{\min}$ 分别是最大的和最小的奇异值。
+
+## 为什么条件数能诊断共线性
+
+如果某些解释变量几乎线性依赖，那么 $\mathbf{X}$ 的最小奇异值会非常小，于是
+
+$$
+\kappa(\mathbf{X})
+$$
+
+就会变得很大。
+
+这表示：在某些方向上，数据几乎不能把不同系数组合区分开，因此估计会变得不稳定。
+
+## 用标准化后的预测变量计算 kappa
+
+由于条件数受量纲影响，诊断共线性时通常更推荐：
+
+::: {.incremental}
+- 去掉截距列
+- 对解释变量做中心化和标准化
+- 再计算 `kappa()`
+:::
+
+```{r}
+x_predictors <-
+  model.matrix(mtcars_lm_full)[, -1] |>
+  scale(center = TRUE, scale = TRUE)
+
+kappa(x_predictors)
+```
+
+## 手工理解 kappa 的计算
+
+```{r}
+svd_x <- svd(x_predictors, nu = 0, nv = 0)$d
+
+svd_x
+max(svd_x) / min(svd_x)
+```
+
+上面最后一个值就是条件数的基本思想：**最大奇异值除以最小奇异值**。
 
 ```{r}
 kappa(model.matrix(mtcars_lm_full))
+kappa(x_predictors)
 ```
 
-条件数越大，说明设计矩阵越接近奇异，模型越不稳定。
+第一个结果来自原始模型矩阵；第二个结果来自更适合诊断共线性的标准化预测变量矩阵。
+
+## 什么时候 kappa 算“大”
+
+常见经验规则是：
+
+::: {.incremental}
+- $\kappa < 10$：通常问题不大
+- $10 \le \kappa < 30$：提示中等程度的共线性
+- $\kappa \ge 30$：常被视为较明显的共线性问题
+- $\kappa \ge 100$：通常说明数值稳定性已经相当差
+:::
+
+::: {.fragment}
+和 VIF 一样，这些阈值只是经验参考。若条件数很大，同时又看到高相关、较大 VIF、系数符号不稳定、t 检验摇摆，就更能判断共线性已经是实质问题。
+:::
 
 ## 完全线性依赖
 
@@ -526,7 +873,9 @@ alias(lm(mpg ~ hp + wt + I(2 * hp + wt), data = mtcars_df))
 - 但由于每个单独系数的标准误变大，单个 t 检验却可能不显著
 :::
 
+::: {.fragment}
 这正是“整体检验”和“单个系数检验”结论不一致的常见原因之一。
+:::
 
 # 如何缓解多重共线性
 
@@ -551,9 +900,11 @@ alias(lm(mpg ~ hp + wt + I(2 * hp + wt), data = mtcars_df))
 - 部分 F 检验与部分 $R^2$
 :::
 
+::: {.fragment}
 ::: callout-important
 ## 经验总结
 如果两个变量刻画了几乎相同的信息，通常优先保留理论意义更强、测量更稳定、解释更清晰的变量。
+:::
 :::
 
 # 小结
