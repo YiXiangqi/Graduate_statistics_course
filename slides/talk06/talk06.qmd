@@ -9,7 +9,9 @@ format:
       buttons: false
     preview-links: auto
     scrollable: true
+    df-print: default
     logo: images/JMU_logo.jpg
+    css: styles.css
     footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
 execute:
   echo: true
@@ -25,16 +27,15 @@ library(car)
 ## 你将学到
 
 ::: {.incremental style="font-size: 1.2em;"}
-- 理解多元线性回归模型的数学形式与矩阵表达
-- 会在 R 中拟合多元线性回归，并读取系数、拟合值与残差
-- 理解“研究问题 $\rightarrow$ 线性假设 $\rightarrow$ 嵌套模型比较”的逻辑链条
-- 掌握一般线性 F 检验，并统一理解整体检验、部分检验和单个系数检验
-- 会写出单个斜率参数的置信区间，并把区间估计与 t / F 检验联系起来
-- 理解 $R^2$、调整 $R^2$、顺序平方和、部分 $R^2$ 之间的联系
-- 理解多重共线性为什么会影响系数解释与假设检验，并掌握常见诊断方法
+- 多元线性回归（MLR）的基本形式与矩阵表达
+- 应用 R 构建 MLR 模型
+- 研究问题 $\rightarrow$ 假设检验 $\rightarrow$ 嵌套模型比较
+- 一般线性 F 检验的基本概念及应用
+- $R^2$、调整 $R^2$、顺序平方和以及部分 $R^2$
+- 多重共线性的基本概念和常见诊断方法
 :::
 
-# 从一元线性回归到多元线性回归
+# 线性回归：一元到多元
 
 ## 一元线性回归回顾
 
@@ -55,7 +56,7 @@ $$
 ::: {.incremental}
 - $y_i$ 是第 $i$ 个观测的响应变量
 - $x_{ij}$ 是第 $i$ 个观测在第 $j$ 个解释变量上的取值
-- $\beta_j$ 是在其他解释变量保持不变时，$x_j$ 对 $y$ 的条件平均影响
+- **$\beta_j$ 是在其他解释变量保持不变时，$x_j$ 对 $y$ 的条件平均影响**
 :::
 
 ## 为什么要强调“其他变量保持不变”
@@ -98,6 +99,8 @@ $$
 \mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon}
 $$
 
+$X$称为设计矩阵（design matrix），它的第一列是全 1 的截距列，后面每列对应一个解释变量。
+
 ## 估计与拟合
 
 最小二乘法选择使残差平方和最小的参数：
@@ -112,29 +115,54 @@ $$
 \hat{\boldsymbol{\beta}} = (\mathbf{X}^\top \mathbf{X})^{-1}\mathbf{X}^\top \mathbf{y}
 $$
 
-## R 语言示例：拟合一个多元线性回归模型
+那么：
+$$
+\hat{\mathbf{y}} = \mathbf{X} (\mathbf{X}^\top \mathbf{X})^{-1}\mathbf{X}^\top \mathbf{y}
+$$
+这里$\mathbf{H} = \mathbf{X} (\mathbf{X}^\top \mathbf{X})^{-1}\mathbf{X}^\top$称为帽子矩阵，它把响应变量 $\mathbf{y}$ 映射到拟合值 $\hat{\mathbf{y}}$。
 
+## R 示例：拟合多元线性回归模型
+
+::: {.panel-tabset}
+
+### `mtcars`数据集
 ```{r}
+mtcars
+```
+
+
+### MLR 模型
+```{r}
+
 mtcars_df <-
   mtcars |>
   rownames_to_column("car")
-
-mtcars_lm_full <- lm(mpg ~ hp + wt + disp, data = mtcars_df)
-
-mtcars_lm_full
-coef(mtcars_lm_full)
+rmarkdown::paged_table(mtcars_df)
 ```
 
-## R 语言示例：读取拟合值与残差
+```{r}
+
+mtcars_lm_full <- lm(mpg ~ hp + wt + disp, data = mtcars_df)
+```
+
+### 模型结果
 
 ```{r}
-tibble(
-  car = mtcars_df$car,
-  mpg = mtcars_df$mpg,
-  fitted = fitted(mtcars_lm_full),
-  resid = resid(mtcars_lm_full)
-) |>
-  slice_head(n = 6)
+summary(mtcars_lm_full)
+```
+
+:::
+
+## 线性回归模型解读：常用 R 函数
+
+```{r}
+#| eval: false
+summary()
+coef() # coefficients()
+confint() 
+fitted()
+resid() # residuals()
+predict() 
 ```
 
 ## 对比一元与多元回归
@@ -146,11 +174,10 @@ summary(mtcars_lm_hp)$coefficients
 summary(mtcars_lm_full)$coefficients
 ```
 
-在一元回归中，`hp` 既反映自身作用，也吸收了与 `wt`、`disp` 相关的信息；在多元回归中，`hp` 的系数变成了控制 `wt` 和 `disp` 后的条件效应。
+- 在一元回归中，`hp` 既反映自身作用，也吸收了与 `wt`、`disp` 相关的信息；
+- 在多元回归中，`hp` 的系数变成了控制 `wt` 和 `disp` 后的条件效应。
 
-# 系数解释、模型作用范围与研究问题
-
-## 系数的解释
+## 回归系数的解读
 
 如果
 
@@ -160,9 +187,7 @@ $$
 
 那么 $\beta_1$ 的含义不是“$X_1$ 与 $Y$ 的简单相关”，而是：
 
-$$
-\text{在 } X_2 \text{ 固定时，} X_1 \text{ 每增加 1 个单位，} E(Y \mid X_1, X_2) \text{ 的平均变化量。}
-$$
+<mark>在$X_2$固定时，$X_1$每增加一个单位，$E(Y \mid X_1, X_2)$的平均变化量。</mark>
 
 ## 系数解释的语言模板
 
@@ -198,22 +223,22 @@ formula(mtcars_lm_full)
 ```
 :::
 
-## 相同变量，不同作用范围，解释也会变
+## 相同变量，不同作用范围，解读不同
 
 ```{r}
 formula(mtcars_lm_hp)
 formula(mtcars_lm_full)
 ```
 
-在 `mpg ~ hp` 中，`hp` 的系数是在**没有控制其他变量**时解释的；
+- 在 `mpg ~ hp` 中，`hp` 的系数是在**没有控制其他变量**时解释的；
 
-在 `mpg ~ hp + wt + disp` 中，`hp` 的系数是在**控制 `wt` 和 `disp`** 后解释的。
+- 在 `mpg ~ hp + wt + disp` 中，`hp` 的系数是在**控制 `wt` 和 `disp`** 后解释的。
 
 所以，模型作用范围一旦改变，同一个变量系数回答的研究问题也会改变。
 
-## 研究问题与假设
+## 研究问题与假设检验
 
-多元线性回归中，经常把研究问题翻译成参数假设。
+多元线性回归中，经常把研究问题“翻译”成假设检验。
 
 例如：
 
@@ -259,7 +284,19 @@ $$
 这正是一般线性 F 检验的统一视角。
 :::
 
-# 一般线性 F 检验：统一三类假设检验
+## 回顾：平方和的三个基本概念
+
+::: {.incremental}
+- 总平方和 $\mathrm{SST}$：响应变量的总变异
+- 残差平方和 $\mathrm{SSE}$：模型还**没解释掉**的变异
+- 回归平方和 $\mathrm{SSR}$：模型**解释掉**的变异
+:::
+
+::: {.fragment}
+提问：
+
+写出 $\mathrm{SST}$、$\mathrm{SSE}$ 和 $\mathrm{SSR}$ 的数学定义，并说明它们之间的关系。
+:::
 
 ## 一般线性 F 检验的基本思想
 
@@ -325,20 +362,7 @@ $$
 - “整体 F 检验、部分 F 检验、单个系数 t 检验”是同一条逻辑链上的不同特例
 :::
 
-## 看软件输出时，到底要报告什么
-
-面对 `summary()`、`anova()`、`drop1()` 的输出，至少要明确四件事：
-
-::: {.incremental}
-1. 原假设 $H_0$ 和备择假设 $H_A$
-2. 比较的是哪两个模型，或删除的是哪一个变量（组）
-3. 检验统计量与 p 值
-4. 用学术语言写出结论：**是否有证据说明新增变量带来了额外解释力**
-:::
-
-# 三类检验在 R 中的实现
-
-## 1：整体模型检验
+## R 中的实现：整体模型检验
 
 整体检验把“只有截距”的模型作为简化模型：
 
@@ -366,7 +390,7 @@ summary(mtcars_lm_full)
 - 这并不等于“每一个单独变量都显著”
 :::
 
-## 2：部分 F 检验
+## R 中的实现：部分 F 检验
 
 例如，想检验在已经包含 `hp` 后，`wt` 和 `disp` 是否还能整体提升拟合：
 
@@ -396,7 +420,7 @@ $$
 
 > 在控制 `hp` 后，`wt` 和 `disp` 作为一个变量组，是否还能提供额外解释力。
 
-## 3：单个系数检验是部分 F 检验的特例
+## R 中的实现：单个系数检验
 
 ```{r}
 drop1(mtcars_lm_full, test = "F")
@@ -412,7 +436,7 @@ summary(mtcars_lm_full)$coefficients
 ::: {.incremental}
 - 原假设：$H_0: \beta_{\text{disp}} = 0$
 - 备择假设：$H_A: \beta_{\text{disp}} \neq 0$
-- 它检验的是：**在已经调整 `hp` 和 `wt` 后，`disp` 是否还有边际贡献**
+- 它检验的是： **在控制 `hp` 和 `wt` 后，`disp` 是否还有贡献**
 - 所以单个系数 t 检验反映的是“控制其他变量后的显著性”，不是简单相关
 :::
 
@@ -430,172 +454,11 @@ drop1(mtcars_lm_full, test = "F")
 
 你会看到 `disp` 对应的一自由度 F 值与其 t 值平方一致。
 
-## 回归平方和的分解
+## 拟合优度 ：决定系数$R^2$ 
 
-若变量按 $x_1, x_2, \dots, x_p$ 的顺序进入模型，则
-
-$$
-\mathrm{SSR}(x_1, \dots, x_p)
-= \mathrm{SSR}(x_1)
-+ \mathrm{SSR}(x_2 \mid x_1)
-+ \cdots
-+ \mathrm{SSR}(x_p \mid x_1, \dots, x_{p-1})
-$$
-
-这里每一项都是**顺序平方和**（sequential sum of squares, Type I SS）。
-
-## 符号提醒：这里的平方和到底在算什么
-
-::: {.incremental}
-- $\mathrm{SST}$：响应变量的总变异
-- $\mathrm{SSE}$：模型还**没解释掉**的变异
-- $\mathrm{SSR}$：模型**解释掉**的变异
-- 顺序平方和 $\mathrm{SSR}(B \mid A)$：在已有变量组 $A$ 后，再加入变量组 $B$ 新解释的那一部分
-:::
-
-## 顺序平方和的两个等价定义
-
-对新加入的变量组 $B$，在已有变量组 $A$ 的基础上，其顺序平方和可写为
 
 $$
-\mathrm{SSR}(B \mid A)
-= \mathrm{SSE}(A) - \mathrm{SSE}(A, B)
-$$
-
-也可写为“加入 $B$ 后，拟合值多解释的变异”：
-
-$$
-\mathrm{SSR}(B \mid A)
-= \sum_{i=1}^n \bigl(\hat{y}_{i,\; A,B} - \hat{y}_{i,\; A}\bigr)^2
-$$
-
-前者是**用残差平方和之差定义**，后者是**用拟合值变化定义**，两者等价。
-
-## 顺序平方和的 R 示例
-
-```{r}
-mtcars_lm_m1 <- lm(mpg ~ hp, data = mtcars_df)
-mtcars_lm_m2 <- lm(mpg ~ hp + wt, data = mtcars_df)
-mtcars_lm_m3 <- lm(mpg ~ hp + wt + disp, data = mtcars_df)
-
-anova(mtcars_lm_m1, mtcars_lm_m2, mtcars_lm_m3)
-```
-
-这个输出展示的是**按进入顺序**计算的平方和，因此它与变量进入模型的顺序有关。
-
-## 手工计算一个顺序平方和
-
-例如，
-
-$$
-\mathrm{SSR}(\texttt{wt} \mid \texttt{hp})
-= \mathrm{SSE}(\texttt{hp}) - \mathrm{SSE}(\texttt{hp}, \texttt{wt})
-$$
-
-```{r}
-deviance(mtcars_lm_m1) - deviance(mtcars_lm_m2)
-```
-
-这个值应与 `anova(mtcars_lm_m1, mtcars_lm_m2, mtcars_lm_m3)` 中第二步加入 `wt` 的平方和一致。
-
-## 用“拟合值变化”再算一次同一个顺序平方和
-
-```{r}
-yhat_m1 <- fitted(mtcars_lm_m1)
-yhat_m2 <- fitted(mtcars_lm_m2)
-
-sum((yhat_m2 - yhat_m1)^2)
-```
-
-这验证了
-
-$$
-\mathrm{SSR}(\texttt{wt} \mid \texttt{hp})
-= \sum_{i=1}^n \bigl(\hat{y}_{i,\; \texttt{hp}, \texttt{wt}} - \hat{y}_{i,\; \texttt{hp}}\bigr)^2
-$$
-
-也就是说，**顺序平方和既可以看作残差平方和减少了多少，也可以看作拟合值多解释了多少**。
-
-## 两个以上自由度的顺序平方和
-
-如果想得到变量组 `wt + disp` 在 `hp` 之后进入时的顺序平方和，就把它们作为一个整体比较：
-
-$$
-\mathrm{SSR}(\texttt{wt}, \texttt{disp} \mid \texttt{hp})
-= \mathrm{SSE}(\texttt{hp}) - \mathrm{SSE}(\texttt{hp}, \texttt{wt}, \texttt{disp})
-$$
-
-```{r}
-deviance(mtcars_lm_m1) - deviance(mtcars_lm_m3)
-anova(mtcars_lm_m1, mtcars_lm_m3)
-```
-
-这就是一个**两自由度**的顺序平方和，也是对应变量组的总体贡献。
-
-## 顺序平方和与一般线性 F 检验的区别
-
-::: {.incremental}
-- `anova(m1, m2, m3)` 强调的是“按顺序加入变量”时，每一步新增了多少解释力
-- `anova(reduced, full)` 强调的是“针对某个明确原假设”，完整模型是否优于简化模型
-- 因此，回答具体研究问题时，通常优先写出原假设，再构造对应的简化模型与完整模型
-:::
-
-## 遇到问题时，应该看哪个量
-
-::: {.incremental}
-- 想问“模型整体有没有解释力？”：看**整体 F 检验**
-- 想问“一组变量一起有没有贡献？”：看**一般线性 F 检验 / 部分 F 检验**
-- 想问“单个变量在控制其他变量后是否还有贡献？”：看**t 检验**或对应的一自由度 **F 检验**
-- 想问“按某个进入顺序，这一步新解释了多少？”：看**顺序平方和**
-- 想问“新增变量解释了剩余变异中的多少比例？”：看**部分 $R^2$**
-:::
-
-# 区间估计与模型拟合优度
-
-## 单个斜率参数的置信区间
-
-单个斜率参数的 $100(1-\alpha)\%$ 置信区间为
-
-$$
-\hat{\beta}_j \pm t_{\alpha/2,\; n-p-1}\,\mathrm{SE}(\hat{\beta}_j)
-$$
-
-在 R 中可直接用 `confint()`：
-
-```{r}
-confint(mtcars_lm_full, level = 0.95)
-```
-
-## 如何解释单个斜率的置信区间
-
-例如，若 `wt` 的 95% 置信区间完全落在 0 的同一侧，则说明：
-
-::: {.incremental}
-- 在控制其他变量后，`wt` 对 `mpg` 的条件效应方向比较稳定
-- 与 $H_0: \beta_{\text{wt}} = 0$ 的双侧 t 检验结论一致
-- 因此区间估计给出的不仅是“显著/不显著”，还有**效应大小的合理范围**
-:::
-
-## 置信区间与假设检验的联系
-
-对于双侧检验：
-
-::: {.incremental}
-- 若 0 不在 $\beta_j$ 的置信区间内，则通常拒绝 $H_0: \beta_j = 0$
-- 这与该系数对应的 t 检验结论一致
-- 而这个 t 检验又等价于一自由度的 F 检验
-:::
-
-::: {.fragment}
-这说明区间估计与假设检验也是互相连通的。
-:::
-
-## $R^2$ 的定义
-
-$$
-R^2 = 1 - \frac{\mathrm{SSE}}{\mathrm{SST}},
-\qquad
-\mathrm{SST} = \sum_{i=1}^n (y_i - \bar{y})^2
+R^2 = 1 - \frac{\mathrm{SSE}}{\mathrm{SST}} = \frac{\mathrm{SSR}}{\mathrm{SST}}
 $$
 
 $R^2$ 表示模型解释了响应变量总变异的比例。
@@ -609,7 +472,7 @@ summary(mtcars_lm_full)$r.squared
 由于加入变量后 $R^2$ 几乎不会下降，所以比较不同复杂度模型时常用调整 $R^2$：
 
 $$
-\bar{R}^2 = 1 - \frac{\mathrm{SSE}/(n-p-1)}{\mathrm{SST}/(n-1)}
+{R}_{\text{adj}}^2 = 1 - \frac{\mathrm{SSE}/(n-p-1)}{\mathrm{SST}/(n-1)}
 $$
 
 其中 $p$ 是解释变量个数。
@@ -617,6 +480,34 @@ $$
 ```{r}
 summary(mtcars_lm_full)$adj.r.squared
 ```
+## 回归平方和的分解
+
+若变量按 $x_1, x_2, \dots, x_p$ 的顺序进入模型，则
+$$
+\mathrm{SSR}(x_1, \dots, x_p)
+= \mathrm{SSR}(x_1)
++ \mathrm{SSR}(x_2 \mid x_1)
++ \cdots
++ \mathrm{SSR}(x_p \mid x_1, \dots, x_{p-1})
+$$
+
+这里每一项都是**顺序平方和**（sequential sum of squares, Type I SS），定义如下：
+
+
+**顺序平方和 $\mathrm{SSR}(B \mid A)$：在已有变量组 $A$ 后，再加入变量组 $B$ 新解释的那一部分。**
+
+## 两自由度的顺序平方和
+
+如果想得到变量组 `wt + disp` 在 `hp` 之后进入时的顺序平方和，就把它们作为一个整体比较：
+
+$$
+\mathrm{SSR}(\texttt{wt}, \texttt{disp} \mid \texttt{hp})
+= \mathrm{SSE}(\texttt{hp}) - \mathrm{SSE}(\texttt{hp}, \texttt{wt}, \texttt{disp})
+$$
+
+
+这就是一个**两自由度**的顺序平方和，也是对应变量组的总体贡献。
+
 
 ## 部分 $R^2$
 
@@ -629,14 +520,6 @@ $$
 
 它刻画的是：在已有变量进入模型后，新变量还能额外解释多少剩余变异。
 
-## 部分 $R^2$ 的 R 计算示例
-
-```{r}
-sse_reduced <- deviance(mtcars_lm_reduced)
-sse_full <- deviance(mtcars_lm_full)
-
-(sse_reduced - sse_full) / sse_reduced
-```
 
 ## 部分 $R^2$ 如何解释
 
@@ -677,10 +560,7 @@ sse_full <- deviance(mtcars_lm_full)
 多重共线性指两个或多个解释变量之间存在较强线性关系。
 
 这会使设计矩阵 $\mathbf{X}$ 接近线性相关，从而使系数估计不稳定。
-
-## 它为什么麻烦
-
-多重共线性不会必然导致估计有偏，但会带来：
+具体来说，多重共线性不会必然导致估计有偏，但会带来：
 
 ::: {.incremental}
 - 系数标准误增大
@@ -689,7 +569,17 @@ sse_full <- deviance(mtcars_lm_full)
 - 系数符号和大小对样本扰动很敏感
 :::
 
-## 先看相关矩阵
+
+
+## 诊断方法：散点矩阵
+
+```{r}
+mtcars_df |>
+  select(hp, wt, disp) |>
+  pairs(pch = 19, col = "steelblue") 
+```
+
+## 诊断方法：相关矩阵
 
 ```{r}
 mtcars_df |>
@@ -697,15 +587,7 @@ mtcars_df |>
   cor()
 ```
 
-## 再看散点矩阵
-
-```{r}
-mtcars_df |>
-  select(hp, wt, disp) |>
-  pairs(pch = 19, col = "steelblue")
-```
-
-## 方差膨胀因子 VIF
+## 诊断方法：方差膨胀因子（VIF）
 
 对第 $j$ 个解释变量，设辅助回归的决定系数为 $R_j^2$，则
 
@@ -729,26 +611,19 @@ $$
 \mathrm{VIF}_{\texttt{hp}} = \frac{1}{1 - R_{\texttt{hp}}^2}
 $$
 
-## 手工计算一个 VIF
+`car` 包中的 `vif()` 函数可以用来计算模型中所有解释变量的 VIF：
 
 ```{r}
-aux_lm_hp <- lm(hp ~ wt + disp, data = mtcars_df)
-aux_r2_hp <- summary(aux_lm_hp)$r.squared
-
-aux_r2_hp
-1 / (1 - aux_r2_hp)
-vif(mtcars_lm_full)["hp"]
+vif(mtcars_lm_full)
 ```
-
-上面第三个输出与 `vif()` 中 `hp` 的结果应一致。
 
 ## VIF 到底在衡量什么
 
-由
-
+通过一定的推倒，可以得到：
 $$
 \mathrm{Var}(\hat{\beta}_j)
 \propto \frac{1}{1 - R_j^2}
+
 $$
 
 可见：当 $x_j$ 能被其他解释变量解释得越好时，$R_j^2$ 越接近 1，$\hat{\beta}_j$ 的方差就越大，标准误也越大。
@@ -756,10 +631,6 @@ $$
 所以 VIF 描述的是：
 
 > **由于与其他解释变量线性重叠，某个系数标准误被放大了多少倍。**
-
-```{r}
-vif(mtcars_lm_full)
-```
 
 ## 什么时候 VIF 算“大”
 
@@ -776,7 +647,7 @@ vif(mtcars_lm_full)
 这些都只是经验规则，不是机械阈值。若研究重点是**解释单个系数**和做显著性检验，就要更警惕较大的 VIF；若重点是**整体预测**，问题有时没那么严重。
 :::
 
-## 条件数 kappa
+## 条件数 (condition number)
 
 VIF 是**逐个变量**地看“它是否能被其他变量解释”；条件数则是从**整个设计矩阵**角度看，共线性是否让某些方向几乎无法区分。
 
@@ -810,6 +681,7 @@ $$
 - 再计算 `kappa()`
 :::
 
+::: {.fragment}
 ```{r}
 x_predictors <-
   model.matrix(mtcars_lm_full)[, -1] |>
@@ -817,6 +689,7 @@ x_predictors <-
 
 kappa(x_predictors)
 ```
+:::
 
 ## 手工理解 kappa 的计算
 
@@ -851,19 +724,7 @@ kappa(x_predictors)
 和 VIF 一样，这些阈值只是经验参考。若条件数很大，同时又看到高相关、较大 VIF、系数符号不稳定、t 检验摇摆，就更能判断共线性已经是实质问题。
 :::
 
-## 完全线性依赖
 
-如果变量之间存在完全线性关系，例如
-
-$$
-x_3 = 2x_1 + x_2
-$$
-
-则设计矩阵不可逆，普通最小二乘无法唯一估计所有系数。
-
-```{r}
-alias(lm(mpg ~ hp + wt + I(2 * hp + wt), data = mtcars_df))
-```
 
 ## 一个常见现象：整体显著，但单个系数不稳定
 
@@ -877,9 +738,9 @@ alias(lm(mpg ~ hp + wt + I(2 * hp + wt), data = mtcars_df))
 这正是“整体检验”和“单个系数检验”结论不一致的常见原因之一。
 :::
 
-# 如何缓解多重共线性
 
-## 常见思路
+
+## 如何缓解多重共线性
 
 ::: {.incremental}
 - 删除冗余变量
@@ -905,16 +766,4 @@ alias(lm(mpg ~ hp + wt + I(2 * hp + wt), data = mtcars_df))
 ## 经验总结
 如果两个变量刻画了几乎相同的信息，通常优先保留理论意义更强、测量更稳定、解释更清晰的变量。
 :::
-:::
-
-# 小结
-
-## 本讲重点
-
-::: {.incremental style="font-size: 1.2em;"}
-- 多元线性回归的核心是“控制其他变量后”解释系数
-- 研究问题要先写成参数假设，再转换为简化模型与完整模型的比较
-- 一般线性 F 检验统一了整体检验、部分检验和单个系数检验
-- 单个系数的 t 检验与一自由度 F 检验等价，即 $F = t^2$
-- 多重共线性会削弱单个系数检验的稳定性，并影响解释的可信度
 :::

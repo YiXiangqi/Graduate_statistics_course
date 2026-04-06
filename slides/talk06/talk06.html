@@ -6,8 +6,8 @@
 <script src="talk06_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="talk06_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="talk06_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="talk06_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.9.36">
+<link href="talk06_files/libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.35">
 
   <meta name="author" content="易湘琦">
   <title>高等数据统计分析</title>
@@ -99,6 +99,7 @@
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="talk06_files/libs/revealjs/dist/theme/quarto-2740581606dc327e82f18f789b69d8a0.css">
+  <link rel="stylesheet" href="styles.css">
   <link href="talk06_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="talk06_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="talk06_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -193,6 +194,8 @@
       margin-right: 0; 
     }
   </style>
+  <link href="talk06_files/libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+  <script src="talk06_files/libs/pagedtable-1.1/js/pagedtable.js"></script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -215,19 +218,18 @@
 <h2>你将学到</h2>
 <div style="font-size: 1.2em;">
 <ul>
-<li class="fragment">理解多元线性回归模型的数学形式与矩阵表达</li>
-<li class="fragment">会在 R 中拟合多元线性回归，并读取系数、拟合值与残差</li>
-<li class="fragment">理解“研究问题 <span class="math inline">\(\rightarrow\)</span> 线性假设 <span class="math inline">\(\rightarrow\)</span> 嵌套模型比较”的逻辑链条</li>
-<li class="fragment">掌握一般线性 F 检验，并统一理解整体检验、部分检验和单个系数检验</li>
-<li class="fragment">会写出单个斜率参数的置信区间，并把区间估计与 t / F 检验联系起来</li>
-<li class="fragment">理解 <span class="math inline">\(R^2\)</span>、调整 <span class="math inline">\(R^2\)</span>、顺序平方和、部分 <span class="math inline">\(R^2\)</span> 之间的联系</li>
-<li class="fragment">理解多重共线性为什么会影响系数解释与假设检验，并掌握常见诊断方法</li>
+<li class="fragment">多元线性回归（MLR）的基本形式与矩阵表达</li>
+<li class="fragment">应用 R 构建 MLR 模型</li>
+<li class="fragment">研究问题 <span class="math inline">\(\rightarrow\)</span> 假设检验 <span class="math inline">\(\rightarrow\)</span> 嵌套模型比较</li>
+<li class="fragment">一般线性 F 检验的基本概念及应用</li>
+<li class="fragment"><span class="math inline">\(R^2\)</span>、调整 <span class="math inline">\(R^2\)</span>、顺序平方和以及部分 <span class="math inline">\(R^2\)</span></li>
+<li class="fragment">多重共线性的基本概念和常见诊断方法</li>
 </ul>
 </div>
 </section>
 <section>
-<section id="从一元线性回归到多元线性回归" class="title-slide slide level1 center">
-<h1>从一元线性回归到多元线性回归</h1>
+<section id="线性回归一元到多元" class="title-slide slide level1 center">
+<h1>线性回归：一元到多元</h1>
 
 </section>
 <section id="一元线性回归回顾" class="slide level2">
@@ -246,7 +248,7 @@ y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \cdots + \beta_p x_{ip} + \var
 <ul>
 <li class="fragment"><span class="math inline">\(y_i\)</span> 是第 <span class="math inline">\(i\)</span> 个观测的响应变量</li>
 <li class="fragment"><span class="math inline">\(x_{ij}\)</span> 是第 <span class="math inline">\(i\)</span> 个观测在第 <span class="math inline">\(j\)</span> 个解释变量上的取值</li>
-<li class="fragment"><span class="math inline">\(\beta_j\)</span> 是在其他解释变量保持不变时，<span class="math inline">\(x_j\)</span> 对 <span class="math inline">\(y\)</span> 的条件平均影响</li>
+<li class="fragment"><strong><span class="math inline">\(\beta_j\)</span> 是在其他解释变量保持不变时，<span class="math inline">\(x_j\)</span> 对 <span class="math inline">\(y\)</span> 的条件平均影响</strong></li>
 </ul>
 </section>
 <section id="为什么要强调其他变量保持不变" class="slide level2">
@@ -284,6 +286,7 @@ y_1 \\ y_2 \\ \vdots \\ y_n
 <p><span class="math display">\[
 \mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\varepsilon}
 \]</span></p>
+<p><span class="math inline">\(X\)</span>称为设计矩阵（design matrix），它的第一列是全 1 的截距列，后面每列对应一个解释变量。</p>
 </section>
 <section id="估计与拟合" class="slide level2">
 <h2>估计与拟合</h2>
@@ -295,68 +298,126 @@ y_1 \\ y_2 \\ \vdots \\ y_n
 <p><span class="math display">\[
 \hat{\boldsymbol{\beta}} = (\mathbf{X}^\top \mathbf{X})^{-1}\mathbf{X}^\top \mathbf{y}
 \]</span></p>
+<p>那么： <span class="math display">\[
+\hat{\mathbf{y}} = \mathbf{X} (\mathbf{X}^\top \mathbf{X})^{-1}\mathbf{X}^\top \mathbf{y}
+\]</span> 这里<span class="math inline">\(\mathbf{H} = \mathbf{X} (\mathbf{X}^\top \mathbf{X})^{-1}\mathbf{X}^\top\)</span>称为帽子矩阵，它把响应变量 <span class="math inline">\(\mathbf{y}\)</span> 映射到拟合值 <span class="math inline">\(\hat{\mathbf{y}}\)</span>。</p>
 </section>
-<section id="r-语言示例拟合一个多元线性回归模型" class="slide level2">
-<h2>R 语言示例：拟合一个多元线性回归模型</h2>
+<section id="r-示例拟合多元线性回归模型" class="slide level2">
+<h2>R 示例：拟合多元线性回归模型</h2>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1"><code>mtcars</code>数据集</a></li><li><a href="#tabset-1-2">MLR 模型</a></li><li><a href="#tabset-1-3">模型结果</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>mtcars_df <span class="ot">&lt;-</span></span>
-<span id="cb1-2"><a href=""></a>  mtcars <span class="sc">|&gt;</span></span>
-<span id="cb1-3"><a href=""></a>  <span class="fu">rownames_to_column</span>(<span class="st">"car"</span>)</span>
-<span id="cb1-4"><a href=""></a></span>
-<span id="cb1-5"><a href=""></a>mtcars_lm_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> wt <span class="sc">+</span> disp, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb1-6"><a href=""></a></span>
-<span id="cb1-7"><a href=""></a>mtcars_lm_full</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>mtcars</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     mpg cyl  disp  hp drat    wt  qsec vs am gear carb
+Mazda RX4           21.0   6 160.0 110 3.90 2.620 16.46  0  1    4    4
+Mazda RX4 Wag       21.0   6 160.0 110 3.90 2.875 17.02  0  1    4    4
+Datsun 710          22.8   4 108.0  93 3.85 2.320 18.61  1  1    4    1
+Hornet 4 Drive      21.4   6 258.0 110 3.08 3.215 19.44  1  0    3    1
+Hornet Sportabout   18.7   8 360.0 175 3.15 3.440 17.02  0  0    3    2
+Valiant             18.1   6 225.0 105 2.76 3.460 20.22  1  0    3    1
+Duster 360          14.3   8 360.0 245 3.21 3.570 15.84  0  0    3    4
+Merc 240D           24.4   4 146.7  62 3.69 3.190 20.00  1  0    4    2
+Merc 230            22.8   4 140.8  95 3.92 3.150 22.90  1  0    4    2
+Merc 280            19.2   6 167.6 123 3.92 3.440 18.30  1  0    4    4
+Merc 280C           17.8   6 167.6 123 3.92 3.440 18.90  1  0    4    4
+Merc 450SE          16.4   8 275.8 180 3.07 4.070 17.40  0  0    3    3
+Merc 450SL          17.3   8 275.8 180 3.07 3.730 17.60  0  0    3    3
+Merc 450SLC         15.2   8 275.8 180 3.07 3.780 18.00  0  0    3    3
+Cadillac Fleetwood  10.4   8 472.0 205 2.93 5.250 17.98  0  0    3    4
+Lincoln Continental 10.4   8 460.0 215 3.00 5.424 17.82  0  0    3    4
+Chrysler Imperial   14.7   8 440.0 230 3.23 5.345 17.42  0  0    3    4
+Fiat 128            32.4   4  78.7  66 4.08 2.200 19.47  1  1    4    1
+Honda Civic         30.4   4  75.7  52 4.93 1.615 18.52  1  1    4    2
+Toyota Corolla      33.9   4  71.1  65 4.22 1.835 19.90  1  1    4    1
+Toyota Corona       21.5   4 120.1  97 3.70 2.465 20.01  1  0    3    1
+Dodge Challenger    15.5   8 318.0 150 2.76 3.520 16.87  0  0    3    2
+AMC Javelin         15.2   8 304.0 150 3.15 3.435 17.30  0  0    3    2
+Camaro Z28          13.3   8 350.0 245 3.73 3.840 15.41  0  0    3    4
+Pontiac Firebird    19.2   8 400.0 175 3.08 3.845 17.05  0  0    3    2
+Fiat X1-9           27.3   4  79.0  66 4.08 1.935 18.90  1  1    4    1
+Porsche 914-2       26.0   4 120.3  91 4.43 2.140 16.70  0  1    5    2
+Lotus Europa        30.4   4  95.1 113 3.77 1.513 16.90  1  1    5    2
+Ford Pantera L      15.8   8 351.0 264 4.22 3.170 14.50  0  1    5    4
+Ferrari Dino        19.7   6 145.0 175 3.62 2.770 15.50  0  1    5    6
+Maserati Bora       15.0   8 301.0 335 3.54 3.570 14.60  0  1    5    8
+Volvo 142E          21.4   4 121.0 109 4.11 2.780 18.60  1  1    4    2</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>mtcars_df <span class="ot">&lt;-</span></span>
+<span id="cb3-2"><a href=""></a>  mtcars <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href=""></a>  <span class="fu">rownames_to_column</span>(<span class="st">"car"</span>)</span>
+<span id="cb3-4"><a href=""></a>rmarkdown<span class="sc">::</span><span class="fu">paged_table</span>(mtcars_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["car"],"name":[1],"type":["chr"],"align":["left"]},{"label":["mpg"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["cyl"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["disp"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["hp"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["drat"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["wt"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["qsec"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["vs"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["am"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["gear"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["carb"],"name":[12],"type":["dbl"],"align":["right"]}],"data":[{"1":"Mazda RX4","2":"21.0","3":"6","4":"160.0","5":"110","6":"3.90","7":"2.620","8":"16.46","9":"0","10":"1","11":"4","12":"4"},{"1":"Mazda RX4 Wag","2":"21.0","3":"6","4":"160.0","5":"110","6":"3.90","7":"2.875","8":"17.02","9":"0","10":"1","11":"4","12":"4"},{"1":"Datsun 710","2":"22.8","3":"4","4":"108.0","5":"93","6":"3.85","7":"2.320","8":"18.61","9":"1","10":"1","11":"4","12":"1"},{"1":"Hornet 4 Drive","2":"21.4","3":"6","4":"258.0","5":"110","6":"3.08","7":"3.215","8":"19.44","9":"1","10":"0","11":"3","12":"1"},{"1":"Hornet Sportabout","2":"18.7","3":"8","4":"360.0","5":"175","6":"3.15","7":"3.440","8":"17.02","9":"0","10":"0","11":"3","12":"2"},{"1":"Valiant","2":"18.1","3":"6","4":"225.0","5":"105","6":"2.76","7":"3.460","8":"20.22","9":"1","10":"0","11":"3","12":"1"},{"1":"Duster 360","2":"14.3","3":"8","4":"360.0","5":"245","6":"3.21","7":"3.570","8":"15.84","9":"0","10":"0","11":"3","12":"4"},{"1":"Merc 240D","2":"24.4","3":"4","4":"146.7","5":"62","6":"3.69","7":"3.190","8":"20.00","9":"1","10":"0","11":"4","12":"2"},{"1":"Merc 230","2":"22.8","3":"4","4":"140.8","5":"95","6":"3.92","7":"3.150","8":"22.90","9":"1","10":"0","11":"4","12":"2"},{"1":"Merc 280","2":"19.2","3":"6","4":"167.6","5":"123","6":"3.92","7":"3.440","8":"18.30","9":"1","10":"0","11":"4","12":"4"},{"1":"Merc 280C","2":"17.8","3":"6","4":"167.6","5":"123","6":"3.92","7":"3.440","8":"18.90","9":"1","10":"0","11":"4","12":"4"},{"1":"Merc 450SE","2":"16.4","3":"8","4":"275.8","5":"180","6":"3.07","7":"4.070","8":"17.40","9":"0","10":"0","11":"3","12":"3"},{"1":"Merc 450SL","2":"17.3","3":"8","4":"275.8","5":"180","6":"3.07","7":"3.730","8":"17.60","9":"0","10":"0","11":"3","12":"3"},{"1":"Merc 450SLC","2":"15.2","3":"8","4":"275.8","5":"180","6":"3.07","7":"3.780","8":"18.00","9":"0","10":"0","11":"3","12":"3"},{"1":"Cadillac Fleetwood","2":"10.4","3":"8","4":"472.0","5":"205","6":"2.93","7":"5.250","8":"17.98","9":"0","10":"0","11":"3","12":"4"},{"1":"Lincoln Continental","2":"10.4","3":"8","4":"460.0","5":"215","6":"3.00","7":"5.424","8":"17.82","9":"0","10":"0","11":"3","12":"4"},{"1":"Chrysler Imperial","2":"14.7","3":"8","4":"440.0","5":"230","6":"3.23","7":"5.345","8":"17.42","9":"0","10":"0","11":"3","12":"4"},{"1":"Fiat 128","2":"32.4","3":"4","4":"78.7","5":"66","6":"4.08","7":"2.200","8":"19.47","9":"1","10":"1","11":"4","12":"1"},{"1":"Honda Civic","2":"30.4","3":"4","4":"75.7","5":"52","6":"4.93","7":"1.615","8":"18.52","9":"1","10":"1","11":"4","12":"2"},{"1":"Toyota Corolla","2":"33.9","3":"4","4":"71.1","5":"65","6":"4.22","7":"1.835","8":"19.90","9":"1","10":"1","11":"4","12":"1"},{"1":"Toyota Corona","2":"21.5","3":"4","4":"120.1","5":"97","6":"3.70","7":"2.465","8":"20.01","9":"1","10":"0","11":"3","12":"1"},{"1":"Dodge Challenger","2":"15.5","3":"8","4":"318.0","5":"150","6":"2.76","7":"3.520","8":"16.87","9":"0","10":"0","11":"3","12":"2"},{"1":"AMC Javelin","2":"15.2","3":"8","4":"304.0","5":"150","6":"3.15","7":"3.435","8":"17.30","9":"0","10":"0","11":"3","12":"2"},{"1":"Camaro Z28","2":"13.3","3":"8","4":"350.0","5":"245","6":"3.73","7":"3.840","8":"15.41","9":"0","10":"0","11":"3","12":"4"},{"1":"Pontiac Firebird","2":"19.2","3":"8","4":"400.0","5":"175","6":"3.08","7":"3.845","8":"17.05","9":"0","10":"0","11":"3","12":"2"},{"1":"Fiat X1-9","2":"27.3","3":"4","4":"79.0","5":"66","6":"4.08","7":"1.935","8":"18.90","9":"1","10":"1","11":"4","12":"1"},{"1":"Porsche 914-2","2":"26.0","3":"4","4":"120.3","5":"91","6":"4.43","7":"2.140","8":"16.70","9":"0","10":"1","11":"5","12":"2"},{"1":"Lotus Europa","2":"30.4","3":"4","4":"95.1","5":"113","6":"3.77","7":"1.513","8":"16.90","9":"1","10":"1","11":"5","12":"2"},{"1":"Ford Pantera L","2":"15.8","3":"8","4":"351.0","5":"264","6":"4.22","7":"3.170","8":"14.50","9":"0","10":"1","11":"5","12":"4"},{"1":"Ferrari Dino","2":"19.7","3":"6","4":"145.0","5":"175","6":"3.62","7":"2.770","8":"15.50","9":"0","10":"1","11":"5","12":"6"},{"1":"Maserati Bora","2":"15.0","3":"8","4":"301.0","5":"335","6":"3.54","7":"3.570","8":"14.60","9":"0","10":"1","11":"5","12":"8"},{"1":"Volvo 142E","2":"21.4","3":"4","4":"121.0","5":"109","6":"4.11","7":"2.780","8":"18.60","9":"1","10":"1","11":"4","12":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a>mtcars_lm_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> wt <span class="sc">+</span> disp, <span class="at">data =</span> mtcars_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-1-3">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
 lm(formula = mpg ~ hp + wt + disp, data = mtcars_df)
 
+Residuals:
+   Min     1Q Median     3Q    Max 
+-3.891 -1.640 -0.172  1.061  5.861 
+
 Coefficients:
-(Intercept)           hp           wt         disp  
-  37.105505    -0.031157    -3.800891    -0.000937  </code></pre>
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 37.105505   2.110815  17.579  &lt; 2e-16 ***
+hp          -0.031157   0.011436  -2.724  0.01097 *  
+wt          -3.800891   1.066191  -3.565  0.00133 ** 
+disp        -0.000937   0.010350  -0.091  0.92851    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.639 on 28 degrees of freedom
+Multiple R-squared:  0.8268,    Adjusted R-squared:  0.8083 
+F-statistic: 44.57 on 3 and 28 DF,  p-value: 8.65e-11</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">coef</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  (Intercept)            hp            wt          disp 
-37.1055052690 -0.0311565508 -3.8008905826 -0.0009370091 </code></pre>
+</div>
+</div>
 </div>
 </div>
 </section>
-<section id="r-语言示例读取拟合值与残差" class="slide level2">
-<h2>R 语言示例：读取拟合值与残差</h2>
+<section id="线性回归模型解读常用-r-函数" class="slide level2">
+<h2>线性回归模型解读：常用 R 函数</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="fu">tibble</span>(</span>
-<span id="cb5-2"><a href=""></a>  <span class="at">car =</span> mtcars_df<span class="sc">$</span>car,</span>
-<span id="cb5-3"><a href=""></a>  <span class="at">mpg =</span> mtcars_df<span class="sc">$</span>mpg,</span>
-<span id="cb5-4"><a href=""></a>  <span class="at">fitted =</span> <span class="fu">fitted</span>(mtcars_lm_full),</span>
-<span id="cb5-5"><a href=""></a>  <span class="at">resid =</span> <span class="fu">resid</span>(mtcars_lm_full)</span>
-<span id="cb5-6"><a href=""></a>) <span class="sc">|&gt;</span></span>
-<span id="cb5-7"><a href=""></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 4
-  car                 mpg fitted  resid
-  &lt;chr&gt;             &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-1 Mazda RX4          21     23.6 -2.57 
-2 Mazda RX4 Wag      21     22.6 -1.60 
-3 Datsun 710         22.8   25.3 -2.49 
-4 Hornet 4 Drive     21.4   21.2  0.183
-5 Hornet Sportabout  18.7   18.2  0.459
-6 Valiant            18.1   20.5 -2.37 </code></pre>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">summary</span>()</span>
+<span id="cb7-2"><a href=""></a><span class="fu">coef</span>() <span class="co"># coefficients()</span></span>
+<span id="cb7-3"><a href=""></a><span class="fu">confint</span>() </span>
+<span id="cb7-4"><a href=""></a><span class="fu">fitted</span>()</span>
+<span id="cb7-5"><a href=""></a><span class="fu">resid</span>() <span class="co"># residuals()</span></span>
+<span id="cb7-6"><a href=""></a><span class="fu">predict</span>() </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="对比一元与多元回归" class="slide level2">
 <h2>对比一元与多元回归</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>mtcars_lm_hp <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb7-2"><a href=""></a></span>
-<span id="cb7-3"><a href=""></a><span class="fu">summary</span>(mtcars_lm_hp)<span class="sc">$</span>coefficients</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>mtcars_lm_hp <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp, <span class="at">data =</span> mtcars_df)</span>
+<span id="cb8-2"><a href=""></a></span>
+<span id="cb8-3"><a href=""></a><span class="fu">summary</span>(mtcars_lm_hp)<span class="sc">$</span>coefficients</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>               Estimate Std. Error   t value     Pr(&gt;|t|)
 (Intercept) 30.09886054  1.6339210 18.421246 6.642736e-18
 hp          -0.06822828  0.0101193 -6.742389 1.787835e-07</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)<span class="sc">$</span>coefficients</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)<span class="sc">$</span>coefficients</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 Estimate Std. Error     t value     Pr(&gt;|t|)
 (Intercept) 37.1055052690 2.11081525 17.57875558 1.161936e-16
@@ -365,23 +426,19 @@ wt          -3.8008905826 1.06619064 -3.56492586 1.330991e-03
 disp        -0.0009370091 0.01034974 -0.09053451 9.285070e-01</code></pre>
 </div>
 </div>
-<p>在一元回归中，<code>hp</code> 既反映自身作用，也吸收了与 <code>wt</code>、<code>disp</code> 相关的信息；在多元回归中，<code>hp</code> 的系数变成了控制 <code>wt</code> 和 <code>disp</code> 后的条件效应。</p>
-</section></section>
-<section>
-<section id="系数解释模型作用范围与研究问题" class="title-slide slide level1 center">
-<h1>系数解释、模型作用范围与研究问题</h1>
-
+<ul>
+<li>在一元回归中，<code>hp</code> 既反映自身作用，也吸收了与 <code>wt</code>、<code>disp</code> 相关的信息；</li>
+<li>在多元回归中，<code>hp</code> 的系数变成了控制 <code>wt</code> 和 <code>disp</code> 后的条件效应。</li>
+</ul>
 </section>
-<section id="系数的解释" class="slide level2">
-<h2>系数的解释</h2>
+<section id="回归系数的解读" class="slide level2">
+<h2>回归系数的解读</h2>
 <p>如果</p>
 <p><span class="math display">\[
 E(Y \mid X_1, X_2) = \beta_0 + \beta_1 X_1 + \beta_2 X_2
 \]</span></p>
 <p>那么 <span class="math inline">\(\beta_1\)</span> 的含义不是“<span class="math inline">\(X_1\)</span> 与 <span class="math inline">\(Y\)</span> 的简单相关”，而是：</p>
-<p><span class="math display">\[
-\text{在 } X_2 \text{ 固定时，} X_1 \text{ 每增加 1 个单位，} E(Y \mid X_1, X_2) \text{ 的平均变化量。}
-\]</span></p>
+<p><mark>在<span class="math inline">\(X_2\)</span>固定时，<span class="math inline">\(X_1\)</span>每增加一个单位，<span class="math inline">\(E(Y \mid X_1, X_2)\)</span>的平均变化量。</mark></p>
 </section>
 <section id="系数解释的语言模板" class="slide level2">
 <h2>系数解释的语言模板</h2>
@@ -408,32 +465,34 @@ E(Y \mid X_1, X_2) = \beta_0 + \beta_1 X_1 + \beta_2 X_2
 <div class="fragment">
 <p>在 R 中，模型作用范围通常由 <code>lm()</code> 的公式给出：</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">formula</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="fu">formula</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mpg ~ hp + wt + disp</code></pre>
 </div>
 </div>
 </div>
 </section>
-<section id="相同变量不同作用范围解释也会变" class="slide level2">
-<h2>相同变量，不同作用范围，解释也会变</h2>
+<section id="相同变量不同作用范围解读不同" class="slide level2">
+<h2>相同变量，不同作用范围，解读不同</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="fu">formula</span>(mtcars_lm_hp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="fu">formula</span>(mtcars_lm_hp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mpg ~ hp</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="fu">formula</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a><span class="fu">formula</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mpg ~ hp + wt + disp</code></pre>
 </div>
 </div>
-<p>在 <code>mpg ~ hp</code> 中，<code>hp</code> 的系数是在<strong>没有控制其他变量</strong>时解释的；</p>
-<p>在 <code>mpg ~ hp + wt + disp</code> 中，<code>hp</code> 的系数是在<strong>控制 <code>wt</code> 和 <code>disp</code></strong> 后解释的。</p>
+<ul>
+<li><p>在 <code>mpg ~ hp</code> 中，<code>hp</code> 的系数是在<strong>没有控制其他变量</strong>时解释的；</p></li>
+<li><p>在 <code>mpg ~ hp + wt + disp</code> 中，<code>hp</code> 的系数是在<strong>控制 <code>wt</code> 和 <code>disp</code></strong> 后解释的。</p></li>
+</ul>
 <p>所以，模型作用范围一旦改变，同一个变量系数回答的研究问题也会改变。</p>
 </section>
-<section id="研究问题与假设" class="slide level2">
-<h2>研究问题与假设</h2>
-<p>多元线性回归中，经常把研究问题翻译成参数假设。</p>
+<section id="研究问题与假设检验" class="slide level2">
+<h2>研究问题与假设检验</h2>
+<p>多元线性回归中，经常把研究问题“翻译”成假设检验。</p>
 <p>例如：</p>
 <ul>
 <li class="fragment">某个单独斜率是否为 0：<span class="math inline">\(H_0: \beta_j = 0\)</span></li>
@@ -470,11 +529,18 @@ H_A: \text{至少有一个不为 } 0
 <div class="fragment">
 <p>这正是一般线性 F 检验的统一视角。</p>
 </div>
-</section></section>
-<section>
-<section id="一般线性-f-检验统一三类假设检验" class="title-slide slide level1 center">
-<h1>一般线性 F 检验：统一三类假设检验</h1>
-
+</section>
+<section id="回顾平方和的三个基本概念" class="slide level2">
+<h2>回顾：平方和的三个基本概念</h2>
+<ul>
+<li class="fragment">总平方和 <span class="math inline">\(\mathrm{SST}\)</span>：响应变量的总变异</li>
+<li class="fragment">残差平方和 <span class="math inline">\(\mathrm{SSE}\)</span>：模型还<strong>没解释掉</strong>的变异</li>
+<li class="fragment">回归平方和 <span class="math inline">\(\mathrm{SSR}\)</span>：模型<strong>解释掉</strong>的变异</li>
+</ul>
+<div class="fragment">
+<p>提问：</p>
+<p>写出 <span class="math inline">\(\mathrm{SST}\)</span>、<span class="math inline">\(\mathrm{SSE}\)</span> 和 <span class="math inline">\(\mathrm{SSR}\)</span> 的数学定义，并说明它们之间的关系。</p>
+</div>
 </section>
 <section id="一般线性-f-检验的基本思想" class="slide level2">
 <h2>一般线性 F 检验的基本思想</h2>
@@ -537,31 +603,16 @@ F = t^2
 <li class="fragment">“整体 F 检验、部分 F 检验、单个系数 t 检验”是同一条逻辑链上的不同特例</li>
 </ul>
 </section>
-<section id="看软件输出时到底要报告什么" class="slide level2 scrollable">
-<h2>看软件输出时，到底要报告什么</h2>
-<p>面对 <code>summary()</code>、<code>anova()</code>、<code>drop1()</code> 的输出，至少要明确四件事：</p>
-<ol type="1">
-<li class="fragment">原假设 <span class="math inline">\(H_0\)</span> 和备择假设 <span class="math inline">\(H_A\)</span></li>
-<li class="fragment">比较的是哪两个模型，或删除的是哪一个变量（组）</li>
-<li class="fragment">检验统计量与 p 值</li>
-<li class="fragment">用学术语言写出结论：<strong>是否有证据说明新增变量带来了额外解释力</strong></li>
-</ol>
-</section></section>
-<section>
-<section id="三类检验在-r-中的实现" class="title-slide slide level1 center">
-<h1>三类检验在 R 中的实现</h1>
-
-</section>
-<section id="整体模型检验" class="slide level2">
-<h2>1：整体模型检验</h2>
+<section id="r-中的实现整体模型检验" class="slide level2">
+<h2>R 中的实现：整体模型检验</h2>
 <p>整体检验把“只有截距”的模型作为简化模型：</p>
 <p><span class="math display">\[
 H_0: \beta_1 = \cdots = \beta_p = 0
 \]</span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a>mtcars_lm_null <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb17-2"><a href=""></a></span>
-<span id="cb17-3"><a href=""></a><span class="fu">anova</span>(mtcars_lm_null, mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a>mtcars_lm_null <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> mtcars_df)</span>
+<span id="cb18-2"><a href=""></a></span>
+<span id="cb18-3"><a href=""></a><span class="fu">anova</span>(mtcars_lm_null, mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -573,7 +624,7 @@ Model 2: mpg ~ hp + wt + disp
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -609,16 +660,16 @@ F-statistic: 44.57 on 3 and 28 DF,  p-value: 8.65e-11</code></pre>
 <li class="fragment">这并不等于“每一个单独变量都显著”</li>
 </ul>
 </section>
-<section id="部分-f-检验" class="slide level2">
-<h2>2：部分 F 检验</h2>
+<section id="r-中的实现部分-f-检验" class="slide level2">
+<h2>R 中的实现：部分 F 检验</h2>
 <p>例如，想检验在已经包含 <code>hp</code> 后，<code>wt</code> 和 <code>disp</code> 是否还能整体提升拟合：</p>
 <p><span class="math display">\[
 H_0: \beta_{\text{wt}} = \beta_{\text{disp}} = 0
 \]</span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a>mtcars_lm_reduced <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb21-2"><a href=""></a></span>
-<span id="cb21-3"><a href=""></a><span class="fu">anova</span>(mtcars_lm_reduced, mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>mtcars_lm_reduced <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp, <span class="at">data =</span> mtcars_df)</span>
+<span id="cb22-2"><a href=""></a></span>
+<span id="cb22-3"><a href=""></a><span class="fu">anova</span>(mtcars_lm_reduced, mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -646,10 +697,10 @@ H_A: \text{至少有一个不为 } 0
 <p>在控制 <code>hp</code> 后，<code>wt</code> 和 <code>disp</code> 作为一个变量组，是否还能提供额外解释力。</p>
 </blockquote>
 </section>
-<section id="单个系数检验是部分-f-检验的特例" class="slide level2">
-<h2>3：单个系数检验是部分 F 检验的特例</h2>
+<section id="r-中的实现单个系数检验" class="slide level2">
+<h2>R 中的实现：单个系数检验</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a><span class="fu">drop1</span>(mtcars_lm_full, <span class="at">test =</span> <span class="st">"F"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="fu">drop1</span>(mtcars_lm_full, <span class="at">test =</span> <span class="st">"F"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Single term deletions
 
@@ -663,7 +714,7 @@ disp    1     0.057 195.05 63.840  0.0082 0.928507
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)<span class="sc">$</span>coefficients</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)<span class="sc">$</span>coefficients</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 Estimate Std. Error     t value     Pr(&gt;|t|)
 (Intercept) 37.1055052690 2.11081525 17.57875558 1.161936e-16
@@ -680,7 +731,7 @@ disp        -0.0009370091 0.01034974 -0.09053451 9.285070e-01</code></pre>
 <ul>
 <li class="fragment">原假设：<span class="math inline">\(H_0: \beta_{\text{disp}} = 0\)</span></li>
 <li class="fragment">备择假设：<span class="math inline">\(H_A: \beta_{\text{disp}} \neq 0\)</span></li>
-<li class="fragment">它检验的是：<strong>在已经调整 <code>hp</code> 和 <code>wt</code> 后，<code>disp</code> 是否还有边际贡献</strong></li>
+<li class="fragment">它检验的是： <strong>在控制 <code>hp</code> 和 <code>wt</code> 后，<code>disp</code> 是否还有贡献</strong></li>
 <li class="fragment">所以单个系数 t 检验反映的是“控制其他变量后的显著性”，不是简单相关</li>
 </ul>
 </section>
@@ -688,14 +739,14 @@ disp        -0.0009370091 0.01034974 -0.09053451 9.285070e-01</code></pre>
 <h2>验证 <span class="math inline">\(F = t^2\)</span></h2>
 <p>下面以 <code>disp</code> 为例：</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a>t_value_disp <span class="ot">&lt;-</span></span>
-<span id="cb27-2"><a href=""></a>  <span class="fu">summary</span>(mtcars_lm_full)<span class="sc">$</span>coefficients[<span class="st">"disp"</span>, <span class="st">"t value"</span>]</span>
-<span id="cb27-3"><a href=""></a></span>
-<span id="cb27-4"><a href=""></a>t_value_disp<span class="sc">^</span><span class="dv">2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a>t_value_disp <span class="ot">&lt;-</span></span>
+<span id="cb28-2"><a href=""></a>  <span class="fu">summary</span>(mtcars_lm_full)<span class="sc">$</span>coefficients[<span class="st">"disp"</span>, <span class="st">"t value"</span>]</span>
+<span id="cb28-3"><a href=""></a></span>
+<span id="cb28-4"><a href=""></a>t_value_disp<span class="sc">^</span><span class="dv">2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.008196498</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a><span class="fu">drop1</span>(mtcars_lm_full, <span class="at">test =</span> <span class="st">"F"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a><span class="fu">drop1</span>(mtcars_lm_full, <span class="at">test =</span> <span class="st">"F"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Single term deletions
 
@@ -712,197 +763,14 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <p>你会看到 <code>disp</code> 对应的一自由度 F 值与其 t 值平方一致。</p>
 </section>
-<section id="回归平方和的分解" class="slide level2">
-<h2>回归平方和的分解</h2>
-<p>若变量按 <span class="math inline">\(x_1, x_2, \dots, x_p\)</span> 的顺序进入模型，则</p>
+<section id="拟合优度-决定系数r2" class="slide level2">
+<h2>拟合优度 ：决定系数<span class="math inline">\(R^2\)</span></h2>
 <p><span class="math display">\[
-\mathrm{SSR}(x_1, \dots, x_p)
-= \mathrm{SSR}(x_1)
-+ \mathrm{SSR}(x_2 \mid x_1)
-+ \cdots
-+ \mathrm{SSR}(x_p \mid x_1, \dots, x_{p-1})
-\]</span></p>
-<p>这里每一项都是<strong>顺序平方和</strong>（sequential sum of squares, Type I SS）。</p>
-</section>
-<section id="符号提醒这里的平方和到底在算什么" class="slide level2">
-<h2>符号提醒：这里的平方和到底在算什么</h2>
-<ul>
-<li class="fragment"><span class="math inline">\(\mathrm{SST}\)</span>：响应变量的总变异</li>
-<li class="fragment"><span class="math inline">\(\mathrm{SSE}\)</span>：模型还<strong>没解释掉</strong>的变异</li>
-<li class="fragment"><span class="math inline">\(\mathrm{SSR}\)</span>：模型<strong>解释掉</strong>的变异</li>
-<li class="fragment">顺序平方和 <span class="math inline">\(\mathrm{SSR}(B \mid A)\)</span>：在已有变量组 <span class="math inline">\(A\)</span> 后，再加入变量组 <span class="math inline">\(B\)</span> 新解释的那一部分</li>
-</ul>
-</section>
-<section id="顺序平方和的两个等价定义" class="slide level2">
-<h2>顺序平方和的两个等价定义</h2>
-<p>对新加入的变量组 <span class="math inline">\(B\)</span>，在已有变量组 <span class="math inline">\(A\)</span> 的基础上，其顺序平方和可写为</p>
-<p><span class="math display">\[
-\mathrm{SSR}(B \mid A)
-= \mathrm{SSE}(A) - \mathrm{SSE}(A, B)
-\]</span></p>
-<p>也可写为“加入 <span class="math inline">\(B\)</span> 后，拟合值多解释的变异”：</p>
-<p><span class="math display">\[
-\mathrm{SSR}(B \mid A)
-= \sum_{i=1}^n \bigl(\hat{y}_{i,\; A,B} - \hat{y}_{i,\; A}\bigr)^2
-\]</span></p>
-<p>前者是<strong>用残差平方和之差定义</strong>，后者是<strong>用拟合值变化定义</strong>，两者等价。</p>
-</section>
-<section id="顺序平方和的-r-示例" class="slide level2">
-<h2>顺序平方和的 R 示例</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a>mtcars_lm_m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb31-2"><a href=""></a>mtcars_lm_m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> wt, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb31-3"><a href=""></a>mtcars_lm_m3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> wt <span class="sc">+</span> disp, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb31-4"><a href=""></a></span>
-<span id="cb31-5"><a href=""></a><span class="fu">anova</span>(mtcars_lm_m1, mtcars_lm_m2, mtcars_lm_m3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Analysis of Variance Table
-
-Model 1: mpg ~ hp
-Model 2: mpg ~ hp + wt
-Model 3: mpg ~ hp + wt + disp
-  Res.Df    RSS Df Sum of Sq       F   Pr(&gt;F)    
-1     30 447.67                                  
-2     29 195.05  1   252.627 36.2763 1.72e-06 ***
-3     28 194.99  1     0.057  0.0082   0.9285    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-</div>
-<p>这个输出展示的是<strong>按进入顺序</strong>计算的平方和，因此它与变量进入模型的顺序有关。</p>
-</section>
-<section id="手工计算一个顺序平方和" class="slide level2">
-<h2>手工计算一个顺序平方和</h2>
-<p>例如，</p>
-<p><span class="math display">\[
-\mathrm{SSR}(\texttt{wt} \mid \texttt{hp})
-= \mathrm{SSE}(\texttt{hp}) - \mathrm{SSE}(\texttt{hp}, \texttt{wt})
-\]</span></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href=""></a><span class="fu">deviance</span>(mtcars_lm_m1) <span class="sc">-</span> <span class="fu">deviance</span>(mtcars_lm_m2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 252.6266</code></pre>
-</div>
-</div>
-<p>这个值应与 <code>anova(mtcars_lm_m1, mtcars_lm_m2, mtcars_lm_m3)</code> 中第二步加入 <code>wt</code> 的平方和一致。</p>
-</section>
-<section id="用拟合值变化再算一次同一个顺序平方和" class="slide level2">
-<h2>用“拟合值变化”再算一次同一个顺序平方和</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a>yhat_m1 <span class="ot">&lt;-</span> <span class="fu">fitted</span>(mtcars_lm_m1)</span>
-<span id="cb35-2"><a href=""></a>yhat_m2 <span class="ot">&lt;-</span> <span class="fu">fitted</span>(mtcars_lm_m2)</span>
-<span id="cb35-3"><a href=""></a></span>
-<span id="cb35-4"><a href=""></a><span class="fu">sum</span>((yhat_m2 <span class="sc">-</span> yhat_m1)<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 252.6266</code></pre>
-</div>
-</div>
-<p>这验证了</p>
-<p><span class="math display">\[
-\mathrm{SSR}(\texttt{wt} \mid \texttt{hp})
-= \sum_{i=1}^n \bigl(\hat{y}_{i,\; \texttt{hp}, \texttt{wt}} - \hat{y}_{i,\; \texttt{hp}}\bigr)^2
-\]</span></p>
-<p>也就是说，<strong>顺序平方和既可以看作残差平方和减少了多少，也可以看作拟合值多解释了多少</strong>。</p>
-</section>
-<section id="两个以上自由度的顺序平方和" class="slide level2">
-<h2>两个以上自由度的顺序平方和</h2>
-<p>如果想得到变量组 <code>wt + disp</code> 在 <code>hp</code> 之后进入时的顺序平方和，就把它们作为一个整体比较：</p>
-<p><span class="math display">\[
-\mathrm{SSR}(\texttt{wt}, \texttt{disp} \mid \texttt{hp})
-= \mathrm{SSE}(\texttt{hp}) - \mathrm{SSE}(\texttt{hp}, \texttt{wt}, \texttt{disp})
-\]</span></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a><span class="fu">deviance</span>(mtcars_lm_m1) <span class="sc">-</span> <span class="fu">deviance</span>(mtcars_lm_m3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 252.6836</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a><span class="fu">anova</span>(mtcars_lm_m1, mtcars_lm_m3)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Analysis of Variance Table
-
-Model 1: mpg ~ hp
-Model 2: mpg ~ hp + wt + disp
-  Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    
-1     30 447.67                                  
-2     28 194.99  2    252.68 18.142 8.846e-06 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-</div>
-<p>这就是一个<strong>两自由度</strong>的顺序平方和，也是对应变量组的总体贡献。</p>
-</section>
-<section id="顺序平方和与一般线性-f-检验的区别" class="slide level2">
-<h2>顺序平方和与一般线性 F 检验的区别</h2>
-<ul>
-<li class="fragment"><code>anova(m1, m2, m3)</code> 强调的是“按顺序加入变量”时，每一步新增了多少解释力</li>
-<li class="fragment"><code>anova(reduced, full)</code> 强调的是“针对某个明确原假设”，完整模型是否优于简化模型</li>
-<li class="fragment">因此，回答具体研究问题时，通常优先写出原假设，再构造对应的简化模型与完整模型</li>
-</ul>
-</section>
-<section id="遇到问题时应该看哪个量" class="slide level2">
-<h2>遇到问题时，应该看哪个量</h2>
-<ul>
-<li class="fragment">想问“模型整体有没有解释力？”：看<strong>整体 F 检验</strong></li>
-<li class="fragment">想问“一组变量一起有没有贡献？”：看<strong>一般线性 F 检验 / 部分 F 检验</strong></li>
-<li class="fragment">想问“单个变量在控制其他变量后是否还有贡献？”：看<strong>t 检验</strong>或对应的一自由度 <strong>F 检验</strong></li>
-<li class="fragment">想问“按某个进入顺序，这一步新解释了多少？”：看<strong>顺序平方和</strong></li>
-<li class="fragment">想问“新增变量解释了剩余变异中的多少比例？”：看<strong>部分 <span class="math inline">\(R^2\)</span></strong></li>
-</ul>
-</section></section>
-<section>
-<section id="区间估计与模型拟合优度" class="title-slide slide level1 center">
-<h1>区间估计与模型拟合优度</h1>
-
-</section>
-<section id="单个斜率参数的置信区间" class="slide level2">
-<h2>单个斜率参数的置信区间</h2>
-<p>单个斜率参数的 <span class="math inline">\(100(1-\alpha)\%\)</span> 置信区间为</p>
-<p><span class="math display">\[
-\hat{\beta}_j \pm t_{\alpha/2,\; n-p-1}\,\mathrm{SE}(\hat{\beta}_j)
-\]</span></p>
-<p>在 R 中可直接用 <code>confint()</code>：</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href=""></a><span class="fu">confint</span>(mtcars_lm_full, <span class="at">level =</span> <span class="fl">0.95</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                  2.5 %       97.5 %
-(Intercept) 32.78169625 41.429314293
-hp          -0.05458171 -0.007731388
-wt          -5.98488310 -1.616898063
-disp        -0.02213750  0.020263482</code></pre>
-</div>
-</div>
-</section>
-<section id="如何解释单个斜率的置信区间" class="slide level2">
-<h2>如何解释单个斜率的置信区间</h2>
-<p>例如，若 <code>wt</code> 的 95% 置信区间完全落在 0 的同一侧，则说明：</p>
-<ul>
-<li class="fragment">在控制其他变量后，<code>wt</code> 对 <code>mpg</code> 的条件效应方向比较稳定</li>
-<li class="fragment">与 <span class="math inline">\(H_0: \beta_{\text{wt}} = 0\)</span> 的双侧 t 检验结论一致</li>
-<li class="fragment">因此区间估计给出的不仅是“显著/不显著”，还有<strong>效应大小的合理范围</strong></li>
-</ul>
-</section>
-<section id="置信区间与假设检验的联系" class="slide level2">
-<h2>置信区间与假设检验的联系</h2>
-<p>对于双侧检验：</p>
-<ul>
-<li class="fragment">若 0 不在 <span class="math inline">\(\beta_j\)</span> 的置信区间内，则通常拒绝 <span class="math inline">\(H_0: \beta_j = 0\)</span></li>
-<li class="fragment">这与该系数对应的 t 检验结论一致</li>
-<li class="fragment">而这个 t 检验又等价于一自由度的 F 检验</li>
-</ul>
-<div class="fragment">
-<p>这说明区间估计与假设检验也是互相连通的。</p>
-</div>
-</section>
-<section id="r2-的定义" class="slide level2">
-<h2><span class="math inline">\(R^2\)</span> 的定义</h2>
-<p><span class="math display">\[
-R^2 = 1 - \frac{\mathrm{SSE}}{\mathrm{SST}},
-\qquad
-\mathrm{SST} = \sum_{i=1}^n (y_i - \bar{y})^2
+R^2 = 1 - \frac{\mathrm{SSE}}{\mathrm{SST}} = \frac{\mathrm{SSR}}{\mathrm{SST}}
 \]</span></p>
 <p><span class="math inline">\(R^2\)</span> 表示模型解释了响应变量总变异的比例。</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)<span class="sc">$</span>r.squared</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)<span class="sc">$</span>r.squared</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.8268361</code></pre>
 </div>
@@ -912,15 +780,36 @@ R^2 = 1 - \frac{\mathrm{SSE}}{\mathrm{SST}},
 <h2>调整 <span class="math inline">\(R^2\)</span></h2>
 <p>由于加入变量后 <span class="math inline">\(R^2\)</span> 几乎不会下降，所以比较不同复杂度模型时常用调整 <span class="math inline">\(R^2\)</span>：</p>
 <p><span class="math display">\[
-\bar{R}^2 = 1 - \frac{\mathrm{SSE}/(n-p-1)}{\mathrm{SST}/(n-1)}
+{R}_{\text{adj}}^2 = 1 - \frac{\mathrm{SSE}/(n-p-1)}{\mathrm{SST}/(n-1)}
 \]</span></p>
 <p>其中 <span class="math inline">\(p\)</span> 是解释变量个数。</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)<span class="sc">$</span>adj.r.squared</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)<span class="sc">$</span>adj.r.squared</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.8082829</code></pre>
 </div>
 </div>
+</section>
+<section id="回归平方和的分解" class="slide level2">
+<h2>回归平方和的分解</h2>
+<p>若变量按 <span class="math inline">\(x_1, x_2, \dots, x_p\)</span> 的顺序进入模型，则 <span class="math display">\[
+\mathrm{SSR}(x_1, \dots, x_p)
+= \mathrm{SSR}(x_1)
++ \mathrm{SSR}(x_2 \mid x_1)
++ \cdots
++ \mathrm{SSR}(x_p \mid x_1, \dots, x_{p-1})
+\]</span></p>
+<p>这里每一项都是<strong>顺序平方和</strong>（sequential sum of squares, Type I SS），定义如下：</p>
+<p><strong>顺序平方和 <span class="math inline">\(\mathrm{SSR}(B \mid A)\)</span>：在已有变量组 <span class="math inline">\(A\)</span> 后，再加入变量组 <span class="math inline">\(B\)</span> 新解释的那一部分。</strong></p>
+</section>
+<section id="两自由度的顺序平方和" class="slide level2">
+<h2>两自由度的顺序平方和</h2>
+<p>如果想得到变量组 <code>wt + disp</code> 在 <code>hp</code> 之后进入时的顺序平方和，就把它们作为一个整体比较：</p>
+<p><span class="math display">\[
+\mathrm{SSR}(\texttt{wt}, \texttt{disp} \mid \texttt{hp})
+= \mathrm{SSE}(\texttt{hp}) - \mathrm{SSE}(\texttt{hp}, \texttt{wt}, \texttt{disp})
+\]</span></p>
+<p>这就是一个<strong>两自由度</strong>的顺序平方和，也是对应变量组的总体贡献。</p>
 </section>
 <section id="部分-r2" class="slide level2">
 <h2>部分 <span class="math inline">\(R^2\)</span></h2>
@@ -930,18 +819,6 @@ R^2_{\text{partial}} =
 \frac{\mathrm{SSE}(M_R) - \mathrm{SSE}(M_F)}{\mathrm{SSE}(M_R)}
 \]</span></p>
 <p>它刻画的是：在已有变量进入模型后，新变量还能额外解释多少剩余变异。</p>
-</section>
-<section id="部分-r2-的-r-计算示例" class="slide level2">
-<h2>部分 <span class="math inline">\(R^2\)</span> 的 R 计算示例</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href=""></a>sse_reduced <span class="ot">&lt;-</span> <span class="fu">deviance</span>(mtcars_lm_reduced)</span>
-<span id="cb47-2"><a href=""></a>sse_full <span class="ot">&lt;-</span> <span class="fu">deviance</span>(mtcars_lm_full)</span>
-<span id="cb47-3"><a href=""></a></span>
-<span id="cb47-4"><a href=""></a>(sse_reduced <span class="sc">-</span> sse_full) <span class="sc">/</span> sse_reduced</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.5644363</code></pre>
-</div>
-</div>
 </section>
 <section id="部分-r2-如何解释" class="slide level2">
 <h2>部分 <span class="math inline">\(R^2\)</span> 如何解释</h2>
@@ -981,11 +858,7 @@ R^2_{\text{partial}} =
 <section id="什么是多重共线性" class="slide level2">
 <h2>什么是多重共线性</h2>
 <p>多重共线性指两个或多个解释变量之间存在较强线性关系。</p>
-<p>这会使设计矩阵 <span class="math inline">\(\mathbf{X}\)</span> 接近线性相关，从而使系数估计不稳定。</p>
-</section>
-<section id="它为什么麻烦" class="slide level2">
-<h2>它为什么麻烦</h2>
-<p>多重共线性不会必然导致估计有偏，但会带来：</p>
+<p>这会使设计矩阵 <span class="math inline">\(\mathbf{X}\)</span> 接近线性相关，从而使系数估计不稳定。 具体来说，多重共线性不会必然导致估计有偏，但会带来：</p>
 <ul>
 <li class="fragment">系数标准误增大</li>
 <li class="fragment">单个变量的 t 检验不稳定</li>
@@ -993,12 +866,21 @@ R^2_{\text{partial}} =
 <li class="fragment">系数符号和大小对样本扰动很敏感</li>
 </ul>
 </section>
-<section id="先看相关矩阵" class="slide level2">
-<h2>先看相关矩阵</h2>
+<section id="诊断方法散点矩阵" class="slide level2">
+<h2>诊断方法：散点矩阵</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href=""></a>mtcars_df <span class="sc">|&gt;</span></span>
-<span id="cb49-2"><a href=""></a>  <span class="fu">select</span>(hp, wt, disp) <span class="sc">|&gt;</span></span>
-<span id="cb49-3"><a href=""></a>  <span class="fu">cor</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href=""></a>mtcars_df <span class="sc">|&gt;</span></span>
+<span id="cb36-2"><a href=""></a>  <span class="fu">select</span>(hp, wt, disp) <span class="sc">|&gt;</span></span>
+<span id="cb36-3"><a href=""></a>  <span class="fu">pairs</span>(<span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"steelblue"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+</div>
+<img data-src="talk06_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"></section>
+<section id="诊断方法相关矩阵" class="slide level2">
+<h2>诊断方法：相关矩阵</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a>mtcars_df <span class="sc">|&gt;</span></span>
+<span id="cb37-2"><a href=""></a>  <span class="fu">select</span>(hp, wt, disp) <span class="sc">|&gt;</span></span>
+<span id="cb37-3"><a href=""></a>  <span class="fu">cor</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            hp        wt      disp
 hp   1.0000000 0.6587479 0.7909486
@@ -1007,17 +889,8 @@ disp 0.7909486 0.8879799 1.0000000</code></pre>
 </div>
 </div>
 </section>
-<section id="再看散点矩阵" class="slide level2">
-<h2>再看散点矩阵</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href=""></a>mtcars_df <span class="sc">|&gt;</span></span>
-<span id="cb51-2"><a href=""></a>  <span class="fu">select</span>(hp, wt, disp) <span class="sc">|&gt;</span></span>
-<span id="cb51-3"><a href=""></a>  <span class="fu">pairs</span>(<span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"steelblue"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-
-</div>
-<img data-src="talk06_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
-<section id="方差膨胀因子-vif" class="slide level2">
-<h2>方差膨胀因子 VIF</h2>
+<section id="诊断方法方差膨胀因子vif" class="slide level2">
+<h2>诊断方法：方差膨胀因子（VIF）</h2>
 <p>对第 <span class="math inline">\(j\)</span> 个解释变量，设辅助回归的决定系数为 <span class="math inline">\(R_j^2\)</span>，则</p>
 <p><span class="math display">\[
 \mathrm{VIF}_j = \frac{1}{1 - R_j^2}
@@ -1034,48 +907,24 @@ disp 0.7909486 0.8879799 1.0000000</code></pre>
 <p><span class="math display">\[
 \mathrm{VIF}_{\texttt{hp}} = \frac{1}{1 - R_{\texttt{hp}}^2}
 \]</span></p>
-</section>
-<section id="手工计算一个-vif" class="slide level2">
-<h2>手工计算一个 VIF</h2>
+<p><code>car</code> 包中的 <code>vif()</code> 函数可以用来计算模型中所有解释变量的 VIF：</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href=""></a>aux_lm_hp <span class="ot">&lt;-</span> <span class="fu">lm</span>(hp <span class="sc">~</span> wt <span class="sc">+</span> disp, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb52-2"><a href=""></a>aux_r2_hp <span class="ot">&lt;-</span> <span class="fu">summary</span>(aux_lm_hp)<span class="sc">$</span>r.squared</span>
-<span id="cb52-3"><a href=""></a></span>
-<span id="cb52-4"><a href=""></a>aux_r2_hp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.6345874</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href=""></a><span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> aux_r2_hp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2.736633</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href=""></a><span class="fu">vif</span>(mtcars_lm_full)[<span class="st">"hp"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      hp 
-2.736633 </code></pre>
-</div>
-</div>
-<p>上面第三个输出与 <code>vif()</code> 中 <code>hp</code> 的结果应一致。</p>
-</section>
-<section id="vif-到底在衡量什么" class="slide level2">
-<h2>VIF 到底在衡量什么</h2>
-<p>由</p>
-<p><span class="math display">\[
-\mathrm{Var}(\hat{\beta}_j)
-\propto \frac{1}{1 - R_j^2}
-\]</span></p>
-<p>可见：当 <span class="math inline">\(x_j\)</span> 能被其他解释变量解释得越好时，<span class="math inline">\(R_j^2\)</span> 越接近 1，<span class="math inline">\(\hat{\beta}_j\)</span> 的方差就越大，标准误也越大。</p>
-<p>所以 VIF 描述的是：</p>
-<blockquote>
-<p><strong>由于与其他解释变量线性重叠，某个系数标准误被放大了多少倍。</strong></p>
-</blockquote>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href=""></a><span class="fu">vif</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a><span class="fu">vif</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      hp       wt     disp 
 2.736633 4.844618 7.324517 </code></pre>
 </div>
 </div>
+</section>
+<section id="vif-到底在衡量什么" class="slide level2">
+<h2>VIF 到底在衡量什么</h2>
+<p>通过一定的推倒，可以得到： $$ (_j) </p>
+<p>$$</p>
+<p>可见：当 <span class="math inline">\(x_j\)</span> 能被其他解释变量解释得越好时，<span class="math inline">\(R_j^2\)</span> 越接近 1，<span class="math inline">\(\hat{\beta}_j\)</span> 的方差就越大，标准误也越大。</p>
+<p>所以 VIF 描述的是：</p>
+<blockquote>
+<p><strong>由于与其他解释变量线性重叠，某个系数标准误被放大了多少倍。</strong></p>
+</blockquote>
 </section>
 <section id="什么时候-vif-算大" class="slide level2">
 <h2>什么时候 VIF 算“大”</h2>
@@ -1090,8 +939,8 @@ disp 0.7909486 0.8879799 1.0000000</code></pre>
 <p>这些都只是经验规则，不是机械阈值。若研究重点是<strong>解释单个系数</strong>和做显著性检验，就要更警惕较大的 VIF；若重点是<strong>整体预测</strong>，问题有时没那么严重。</p>
 </div>
 </section>
-<section id="条件数-kappa" class="slide level2">
-<h2>条件数 kappa</h2>
+<section id="条件数-condition-number" class="slide level2">
+<h2>条件数 (condition number)</h2>
 <p>VIF 是<strong>逐个变量</strong>地看“它是否能被其他变量解释”；条件数则是从<strong>整个设计矩阵</strong>角度看，共线性是否让某些方向几乎无法区分。</p>
 <p>在线性代数上，若设计矩阵（通常去掉截距并做标准化）记为 <span class="math inline">\(\mathbf{X}\)</span>，则条件数可写成</p>
 <p><span class="math display">\[
@@ -1116,38 +965,40 @@ disp 0.7909486 0.8879799 1.0000000</code></pre>
 <li class="fragment">对解释变量做中心化和标准化</li>
 <li class="fragment">再计算 <code>kappa()</code></li>
 </ul>
+<div class="fragment">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href=""></a>x_predictors <span class="ot">&lt;-</span></span>
-<span id="cb60-2"><a href=""></a>  <span class="fu">model.matrix</span>(mtcars_lm_full)[, <span class="sc">-</span><span class="dv">1</span>] <span class="sc">|&gt;</span></span>
-<span id="cb60-3"><a href=""></a>  <span class="fu">scale</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb60-4"><a href=""></a></span>
-<span id="cb60-5"><a href=""></a><span class="fu">kappa</span>(x_predictors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href=""></a>x_predictors <span class="ot">&lt;-</span></span>
+<span id="cb41-2"><a href=""></a>  <span class="fu">model.matrix</span>(mtcars_lm_full)[, <span class="sc">-</span><span class="dv">1</span>] <span class="sc">|&gt;</span></span>
+<span id="cb41-3"><a href=""></a>  <span class="fu">scale</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb41-4"><a href=""></a></span>
+<span id="cb41-5"><a href=""></a><span class="fu">kappa</span>(x_predictors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 4.669886</code></pre>
+</div>
 </div>
 </div>
 </section>
 <section id="手工理解-kappa-的计算" class="slide level2">
 <h2>手工理解 kappa 的计算</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href=""></a>svd_x <span class="ot">&lt;-</span> <span class="fu">svd</span>(x_predictors, <span class="at">nu =</span> <span class="dv">0</span>, <span class="at">nv =</span> <span class="dv">0</span>)<span class="sc">$</span>d</span>
-<span id="cb62-2"><a href=""></a></span>
-<span id="cb62-3"><a href=""></a>svd_x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href=""></a>svd_x <span class="ot">&lt;-</span> <span class="fu">svd</span>(x_predictors, <span class="at">nu =</span> <span class="dv">0</span>, <span class="at">nv =</span> <span class="dv">0</span>)<span class="sc">$</span>d</span>
+<span id="cb43-2"><a href=""></a></span>
+<span id="cb43-3"><a href=""></a>svd_x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 8.912209 3.304165 1.629423</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href=""></a><span class="fu">max</span>(svd_x) <span class="sc">/</span> <span class="fu">min</span>(svd_x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href=""></a><span class="fu">max</span>(svd_x) <span class="sc">/</span> <span class="fu">min</span>(svd_x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 5.469549</code></pre>
 </div>
 </div>
 <p>上面最后一个值就是条件数的基本思想：<strong>最大奇异值除以最小奇异值</strong>。</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href=""></a><span class="fu">kappa</span>(<span class="fu">model.matrix</span>(mtcars_lm_full))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href=""></a><span class="fu">kappa</span>(<span class="fu">model.matrix</span>(mtcars_lm_full))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1588.348</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href=""></a><span class="fu">kappa</span>(x_predictors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href=""></a><span class="fu">kappa</span>(x_predictors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 4.669886</code></pre>
 </div>
@@ -1167,25 +1018,6 @@ disp 0.7909486 0.8879799 1.0000000</code></pre>
 <p>和 VIF 一样，这些阈值只是经验参考。若条件数很大，同时又看到高相关、较大 VIF、系数符号不稳定、t 检验摇摆，就更能判断共线性已经是实质问题。</p>
 </div>
 </section>
-<section id="完全线性依赖" class="slide level2">
-<h2>完全线性依赖</h2>
-<p>如果变量之间存在完全线性关系，例如</p>
-<p><span class="math display">\[
-x_3 = 2x_1 + x_2
-\]</span></p>
-<p>则设计矩阵不可逆，普通最小二乘无法唯一估计所有系数。</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href=""></a><span class="fu">alias</span>(<span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> wt <span class="sc">+</span> <span class="fu">I</span>(<span class="dv">2</span> <span class="sc">*</span> hp <span class="sc">+</span> wt), <span class="at">data =</span> mtcars_df))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Model :
-mpg ~ hp + wt + I(2 * hp + wt)
-
-Complete :
-               (Intercept) hp wt
-I(2 * hp + wt) 0           2  1 </code></pre>
-</div>
-</div>
-</section>
 <section id="一个常见现象整体显著但单个系数不稳定" class="slide level2">
 <h2>一个常见现象：整体显著，但单个系数不稳定</h2>
 <ul>
@@ -1196,14 +1028,9 @@ I(2 * hp + wt) 0           2  1 </code></pre>
 <div class="fragment">
 <p>这正是“整体检验”和“单个系数检验”结论不一致的常见原因之一。</p>
 </div>
-</section></section>
-<section>
-<section id="如何缓解多重共线性" class="title-slide slide level1 center">
-<h1>如何缓解多重共线性</h1>
-
 </section>
-<section id="常见思路" class="slide level2">
-<h2>常见思路</h2>
+<section id="如何缓解多重共线性" class="slide level2">
+<h2>如何缓解多重共线性</h2>
 <ul>
 <li class="fragment">删除冗余变量</li>
 <li class="fragment">合并高度相关变量</li>
@@ -1235,23 +1062,6 @@ I(2 * hp + wt) 0           2  1 </code></pre>
 </div>
 </div>
 </div>
-</div>
-</section></section>
-<section>
-<section id="小结" class="title-slide slide level1 center">
-<h1>小结</h1>
-
-</section>
-<section id="本讲重点" class="slide level2">
-<h2>本讲重点</h2>
-<div style="font-size: 1.2em;">
-<ul>
-<li class="fragment">多元线性回归的核心是“控制其他变量后”解释系数</li>
-<li class="fragment">研究问题要先写成参数假设，再转换为简化模型与完整模型的比较</li>
-<li class="fragment">一般线性 F 检验统一了整体检验、部分检验和单个系数检验</li>
-<li class="fragment">单个系数的 t 检验与一自由度 F 检验等价，即 <span class="math inline">\(F = t^2\)</span></li>
-<li class="fragment">多重共线性会削弱单个系数检验的稳定性，并影响解释的可信度</li>
-</ul>
 </div>
 
 </section></section>

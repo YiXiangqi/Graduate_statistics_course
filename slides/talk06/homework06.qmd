@@ -1,6 +1,6 @@
 ---
-title: "作业06：多元线性回归与多重共线性诊断"
-subtitle: "复习第六讲内容，掌握多元线性回归与共线性诊断方法"
+title: "作业06：多元线性回归与多重共线性的诊断"
+subtitle: "复习第六讲内容，掌握多元线性回归中的模型比较、顺序平方和与共线性诊断"
 author: 易湘琦
 author-title: ""
 format:
@@ -13,27 +13,25 @@ execute:
   echo: true
   warning: false
   message: false
-params:
-  show_solutions: false
 ---
 
 ## 作业目标
 
 本次作业对应第六讲 `talk06.qmd`，目标是：
 
-1. 理解多元线性回归模型中回归系数的含义。
-2. 学会使用散点矩阵、相关矩阵、VIF 和条件数诊断多重共线性。
-3. 认识多重共线性对系数估计、标准误和显著性检验的影响。
-4. 思考如何在实际建模中缓解多重共线性问题。
+1. 理解多元线性回归中“控制其他变量不变”这一系数解释逻辑。
+2. 学会用嵌套模型比较理解整体 F 检验、部分 F 检验与顺序平方和。
+3. 理解 `anova()` 与 `drop1()` 在线性模型中的不同含义。
+4. 学会手动计算方差膨胀因子（VIF），并据此诊断多重共线性。
 
-预计完成时间：**3–4 小时**。
+预计完成时间：**2-3 小时**。
 
 ## 提交要求（必须遵守）
 
 - 提交：
   - `homework06.qmd`
   - `homework06.html`
-  - ***渲染后生成的同名文件夹***
+  - ***渲染后生成的同名文件夹***：`homework06_files`
 - 所有代码必须可运行，渲染后 HTML 不报错。
 - 文末必须包含 **AI 使用声明**（按模板填写；未使用也要填写）。
 - 报告完成本次作业花费的时间。
@@ -45,73 +43,190 @@ library(tidyverse)
 library(car)
 ```
 
-## Part 1：多元线性回归基础
+## 数据准备
 
-本部分使用 `mtcars` 数据集。
-
-### 数据整理
+本次作业继续使用 `mtcars` 数据集。为了便于展示车型名称，先整理出一个新的数据框：
 
 ```{r}
 mtcars_df <-
   mtcars |>
   rownames_to_column("car")
 
-mtcars_df |>
-  select(mpg, hp, wt, disp) |>
-  head()
+mtcars_df
 ```
 
-### 初始模型
-
-考虑油耗 `mpg` 与发动机功率 `hp`、重量 `wt`、排量 `disp` 的关系：
-
-$$
-mpg_i = \beta_0 + \beta_1 hp_i + \beta_2 wt_i + \beta_3 disp_i + \varepsilon_i
-$$
+本讲中我们主要关心 `mpg` 与 `hp`、`wt`、`disp` 之间的关系。先拟合几个后续会反复使用的模型：
 
 ```{r}
-mtcars_lm_m0 <- lm(mpg ~ hp + wt + disp, data = mtcars_df)
-summary(mtcars_lm_m0)
-```
-
-### 第1题：解释回归系数
-
-请用自己的话解释 `hp`、`wt` 和 `disp` 三个系数的含义，说明它们分别对应什么样的“控制其他变量不变”的条件效应。
-
-::: {.content-visible when-meta="show_solutions"}
-**Solution：** 回归系数应解释为在其他变量保持不变时，自变量每增加 1 个单位，响应变量的平均变化量。例如 `hp` 的系数表示在 `wt` 和 `disp` 不变时，功率每增加 1，`mpg` 的平均变化。
-:::
-
-### 第2题：比较简单回归与多元回归
-
-分别拟合下面两个模型，并比较 `hp` 的系数符号、大小和显著性：
-
-1. `mpg ~ hp`
-2. `mpg ~ hp + wt + disp`
-
-请简要说明为什么两个模型中 `hp` 的结果可能不同。
-
-```{r}
+mtcars_lm_null <- lm(mpg ~ 1, data = mtcars_df)
 mtcars_lm_hp <- lm(mpg ~ hp, data = mtcars_df)
-summary(mtcars_lm_hp)
-summary(mtcars_lm_m0)
+mtcars_lm_hp_wt <- lm(mpg ~ hp + wt, data = mtcars_df)
+mtcars_lm_full <- lm(mpg ~ hp + wt + disp, data = mtcars_df)
 ```
 
-::: {.content-visible when-meta="show_solutions"}
-**Solution：** 简单回归中 `hp` 吸收了更多与 `wt`、`disp` 相关的信息，因此系数反映的是“总关联”；在多元回归中，`hp` 的系数变成条件效应。若解释变量高度相关，系数、标准误和显著性都可能明显变化。
-:::
+## Part 1：嵌套模型比较与顺序平方和
 
-## Part 2：多重共线性诊断
-
-### 第3题：相关矩阵与散点矩阵
-
-请计算 `hp`、`wt` 和 `disp` 的相关矩阵，并绘制散点矩阵。结合结果说明哪些变量之间可能存在较强共线性。
+### 回顾：三个模型
 
 ```{r}
-mtcars_df |>
-  select(hp, wt, disp) |>
-  cor()
+formula(mtcars_lm_hp)
+formula(mtcars_lm_hp_wt)
+formula(mtcars_lm_full)
 ```
+
+对于任意一个线性模型，都可以通过残差平方和衡量“模型还没解释掉多少变异”：
+
+$$
+\mathrm{SSE} = \sum_{i = 1}^{n} (y_i - \hat{y}_i)^2
+$$
+
+下面先提取几个模型的残差平方和：
+
+```{r}
+sse_hp <- sum(resid(mtcars_lm_hp)^2)
+sse_hp_wt <- sum(resid(mtcars_lm_hp_wt)^2)
+sse_full <- sum(resid(mtcars_lm_full)^2)
+
+c(
+  sse_hp = sse_hp,
+  sse_hp_wt = sse_hp_wt,
+  sse_full = sse_full
+)
+```
+
+### 顺序平方和的两个等价定义
+
+对于已有变量组 $A$ 和新加入的变量组 $B$，顺序平方和可以写为
+
+$$
+\mathrm{SSR}(B \mid A)
+= \mathrm{SSE}(A) - \mathrm{SSE}(A, B)
+$$
+
+也可以写为
+
+$$
+\mathrm{SSR}(B \mid A)
+= \sum_{i=1}^n \left(\hat{y}_{i, A,B} - \hat{y}_{i, A}\right)^2
+$$
+
+这两个公式一个从“残差平方和减少了多少”出发，另一个从“拟合值多解释了多少变异”出发。它们在理论上是等价的。
+
+下面先看一个具体例子：在已经有 `hp` 的基础上，再加入变量组 `wt + disp`。
+
+```{r}
+ssr_group_from_sse <- sse_hp - sse_full
+
+yhat_hp <- fitted(mtcars_lm_hp)
+yhat_full <- fitted(mtcars_lm_full)
+
+ssr_group_from_fitted <- sum((yhat_full - yhat_hp)^2)
+
+c(
+  ssr_group_from_sse = ssr_group_from_sse,
+  ssr_group_from_fitted = ssr_group_from_fitted
+)
+```
+
+```{r}
+anova(mtcars_lm_hp, mtcars_lm_full)
+```
+
+::: {.callout-important}
+## 第一题
+
+通过手动计算，验证顺序平方和的两个等价定义。
+
+1. 令 $A = \{\texttt{hp}\}$，$B = \{\texttt{wt}, \texttt{disp}\}$，分别使用
+   $$
+   \mathrm{SSR}(B \mid A) = \mathrm{SSE}(A) - \mathrm{SSE}(A, B)
+   $$
+   和
+   $$
+   \mathrm{SSR}(B \mid A) = \sum_{i=1}^n \left(\hat{y}_{i, A,B} - \hat{y}_{i, A}\right)^2
+   $$
+   计算顺序平方和。
+2. 比较你得到的两个数值，它们应该满足什么关系？
+3. 说明这个顺序平方和在模型比较中的统计含义。
+4. 结合 `anova(mtcars_lm_hp, mtcars_lm_full)` 的结果，说明这个两自由度顺序平方和如何进入一般线性 F 检验。
+
+:::
+
+### 整体 F 检验与部分 F 检验
+
+整体 F 检验把“只有截距”的模型作为简化模型，而部分 F 检验则比较两个一般的嵌套模型。
+
+```{r}
+anova(mtcars_lm_null, mtcars_lm_full)
+anova(mtcars_lm_hp, mtcars_lm_full)
+```
+
+请结合上面的两个比较思考：
+
+- 哪一个对应“模型整体是否具有解释力”？
+- 哪一个对应“在控制 `hp` 后，`wt` 与 `disp` 是否还能整体提高拟合”？
+
+## Part 2：`anova()` 与 `drop1()` 的结果解读
+
+### 当 `anova()` 直接用于单个线性模型
+
+```{r}
+anova(mtcars_lm_full)
+```
+
+对单个 `lm` 对象使用 `anova()` 时，输出的是按变量进入顺序得到的**顺序平方和**（Type I sum of squares）。
+
+在模型
+
+$$
+\texttt{mpg} \sim \texttt{hp} + \texttt{wt} + \texttt{disp}
+$$
+
+中：
+
+- `hp` 这一行衡量的是 `hp` 在最先进入模型时解释了多少变异；
+- `wt` 这一行衡量的是 `wt` 在 `hp` 已经进入后又额外解释了多少变异；
+- `disp` 这一行衡量的是 `disp` 在 `hp` 和 `wt` 已经进入后又额外解释了多少变异。
+
+因此，这个表的结果会受到**变量顺序**影响。
+
+### `drop1()` 的思路
+
+```{r}
+drop1(mtcars_lm_full, test = "F")
+```
+
+`drop1()` 从完整模型出发，每次删除一个变量，并把删去后的模型与完整模型进行比较。因此它回答的是：
+
+> 在其他变量已经保留在模型中的前提下，删去某一个变量是否会显著恶化模型拟合？
+
+所以，`drop1(..., test = "F")` 给出的更接近“控制其他变量后的单个变量检验”，与系数 t 检验在一自由度下是对应的。
+
+为了更清楚地看到 `drop1()` 的含义，可以手动做一次：
+
+```{r}
+mtcars_lm_no_disp <- lm(mpg ~ hp + wt, data = mtcars_df)
+
+anova(mtcars_lm_no_disp, mtcars_lm_full)
+```
+
+::: {.callout-important}
+## 第二题
+
+当 `anova()` 函数被应用于一个线性模型时，如何解读其返回结果？和 `drop1()` 的结果有什么不同？
+
+请至少回答以下几点：
+
+1. `anova(mtcars_lm_full)` 表中每一行的原假设分别是什么？
+2. 为什么说 `anova(mtcars_lm_full)` 的结果依赖变量进入模型的顺序？
+3. `drop1(mtcars_lm_full, test = "F")` 中每一行的检验在统计意义上对应什么问题？
+4. 比较 `anova(mtcars_lm_full)` 与 `drop1(mtcars_lm_full, test = "F")` 对 `disp` 的结论，并解释为什么它们的出发点不同。
+
+:::
+
+## Part 3：多重共线性与 VIF 的手动计算
+
+### 先观察解释变量之间的关系
 
 ```{r}
 mtcars_df |>
@@ -119,47 +234,102 @@ mtcars_df |>
   pairs(pch = 19, col = "steelblue")
 ```
 
-::: {.content-visible when-meta="show_solutions"}
-**Solution：** 如果相关矩阵中出现较大的绝对相关系数，且散点图呈明显线性趋势，就提示可能存在共线性。`hp`、`wt`、`disp` 在汽车数据中通常会有较明显的相关性。
-:::
-
-### 第4题：VIF 诊断
-
-请对 `mtcars_lm_m0` 计算 VIF，并解释结果。结合课上经验规则，判断该模型是否存在需要关注的多重共线性。
-
 ```{r}
-vif(mtcars_lm_m0)
+mtcars_df |>
+  select(hp, wt, disp) |>
+  cor()
 ```
 
-::: {.content-visible when-meta="show_solutions"}
-**Solution：** VIF 反映某个解释变量被其他解释变量线性解释的程度。若 VIF 明显大于 5 或 10，说明标准误可能被放大，模型存在较明显的共线性风险。
-:::
+从散点图和相关矩阵中可以初步看出，这几个解释变量之间存在一定程度的线性相关。
 
-### 第5题：条件数与模型稳定性
+### 回顾 VIF 的定义
 
-请计算模型矩阵的条件数，并简要解释其含义。然后尝试删除一个你认为信息最冗余的变量，比较删前删后模型的条件数是否有改善。
+对第 $j$ 个解释变量，如果把它当作响应变量、其余解释变量当作自变量做一个辅助回归，并记该辅助回归的决定系数为 $R_j^2$，那么
+
+$$
+\mathrm{VIF}_j = \frac{1}{1 - R_j^2}
+$$
+
+例如，要计算 `hp` 的 VIF，就可以拟合辅助回归：
+
+$$
+\texttt{hp} = \gamma_0 + \gamma_1 \texttt{wt} + \gamma_2 \texttt{disp} + e
+$$
 
 ```{r}
-kappa(model.matrix(mtcars_lm_m0))
+hp_aux_lm <- lm(hp ~ wt + disp, data = mtcars_df)
+summary(hp_aux_lm)$r.squared
+1 / (1 - summary(hp_aux_lm)$r.squared)
 ```
 
-::: {.content-visible when-meta="show_solutions"}
-**Solution：** 条件数越大，矩阵越接近奇异，估计越不稳定。删除高度冗余的变量后，条件数通常会下降，说明模型数值稳定性有所改善。
+### 自定义函数 `vif_man`
+
+下面给出一个函数框架。你可以先理解其思路，再补充或重写。
+
+```{r}
+vif_man <- function(model) {
+  model_matrix <- model.matrix(model)[, -1, drop = FALSE]
+  predictor_names <- colnames(model_matrix)
+
+  vif_values <-
+    map_dbl(
+      predictor_names,
+      function(var_name) {
+        y_aux <- model_matrix[, var_name]
+        x_aux <- model_matrix[, setdiff(predictor_names, var_name), drop = FALSE]
+
+        aux_df <- as_tibble(x_aux) |>
+          mutate(y_aux = y_aux)
+
+        aux_formula <-
+          reformulate(
+            termlabels = setdiff(predictor_names, var_name),
+            response = "y_aux"
+          )
+
+        aux_lm <- lm(aux_formula, data = aux_df)
+        r_squared_aux <- summary(aux_lm)$r.squared
+        1 / (1 - r_squared_aux)
+      }
+    )
+
+  names(vif_values) <- predictor_names
+  vif_values
+}
+```
+
+```{r}
+vif_man(mtcars_lm_full)
+vif(mtcars_lm_full)
+```
+
+::: {.callout-important}
+## 第三题
+
+自定义一个函数 `vif_man` 用于计算线性模型中各解释变量的 VIF，并与 `car` 包中 `vif()` 函数的结果进行比较。
+
+请至少完成以下内容：
+
+1. 解释 `vif_man()` 的基本思路：它为什么要对每个解释变量分别做一次辅助回归？
+2. 给出 `mtcars_lm_full` 中 `hp`、`wt`、`disp` 的 VIF 结果，并与 `vif()` 的输出比较。
+3. 如果你手动写出的 `vif_man()` 与 `vif()` 结果一致，这说明什么？
+4. 结合本题结果，说明多重共线性会如何影响回归系数的标准误、单个变量的显著性检验以及结果解释。
+
 :::
 
-## Part 3：思考与总结
+### 进一步思考：条件数
 
-### 第6题：如何缓解共线性
+除了 VIF，还可以从整体设计矩阵出发，用条件数初步判断共线性问题。
 
-请结合本次作业中的分析结果，回答：
+```{r}
+x_predictors <-
+  model.matrix(mtcars_lm_full)[, -1] |>
+  scale(center = TRUE, scale = TRUE)
 
-1. 你认为在 `mtcars` 这个例子中，哪些变量可以考虑删去或合并？
-2. 如果研究问题要求保留这些变量，你会考虑哪些替代方法？
-3. 多重共线性与“变量重要性”之间有什么关系？
+kappa(x_predictors)
+```
 
-### 第7题：简短总结
-
-请用 5–8 句话总结本次作业中你对多元线性回归与多重共线性的理解。
+这不是必做题，但你可以把它和 VIF 的结论放在一起思考：一个是逐个变量地看“它能否被其他变量解释”，另一个是整体地看“设计矩阵是否接近线性相关”。
 
 ## 文档表达与规范
 

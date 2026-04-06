@@ -12,3 +12,6 @@ slides/talk03/homework03_files/
 */*/*_files/
 cases/linear_regression/MLR_files
 slides/talk01/talk01.zip
+.DS_Store
+*/.DS_Store
+*/*/.DS_Store
