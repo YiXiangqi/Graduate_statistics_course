@@ -6,8 +6,8 @@
 <script src="talk06_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="talk06_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="talk06_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="talk06_files/libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.9.35">
+<link href="talk06_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.36">
 
   <meta name="author" content="易湘琦">
   <title>高等数据统计分析</title>
@@ -221,7 +221,7 @@
 <li class="fragment">多元线性回归（MLR）的基本形式与矩阵表达</li>
 <li class="fragment">应用 R 构建 MLR 模型</li>
 <li class="fragment">研究问题 <span class="math inline">\(\rightarrow\)</span> 假设检验 <span class="math inline">\(\rightarrow\)</span> 嵌套模型比较</li>
-<li class="fragment">一般线性 F 检验的基本概念及应用</li>
+<li class="fragment">一般线性 F 检验的基本思想及应用</li>
 <li class="fragment"><span class="math inline">\(R^2\)</span>、调整 <span class="math inline">\(R^2\)</span>、顺序平方和以及部分 <span class="math inline">\(R^2\)</span></li>
 <li class="fragment">多重共线性的基本概念和常见诊断方法</li>
 </ul>
@@ -609,10 +609,13 @@ F = t^2
 <p><span class="math display">\[
 H_0: \beta_1 = \cdots = \beta_p = 0
 \]</span></p>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1"><code>anova()</code></a></li><li><a href="#tabset-2-2"><code>summary()</code></a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a>mtcars_lm_null <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb18-2"><a href=""></a></span>
-<span id="cb18-3"><a href=""></a><span class="fu">anova</span>(mtcars_lm_null, mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb18-2"><a href=""></a><span class="fu">anova</span>(mtcars_lm_null, mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Analysis of Variance Table
 
@@ -624,6 +627,10 @@ Model 2: mpg ~ hp + wt + disp
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
+</div>
+</div>
+<div id="tabset-2-2">
+<div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a><span class="fu">summary</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -646,6 +653,9 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 Residual standard error: 2.639 on 28 degrees of freedom
 Multiple R-squared:  0.8268,    Adjusted R-squared:  0.8083 
 F-statistic: 44.57 on 3 and 28 DF,  p-value: 8.65e-11</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <p><code>summary()</code> 底部的 F 检验，与 <code>anova(mtcars_lm_null, mtcars_lm_full)</code> 的结论是一致的。</p>
@@ -874,7 +884,7 @@ R^2_{\text{partial}} =
 <span id="cb36-3"><a href=""></a>  <span class="fu">pairs</span>(<span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"steelblue"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 </div>
-<img data-src="talk06_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"></section>
+<img data-src="talk06_files/figure-revealjs/unnamed-chunk-17-1.png" width="960" class="r-stretch"></section>
 <section id="诊断方法相关矩阵" class="slide level2">
 <h2>诊断方法：相关矩阵</h2>
 <div class="cell">

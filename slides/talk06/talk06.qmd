@@ -30,7 +30,7 @@ library(car)
 - 多元线性回归（MLR）的基本形式与矩阵表达
 - 应用 R 构建 MLR 模型
 - 研究问题 $\rightarrow$ 假设检验 $\rightarrow$ 嵌套模型比较
-- 一般线性 F 检验的基本概念及应用
+- 一般线性 F 检验的基本思想及应用
 - $R^2$、调整 $R^2$、顺序平方和以及部分 $R^2$
 - 多重共线性的基本概念和常见诊断方法
 :::
@@ -366,16 +366,23 @@ $$
 
 整体检验把“只有截距”的模型作为简化模型：
 
+
 $$
 H_0: \beta_1 = \cdots = \beta_p = 0
 $$
 
+::: {.panel-tabset}
+### `anova()` 
 ```{r}
 mtcars_lm_null <- lm(mpg ~ 1, data = mtcars_df)
-
 anova(mtcars_lm_null, mtcars_lm_full)
+```
+
+### `summary()`
+```{r}
 summary(mtcars_lm_full)
 ```
+:::
 
 `summary()` 底部的 F 检验，与 `anova(mtcars_lm_null, mtcars_lm_full)` 的结论是一致的。
 
