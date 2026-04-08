@@ -1,6 +1,6 @@
 ---
 title: "作业06：多元线性回归与多重共线性的诊断"
-subtitle: "复习第六讲内容，掌握多元线性回归中的模型比较、顺序平方和与共线性诊断"
+subtitle: "复习第六讲内容，掌握多元线性回归中的假设检验、模型比较与共线性诊断"
 author: 易湘琦
 author-title: ""
 format:
@@ -15,14 +15,18 @@ execute:
   message: false
 ---
 
+```{r}
+library(tidyverse)
+library(car)
+```
+
 ## 作业目标
 
 本次作业对应第六讲 `talk06.qmd`，目标是：
 
-1. 理解多元线性回归中“控制其他变量不变”这一系数解释逻辑。
-2. 学会用嵌套模型比较理解整体 F 检验、部分 F 检验与顺序平方和。
-3. 理解 `anova()` 与 `drop1()` 在线性模型中的不同含义。
-4. 学会手动计算方差膨胀因子（VIF），并据此诊断多重共线性。
+1. 掌握多元线性回归中假设检验的一般方法（一般线性 F 检验）。
+2. 理解 $R^2$、调整 $R^2$ 与部分 $R^2$ 的含义与计算。
+3. 学会使用 VIF 和条件数诊断多重共线性问题。
 
 预计完成时间：**2-3 小时**。
 
@@ -36,16 +40,9 @@ execute:
 - 文末必须包含 **AI 使用声明**（按模板填写；未使用也要填写）。
 - 报告完成本次作业花费的时间。
 
-## 本次作业会用到的 R 包
-
-```{r}
-library(tidyverse)
-library(car)
-```
-
 ## 数据准备
 
-本次作业继续使用 `mtcars` 数据集。为了便于展示车型名称，先整理出一个新的数据框：
+本次作业使用 `mtcars` 数据集，以 `mpg`（每加仑英里数）作为响应变量，`hp`（马力）、`wt`（车重）和 `disp`（排量）作为解释变量。
 
 ```{r}
 mtcars_df <-
@@ -55,281 +52,126 @@ mtcars_df <-
 mtcars_df
 ```
 
-本讲中我们主要关心 `mpg` 与 `hp`、`wt`、`disp` 之间的关系。先拟合几个后续会反复使用的模型：
+先拟合几个后续会反复使用的模型：
 
 ```{r}
 mtcars_lm_null <- lm(mpg ~ 1, data = mtcars_df)
 mtcars_lm_hp <- lm(mpg ~ hp, data = mtcars_df)
-mtcars_lm_hp_wt <- lm(mpg ~ hp + wt, data = mtcars_df)
 mtcars_lm_full <- lm(mpg ~ hp + wt + disp, data = mtcars_df)
 ```
 
-## Part 1：嵌套模型比较与顺序平方和
+---
 
-### 回顾：三个模型
+## Section A：一般线性 F 检验
 
-```{r}
-formula(mtcars_lm_hp)
-formula(mtcars_lm_hp_wt)
-formula(mtcars_lm_full)
-```
+### 关键概念回顾
 
-对于任意一个线性模型，都可以通过残差平方和衡量“模型还没解释掉多少变异”：
+**一般线性 F 检验**用于比较嵌套模型：
 
-$$
-\mathrm{SSE} = \sum_{i = 1}^{n} (y_i - \hat{y}_i)^2
-$$
+- **简化模型（Reduced Model）** $M_R$：原假设约束下的模型
+- **完整模型（Full Model）** $M_F$：包含更多参数的模型
 
-下面先提取几个模型的残差平方和：
-
-```{r}
-sse_hp <- sum(resid(mtcars_lm_hp)^2)
-sse_hp_wt <- sum(resid(mtcars_lm_hp_wt)^2)
-sse_full <- sum(resid(mtcars_lm_full)^2)
-
-c(
-  sse_hp = sse_hp,
-  sse_hp_wt = sse_hp_wt,
-  sse_full = sse_full
-)
-```
-
-### 顺序平方和的两个等价定义
-
-对于已有变量组 $A$ 和新加入的变量组 $B$，顺序平方和可以写为
+F 统计量定义为：
 
 $$
-\mathrm{SSR}(B \mid A)
-= \mathrm{SSE}(A) - \mathrm{SSE}(A, B)
+F = \frac{[\text{SSE}(M_R) - \text{SSE}(M_F)] / q}{\text{SSE}(M_F) / (n - p_F - 1)}
 $$
 
-也可以写为
+其中：
 
-$$
-\mathrm{SSR}(B \mid A)
-= \sum_{i=1}^n \left(\hat{y}_{i, A,B} - \hat{y}_{i, A}\right)^2
-$$
+- $q$ 是约束个数（被检验的参数个数）
+- $p_F$ 是完整模型中解释变量的个数
+- $n$ 是样本量
 
-这两个公式一个从“残差平方和减少了多少”出发，另一个从“拟合值多解释了多少变异”出发。它们在理论上是等价的。
+### 研究问题
 
-下面先看一个具体例子：在已经有 `hp` 的基础上，再加入变量组 `wt + disp`。
-
-```{r}
-ssr_group_from_sse <- sse_hp - sse_full
-
-yhat_hp <- fitted(mtcars_lm_hp)
-yhat_full <- fitted(mtcars_lm_full)
-
-ssr_group_from_fitted <- sum((yhat_full - yhat_hp)^2)
-
-c(
-  ssr_group_from_sse = ssr_group_from_sse,
-  ssr_group_from_fitted = ssr_group_from_fitted
-)
-```
-
-```{r}
-anova(mtcars_lm_hp, mtcars_lm_full)
-```
+**研究问题**：在已经控制 `hp`（马力）后，`wt`（车重）和 `disp`（排量）是否还能整体提升对 `mpg`（每加仑英里数）的解释力？
 
 ::: {.callout-important}
-## 第一题
+## **第一题：**
 
-通过手动计算，验证顺序平方和的两个等价定义。
-
-1. 令 $A = \{\texttt{hp}\}$，$B = \{\texttt{wt}, \texttt{disp}\}$，分别使用
-   $$
-   \mathrm{SSR}(B \mid A) = \mathrm{SSE}(A) - \mathrm{SSE}(A, B)
-   $$
-   和
-   $$
-   \mathrm{SSR}(B \mid A) = \sum_{i=1}^n \left(\hat{y}_{i, A,B} - \hat{y}_{i, A}\right)^2
-   $$
-   计算顺序平方和。
-2. 比较你得到的两个数值，它们应该满足什么关系？
-3. 说明这个顺序平方和在模型比较中的统计含义。
-4. 结合 `anova(mtcars_lm_hp, mtcars_lm_full)` 的结果，说明这个两自由度顺序平方和如何进入一般线性 F 检验。
-
+1. 写出该研究问题对应的**原假设** $H_0$ 和**备择假设** $H_A$。
+2. 根据假设，构建对应的**简化模型**（Reduced Model）和**完整模型**（Full Model）。
+3. 手动计算 F 统计量，并使用 `pf()` 函数计算 p 值。
+4. 使用 `anova()` 函数验证你的计算结果。
+5. 基于统计结果，回答研究问题：控制 `hp` 后，`wt` 和 `disp` 是否还能提供额外解释力？
 :::
 
-### 整体 F 检验与部分 F 检验
+---
 
-整体 F 检验把“只有截距”的模型作为简化模型，而部分 F 检验则比较两个一般的嵌套模型。
+## Section B：$R^2$、调整 $R^2$ 与部分 $R^2$
 
-```{r}
-anova(mtcars_lm_null, mtcars_lm_full)
-anova(mtcars_lm_hp, mtcars_lm_full)
-```
+### 关键概念回顾
 
-请结合上面的两个比较思考：
-
-- 哪一个对应“模型整体是否具有解释力”？
-- 哪一个对应“在控制 `hp` 后，`wt` 与 `disp` 是否还能整体提高拟合”？
-
-## Part 2：`anova()` 与 `drop1()` 的结果解读
-
-### 当 `anova()` 直接用于单个线性模型
-
-```{r}
-anova(mtcars_lm_full)
-```
-
-对单个 `lm` 对象使用 `anova()` 时，输出的是按变量进入顺序得到的**顺序平方和**（Type I sum of squares）。
-
-在模型
-
+- **决定系数 $R^2$**：模型解释的变异占总变异的比例
 $$
-\texttt{mpg} \sim \texttt{hp} + \texttt{wt} + \texttt{disp}
+R^2 = 1 - \frac{\text{SSE}}{\text{SST}}
 $$
 
-中：
+- **调整 $R^2$**：对模型复杂度进行惩罚的 $R^2$
+$$
+\bar{R}^2 = 1 - \frac{\text{SSE}/(n-p-1)}{\text{SST}/(n-1)}
+$$
 
-- `hp` 这一行衡量的是 `hp` 在最先进入模型时解释了多少变异；
-- `wt` 这一行衡量的是 `wt` 在 `hp` 已经进入后又额外解释了多少变异；
-- `disp` 这一行衡量的是 `disp` 在 `hp` 和 `wt` 已经进入后又额外解释了多少变异。
+其中 $p$ 是解释变量个数。
 
-因此，这个表的结果会受到**变量顺序**影响。
-
-### `drop1()` 的思路
-
-```{r}
-drop1(mtcars_lm_full, test = "F")
-```
-
-`drop1()` 从完整模型出发，每次删除一个变量，并把删去后的模型与完整模型进行比较。因此它回答的是：
-
-> 在其他变量已经保留在模型中的前提下，删去某一个变量是否会显著恶化模型拟合？
-
-所以，`drop1(..., test = "F")` 给出的更接近“控制其他变量后的单个变量检验”，与系数 t 检验在一自由度下是对应的。
-
-为了更清楚地看到 `drop1()` 的含义，可以手动做一次：
-
-```{r}
-mtcars_lm_no_disp <- lm(mpg ~ hp + wt, data = mtcars_df)
-
-anova(mtcars_lm_no_disp, mtcars_lm_full)
-```
+- **部分 $R^2$**：衡量在已有变量基础上，新变量组能额外解释多少剩余变异
+$$
+R^2_{\text{partial}} = \frac{\text{SSE}(M_R) - \text{SSE}(M_F)}{\text{SSE}(M_R)}
+$$
 
 ::: {.callout-important}
-## 第二题
+## **第二题：**
 
-当 `anova()` 函数被应用于一个线性模型时，如何解读其返回结果？和 `drop1()` 的结果有什么不同？
-
-请至少回答以下几点：
-
-1. `anova(mtcars_lm_full)` 表中每一行的原假设分别是什么？
-2. 为什么说 `anova(mtcars_lm_full)` 的结果依赖变量进入模型的顺序？
-3. `drop1(mtcars_lm_full, test = "F")` 中每一行的检验在统计意义上对应什么问题？
-4. 比较 `anova(mtcars_lm_full)` 与 `drop1(mtcars_lm_full, test = "F")` 对 `disp` 的结论，并解释为什么它们的出发点不同。
-
+1. 手动计算完整模型（`mpg ~ hp + wt + disp`）的 $R^2$ 和调整 $R^2$，并与 `summary()` 输出的结果进行验证。
+2. 对于简化模型（`mpg ~ hp`）和完整模型，计算**部分 $R^2$**，即 `wt + disp` 这组变量在 `hp` 基础上能额外解释多少残差变异。
+3. 解释部分 $R^2$ 的实际含义。
 :::
 
-## Part 3：多重共线性与 VIF 的手动计算
+---
 
-### 先观察解释变量之间的关系
+## Section C：多重共线性诊断
 
-```{r}
-mtcars_df |>
-  select(hp, wt, disp) |>
-  pairs(pch = 19, col = "steelblue")
-```
+### 关键概念回顾
 
-```{r}
-mtcars_df |>
-  select(hp, wt, disp) |>
-  cor()
-```
+**方差膨胀因子（VIF）** 用于诊断每个解释变量与其他解释变量的线性重叠程度：
 
-从散点图和相关矩阵中可以初步看出，这几个解释变量之间存在一定程度的线性相关。
-
-### 回顾 VIF 的定义
-
-对第 $j$ 个解释变量，如果把它当作响应变量、其余解释变量当作自变量做一个辅助回归，并记该辅助回归的决定系数为 $R_j^2$，那么
+对第 $j$ 个解释变量，设辅助回归的决定系数为 $R_j^2$，则
 
 $$
-\mathrm{VIF}_j = \frac{1}{1 - R_j^2}
+\text{VIF}_j = \frac{1}{1 - R_j^2}
 $$
 
-例如，要计算 `hp` 的 VIF，就可以拟合辅助回归：
+其中，$R_j^2$ 不是原始回归模型的 $R^2$，而是将第 $j$ 个变量当作响应变量，用其余所有解释变量去回归它得到的决定系数。
+
+**经验法则**：
+
+- VIF 接近 1：几乎没有共线性问题
+- VIF 在 1 到 5 之间：通常可以接受
+- VIF 大于 5：需要警惕
+- VIF 大于 10：存在较严重的共线性问题
+
+**条件数（Condition Number）** 是从整体设计矩阵角度诊断共线性的方法：
+
+对标准化后的设计矩阵 $\mathbf{X}$，条件数定义为最大奇异值与最小奇异值的比值：
 
 $$
-\texttt{hp} = \gamma_0 + \gamma_1 \texttt{wt} + \gamma_2 \texttt{disp} + e
+\kappa(\mathbf{X}) = \frac{\sigma_{\max}(\mathbf{X})}{\sigma_{\min}(\mathbf{X})}
 $$
 
-```{r}
-hp_aux_lm <- lm(hp ~ wt + disp, data = mtcars_df)
-summary(hp_aux_lm)$r.squared
-1 / (1 - summary(hp_aux_lm)$r.squared)
-```
-
-### 自定义函数 `vif_man`
-
-下面给出一个函数框架。你可以先理解其思路，再补充或重写。
-
-```{r}
-vif_man <- function(model) {
-  model_matrix <- model.matrix(model)[, -1, drop = FALSE]
-  predictor_names <- colnames(model_matrix)
-
-  vif_values <-
-    map_dbl(
-      predictor_names,
-      function(var_name) {
-        y_aux <- model_matrix[, var_name]
-        x_aux <- model_matrix[, setdiff(predictor_names, var_name), drop = FALSE]
-
-        aux_df <- as_tibble(x_aux) |>
-          mutate(y_aux = y_aux)
-
-        aux_formula <-
-          reformulate(
-            termlabels = setdiff(predictor_names, var_name),
-            response = "y_aux"
-          )
-
-        aux_lm <- lm(aux_formula, data = aux_df)
-        r_squared_aux <- summary(aux_lm)$r.squared
-        1 / (1 - r_squared_aux)
-      }
-    )
-
-  names(vif_values) <- predictor_names
-  vif_values
-}
-```
-
-```{r}
-vif_man(mtcars_lm_full)
-vif(mtcars_lm_full)
-```
+- $\kappa < 10$：通常问题不大
+- $10 \le \kappa < 30$：提示中等程度的共线性
+- $\kappa \ge 30$：常被视为较明显的共线性问题
 
 ::: {.callout-important}
-## 第三题
+## **第三题：**
 
-自定义一个函数 `vif_man` 用于计算线性模型中各解释变量的 VIF，并与 `car` 包中 `vif()` 函数的结果进行比较。
-
-请至少完成以下内容：
-
-1. 解释 `vif_man()` 的基本思路：它为什么要对每个解释变量分别做一次辅助回归？
-2. 给出 `mtcars_lm_full` 中 `hp`、`wt`、`disp` 的 VIF 结果，并与 `vif()` 的输出比较。
-3. 如果你手动写出的 `vif_man()` 与 `vif()` 结果一致，这说明什么？
-4. 结合本题结果，说明多重共线性会如何影响回归系数的标准误、单个变量的显著性检验以及结果解释。
-
+1. 定义一个新函数 `vif_man()`，手动计算完整模型（`mpg ~ hp + wt + disp`）中各变量的 VIF，并与 `car::vif()` 的结果进行比较验证。
+2. 根据 VIF 值，判断是否存在多重共线性问题。
+3. 结合相关矩阵和条件数（kappa）对多重共线性进行综合判断。
 :::
 
-### 进一步思考：条件数
-
-除了 VIF，还可以从整体设计矩阵出发，用条件数初步判断共线性问题。
-
-```{r}
-x_predictors <-
-  model.matrix(mtcars_lm_full)[, -1] |>
-  scale(center = TRUE, scale = TRUE)
-
-kappa(x_predictors)
-```
-
-这不是必做题，但你可以把它和 VIF 的结论放在一起思考：一个是逐个变量地看“它能否被其他变量解释”，另一个是整体地看“设计矩阵是否接近线性相关”。
+---
 
 ## 文档表达与规范
 
@@ -353,3 +195,9 @@ kappa(x_predictors)
 
 - 本次作业未使用任何 AI 工具。
 - 我确认并对最终提交内容负责：是
+
+---
+
+## 完成作业用时
+
+请在此处填写完成作业大约花费的时间：\_\_\_\_\_\_\_ 小时

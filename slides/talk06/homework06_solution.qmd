@@ -1,0 +1,283 @@
+---
+title: "作业06参考答案：多元线性回归与多重共线性"
+subtitle: "第六讲参考答案"
+author: 易湘琦
+author-title: ""
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    df-print: tibble
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(car)
+```
+
+## 数据准备
+
+```{r}
+mtcars_df <-
+  mtcars |>
+  rownames_to_column("car")
+
+mtcars_lm_null <- lm(mpg ~ 1, data = mtcars_df)
+mtcars_lm_hp <- lm(mpg ~ hp, data = mtcars_df)
+mtcars_lm_full <- lm(mpg ~ hp + wt + disp, data = mtcars_df)
+```
+
+---
+
+## Section A：一般线性 F 检验
+
+### 第一题解答
+
+**1. 原假设与备择假设**
+
+研究问题：在已经控制 `hp` 后，`wt` 和 `disp` 是否还能整体提升解释力？
+
+- **原假设** $H_0$: $\beta_{\text{wt}} = \beta_{\text{disp}} = 0$（这两个变量对 mpg 没有额外贡献）
+- **备择假设** $H_A$: 至少有一个不为 0（至少有一个变量有贡献）
+
+**2. 简化模型与完整模型**
+
+- **简化模型**（Reduced Model）$M_R$: `mpg ~ hp`
+- **完整模型**（Full Model）$M_F$: `mpg ~ hp + wt + disp`
+
+**3. 手动计算 F 统计量与 p 值**
+
+首先提取两个模型的残差平方和：
+
+```{r}
+sse_reduced <- sum(resid(mtcars_lm_hp)^2)
+sse_full <- sum(resid(mtcars_lm_full)^2)
+
+c(SSE_reduced = sse_reduced, SSE_full = sse_full)
+```
+
+计算 F 统计量：
+
+- $q = 2$（约束个数，即被检验的参数个数）
+- $n = 32$（样本量）
+- $p_F = 3$（完整模型中解释变量的个数）
+
+$$
+F = \frac{(272.30 - 169.88) / 2}{169.88 / (32 - 3 - 1)} = \frac{102.42 / 2}{169.88 / 28} = \frac{51.21}{6.07} = 8.44
+$$
+
+```{r}
+q <- 2
+n <- 32
+p_F <- 3
+
+f_stat_manual <- (sse_reduced - sse_full) / q / (sse_full / (n - p_F - 1))
+f_stat_manual
+```
+
+使用 `pf()` 计算 p 值：
+
+```{r}
+p_value_manual <- 1 - pf(f_stat_manual, df1 = q, df2 = n - p_F - 1)
+p_value_manual
+```
+
+**4. 使用 `anova()` 验证**
+
+```{r}
+anova(mtcars_lm_hp, mtcars_lm_full)
+```
+
+结果完全一致：F = 8.44，p = 0.0017。
+
+**5. 结论**
+
+由于 p 值 = 0.0017 < 0.05，我们拒绝原假设。结论：**在控制 `hp` 后，`wt` 和 `disp` 作为一个变量组能显著提升对 `mpg` 的解释力**。
+
+---
+
+## Section B：$R^2$、调整 $R^2$ 与部分 $R^2$
+
+### 第二题解答
+
+**1. 手动计算 $R^2$ 和调整 $R^2$**
+
+首先计算总平方和 SST：
+
+```{r}
+y <- mtcars_df$mpg
+y_bar <- mean(y)
+sst <- sum((y - y_bar)^2)
+sst
+```
+
+计算 $R^2$：
+
+$$
+R^2 = 1 - \frac{\text{SSE}}{\text{SST}} = 1 - \frac{169.88}{847.27} = 0.7995
+$$
+
+```{r}
+r_squared_manual <- 1 - sse_full / sst
+r_squared_manual
+```
+
+计算调整 $R^2$：
+
+$$
+\bar{R}^2 = 1 - \frac{169.88 / 28}{847.27 / 31} = 1 - \frac{6.067}{27.332} = 0.7779
+$$
+
+```{r}
+n <- 32
+p <- 3
+adj_r_squared_manual <- 1 - (sse_full / (n - p - 1)) / (sst / (n - 1))
+adj_r_squared_manual
+```
+
+与 `summary()` 结果验证：
+
+```{r}
+c(R2_manual = r_squared_manual, R2_builtin = summary(mtcars_lm_full)$r.squared)
+c(AdjR2_manual = adj_r_squared_manual, AdjR2_builtin = summary(mtcars_lm_full)$adj.r.squared)
+```
+
+**2. 计算部分 $R^2$**
+
+$$
+R^2_{\text{partial}} = \frac{\text{SSE}(M_R) - \text{SSE}(M_F)}{\text{SSE}(M_R)} = \frac{272.30 - 169.88}{272.30} = \frac{102.42}{272.30} = 0.3763
+$$
+
+```{r}
+partial_r_squared <- (sse_reduced - sse_full) / sse_reduced
+partial_r_squared
+```
+
+**3. 部分 $R^2$ 的实际含义**
+
+部分 $R^2$ = 0.376 表示：**在 `hp` 尚未解释掉的那部分变异中，`wt` 和 `disp` 又额外解释了约 37.6%**。也就是说，即使 `hp` 已经进入模型，`wt` 和 `disp` 还能再解释超过三分之一的剩余残差变异，说明这两个变量作为一个整体提供了有价值的额外信息。
+
+---
+
+## Section C：多重共线性诊断
+
+### 第三题解答
+
+**1. 定义 `vif_man()` 函数并验证**
+
+```{r}
+vif_man <- function(model) {
+  model_matrix <- model.matrix(model)[, -1, drop = FALSE]
+  predictor_names <- colnames(model_matrix)
+  
+  vif_values <-
+    map_dbl(
+      predictor_names,
+      function(var_name) {
+        y_aux <- model_matrix[, var_name]
+        x_aux <- model_matrix[, setdiff(predictor_names, var_name), drop = FALSE]
+        
+        aux_df <- as_tibble(x_aux) |>
+          mutate(y_aux = y_aux)
+        
+        aux_formula <-
+          reformulate(
+            termlabels = setdiff(predictor_names, var_name),
+            response = "y_aux"
+          )
+        
+        aux_lm <- lm(aux_formula, data = aux_df)
+        r_squared_aux <- summary(aux_lm)$r.squared
+        1 / (1 - r_squared_aux)
+      }
+    )
+  
+  names(vif_values) <- predictor_names
+  vif_values
+}
+```
+
+比较手动计算与 `car::vif()` 的结果：
+
+```{r}
+vif_manual <- vif_man(mtcars_lm_full)
+vif_builtin <- vif(mtcars_lm_full)
+
+data.frame(
+  vif_manual = vif_manual,
+  vif_builtin = vif_builtin,
+  diff = vif_manual - vif_builtin
+)
+```
+
+结果完全一致。
+
+**2. VIF 判断**
+
+从结果可以看到：
+
+- `hp` 的 VIF = 2.89
+- `wt` 的 VIF = 2.89  
+- `disp` 的 VIF = 1.69
+
+所有 VIF 值都小于 5，根据经验法则：**不存在严重的多重共线性问题**。
+
+**3. 综合判断**
+
+查看相关矩阵：
+
+```{r}
+mtcars_df |>
+  select(hp, wt, disp) |>
+  cor()
+```
+
+计算条件数：
+
+```{r}
+x_predictors <-
+  model.matrix(mtcars_lm_full)[, -1] |>
+  scale(center = TRUE, scale = TRUE)
+
+kappa(x_predictors)
+```
+
+条件数 $\kappa = 10.79$，略高于 10，但远低于 30。根据经验规则：
+
+| 指标 | 值 | 判断 |
+|------|-----|------|
+| VIF (hp) | 2.89 | < 5，可接受 |
+| VIF (wt) | 2.89 | < 5，可接受 |
+| VIF (disp) | 1.69 | < 5，可接受 |
+| 条件数 $\kappa$ | 10.79 | 略高于 10，接近边界 |
+
+**综合结论**：虽然条件数略高于常用的 10 阈值，但所有 VIF 值都在可接受范围内。从整体来看，**不存在严重的多重共线性问题**，`hp`、`wt` 和 `disp` 之间的线性相关性并不足以对回归系数的估计造成实质性影响。
+
+---
+
+## 参考公式汇总
+
+### 一般线性 F 检验
+$$
+F = \frac{[\text{SSE}(M_R) - \text{SSE}(M_F)] / q}{\text{SSE}(M_F) / (n - p_F - 1)}
+$$
+
+### $R^2$ 与调整 $R^2$
+$$
+R^2 = 1 - \frac{\text{SSE}}{\text{SST}}, \quad \bar{R}^2 = 1 - \frac{\text{SSE}/(n-p-1)}{\text{SST}/(n-1)}
+$$
+
+### 部分 $R^2$
+$$
+R^2_{\text{partial}} = \frac{\text{SSE}(M_R) - \text{SSE}(M_F)}{\text{SSE}(M_R)}
+$$
+
+### VIF
+$$
+\text{VIF}_j = \frac{1}{1 - R_j^2}
+$$
