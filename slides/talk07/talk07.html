@@ -212,27 +212,12 @@
 </div>
 
 </section>
-<section class="slide level2">
-
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">theme_set</span>(</span>
-<span id="cb1-2"><a href=""></a>  <span class="fu">theme_light</span>(<span class="at">base_size =</span> <span class="dv">16</span>, <span class="at">base_family=</span><span class="st">"serif"</span>) <span class="sc">+</span></span>
-<span id="cb1-3"><a href=""></a>    <span class="fu">theme</span>(<span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>),</span>
-<span id="cb1-4"><a href=""></a>          <span class="at">legend.key =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"transparent"</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
-<span id="cb1-5"><a href=""></a>          <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb1-6"><a href=""></a>          <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"black"</span>,</span>
-<span id="cb1-7"><a href=""></a>                                      <span class="at">linewidth =</span> <span class="fl">0.5</span>,</span>
-<span id="cb1-8"><a href=""></a>                                      <span class="at">fill =</span> <span class="cn">NA</span>),</span>
-<span id="cb1-9"><a href=""></a>          <span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="at">unit =</span> <span class="st">"pt"</span>)</span>
-<span id="cb1-10"><a href=""></a>          )</span>
-<span id="cb1-11"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
 <section id="你将学到" class="slide level2">
 <h2>你将学到</h2>
 <div style="font-size: 1.2em;">
 <ul>
-<li class="fragment">线性模型中的”线性”究竟指什么？</li>
+<li class="fragment">线性模型中的“线性”究竟指什么？</li>
+<li class="fragment">处理“非线性”的基本思路</li>
 <li class="fragment">广义加性模型（GAM）的基本思想</li>
 <li class="fragment">样条（Splines）与基函数（Basis Functions）</li>
 <li class="fragment">GAM 如何通过惩罚项防止过拟合</li>
@@ -249,6 +234,7 @@
 </section>
 <section id="什么是线性模型" class="slide level2">
 <h2>什么是“线性”模型？</h2>
+<div class="fragment">
 <p>下面的是“线性”模型吗？ <span class="math display">\[
 \begin{align}
 &amp;y_i = \beta_0 + \beta_1 x_i + \beta_2x_i^2 + \varepsilon_i \\
@@ -258,6 +244,7 @@
 &amp;y_i = \beta_0 + \beta_1 \text{sin}(x_i) + \varepsilon_i \\
 \end{align}
 \]</span></p>
+</div>
 <div class="fragment">
 <p>下面这些呢？ <span class="math display">\[
 \begin{align}
@@ -282,6 +269,7 @@
 &amp;y_i = \beta_0 + \beta_1 \text{sin}(x_i) + \varepsilon_i \\
 \end{align}
 \]</span></p>
+<div class="fragment">
 <p>对于以上的方程，我们都可以定义一个新的自变量，将其转换成我们熟悉的线性模型的形式，比如： <span class="math display">\[
 \begin{align}
 &amp;y_i = \beta_0 + \beta_1 log(x_i) + \varepsilon_i \\
@@ -289,12 +277,11 @@
 &amp;y_i = \beta_0 + \beta_1 z_i + \varepsilon_i \\
 \end{align}
 \]</span></p>
+</div>
 </section>
 <section id="非线性的示例" class="slide level2">
 <h2>“非线性”的示例</h2>
-<p>米氏方程（Michaelis-Menten equation） <span class="math display">\[
-v_i = \frac{v_{max}s_i}{k_m + s_i}
-\]</span></p>
+<p>米氏方程（Michaelis-Menten equation）</p>
 <div class="panel-tabset">
 <ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">典型图像</a></li><li><a href="#tabset-1-2">线性方程的残差</a></li></ul>
 <div class="tab-content">
@@ -325,13 +312,20 @@ v_i = \frac{v_{max}s_i}{k_m + s_i}
 </section>
 <section id="如何处理非线性关系" class="slide level2">
 <h2>如何处理非线性关系？</h2>
-<p>通过转换自变量或响应变量，可以将非线性关系转化为线性关系，例如： <span class="math display">\[
+<ul>
+<li>通过转换自变量或响应变量，可以将非线性关系转化为线性关系，例如：</li>
+</ul>
+<p><span class="math display">\[
 \begin{align}
 &amp;v_i = \frac{v_{max}s_i}{k_m + s_i} \\
 &amp;\frac{1}{v_i} = \frac{k_m + s_i}{v_{max}s_i} = \frac{k_m}{s_i}\frac{1}{v_{max}} + \frac{1}{v_{max}} \\
 \end{align}
 \]</span></p>
-<p>如果知道变量间的关系可以使用什么样的函数进行刻画，那么我们可以直接使用非线性最小二乘法（<code>nls()</code>）进行拟合。</p>
+<div class="fragment">
+<ul>
+<li>如果知道变量间的关系可以使用什么样的函数进行刻画，那么我们可以直接使用非线性最小二乘法（<code>nls()</code>）进行拟合。</li>
+</ul>
+</div>
 </section>
 <section id="多项式拟合" class="slide level2 scrollable">
 <h2>多项式拟合</h2>
@@ -351,7 +345,7 @@ v_i = \frac{v_{max}s_i}{k_m + s_i}
 </div>
 <div id="tabset-2-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>gtemp_poly_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Temperature <span class="sc">~</span> <span class="fu">poly</span>(Year, <span class="at">degree =</span> <span class="dv">3</span>), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>gtemp_poly_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Temperature <span class="sc">~</span> <span class="fu">poly</span>(Year, <span class="at">degree =</span> <span class="dv">3</span>), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-2-3">
@@ -367,8 +361,38 @@ v_i = \frac{v_{max}s_i}{k_m + s_i}
 </div>
 </div>
 </div>
+<aside><ol class="aside-footnotes"><li id="fn1"><p>来源：https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/series_format.html</p></li></ol></aside></section>
+<section id="多项式拟合的缺点" class="slide level2">
+<h2>多项式拟合的缺点</h2>
+<ul>
+<li>多项式拟合可能会导致过拟合，尤其是当多项式的阶数较高时。</li>
+<li>多项式拟合在数据范围之外的预测可能会非常不准确。</li>
+</ul>
+<div style="zoom: 1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="广义加性模型" class="title-slide slide level1 center">
+<h1>广义加性模型</h1>
 
-<aside><ol class="aside-footnotes"><li id="fn1"><p><a href="https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/series_format.html">数据介绍</a></p></li></ol></aside></section></section>
+</section>
+<section id="mgcv包拟合gam" class="slide level2">
+<h2><code>mgcv</code>包拟合GAM</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>gtemp_gam_m0 <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+
+<img data-src="talk07_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"></section></section>
 
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">

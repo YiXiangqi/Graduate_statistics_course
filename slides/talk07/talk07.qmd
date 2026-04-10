@@ -44,7 +44,8 @@ theme_set(
 ## 你将学到
 
 ::: {.incremental style="font-size: 1.2em;"}
-- 线性模型中的"线性"究竟指什么？
+- 线性模型中的“线性”究竟指什么？
+- 处理“非线性”的基本思路
 - 广义加性模型（GAM）的基本思想
 - 样条（Splines）与基函数（Basis Functions）
 - GAM 如何通过惩罚项防止过拟合
@@ -55,8 +56,10 @@ theme_set(
 
 # “线性”模型
 
+
 ## 什么是“线性”模型？
 
+::: {.fragment}
 下面的是“线性”模型吗？
 $$
 \begin{align}
@@ -67,6 +70,7 @@ $$
 &y_i = \beta_0 + \beta_1 \text{sin}(x_i) + \varepsilon_i \\
 \end{align}
 $$
+:::
 
 ::: {.fragment}
 下面这些呢？
@@ -93,6 +97,7 @@ $$
 \end{align}
 $$
 
+::: {.fragment}
 对于以上的方程，我们都可以定义一个新的自变量，将其转换成我们熟悉的线性模型的形式，比如：
 $$
 \begin{align}
@@ -101,12 +106,10 @@ $$
 &y_i = \beta_0 + \beta_1 z_i + \varepsilon_i \\
 \end{align}
 $$
+:::
 
 ## “非线性”的示例
 米氏方程（Michaelis-Menten equation）
-$$
-v_i = \frac{v_{max}s_i}{k_m + s_i}
-$$
 
 ::: {.panel-tabset}
 ### 典型图像
@@ -121,7 +124,9 @@ tibble(
     mutate(v = v_max * s / (k_m + s) + rnorm(n())) |>
     ggplot(aes(s, v)) +
     geom_point() +
-    geom_smooth(method = "lm")
+    geom_smooth(method = "lm") +
+    annotate("text", x = 5, y = 55, label = latex2exp::TeX(r"($v = \frac{v_{max}s}{k_m + s}$)"), size = 10) +
+    labs(x = "Substrate concentration (S)", y = "Reaction velocity (V)")
 ```
 ### 线性方程的残差
 ```{r}
@@ -149,17 +154,20 @@ $$
 \end{align}
 $$
 
+::: {.fragment}
 - 如果知道变量间的关系可以使用什么样的函数进行刻画，那么我们可以直接使用非线性最小二乘法（`nls()`）进行拟合。
+:::
 
 ## 多项式拟合
 
 ::: {.panel-tabset}
 ### HadCRUT4 全球温度数据[^1]
-[^1]: [数据介绍](https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/series_format.html)
+[^1]: 来源：https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/series_format.html
 
 ```{r}
 #| echo: false
-gtemp <- 
+gtemp <-
+  #read_csv("slides/talk07/data/gtemp.csv") 
   read_csv("data/gtemp.csv")
 
 gtemp |>
@@ -184,33 +192,145 @@ p <- c(1, 3, 8, 15)
 N <- 300
 
 newd <- tibble(Year = seq(min(gtemp$Year), max(gtemp$Year), length.out = N))
-polyFun <- function(i, data = data) {
+
+polyFun <- function(i, data) {
   lm(Temperature ~ poly(Year, degree = i), data = data)
 }
-mods <- lapply(p, polyFun, data = gtemp)
-pred <- vapply(mods, predict, numeric(N), newdata = newd)
-colnames(pred) <- p
-newd <- bind_cols(newd, pred)
-polyDat <- gather(newd, Degree, Fitted, -Year)
-polyDat <- mutate(polyDat, Degree = ordered(Degree, levels = p))
+
+mods <- map(p, polyFun, data = gtemp)
+preds <- map(mods, predict, newdata = newd) |>
+  set_names(p) |>
+  as_tibble()
+
+poly_pred <-
+  bind_cols(newd, preds) |>
+  pivot_longer(-Year, names_to = "Degree", values_to = "Temperature") |>
+  mutate(Degree = ordered(Degree, levels = p))
 
 ggplot(gtemp, aes(x = Year, y = Temperature)) +
   geom_line() +
   geom_point() +
-  labs(x = 'Year', y = expression(Temeprature ~ degree * C)) + geom_line(
-    data = polyDat,
-    mapping = aes(x = Year, y = Fitted, colour = Degree),
-    size = 1.5,
+  labs(x = 'Year', y = "Temperature anomaly (<sup>o</sup>C)") +
+  geom_line(
+    data = poly_pred,
+    mapping = aes(x = Year, y = Temperature, colour = Degree),
+    linewidth = 1.5,
     alpha = 0.9
   ) +
   scale_color_brewer(name = "Degree", palette = "PuOr") +
-  theme(legend.position = "right")
+  theme(legend.position = "right", axis.title.y = element_markdown())
 ```
 
 :::
 
 ## 多项式拟合的缺点
+
 - 多项式拟合可能会导致过拟合，尤其是当多项式的阶数较高时。
 - 多项式拟合在数据范围之外的预测可能会非常不准确。
 
+::: {style="zoom: 1"}
+```{r}
+#| echo: false
+#| fig-align: center
+#| fig-width: 8
+p <- c(1, 3, 8, 15)
+N <- 300
+
+newd <- tibble(
+  Year = seq(min(gtemp$Year) - 5, max(gtemp$Year) + 5, length.out = N)
+)
+
+polyFun <- function(i, data) {
+  lm(Temperature ~ poly(Year, degree = i), data = data)
+}
+
+mods <- map(p, polyFun, data = gtemp)
+preds <- map(mods, predict, newdata = newd) |>
+  set_names(p) |>
+  as_tibble()
+
+poly_pred <-
+  bind_cols(newd, preds) |>
+  pivot_longer(-Year, names_to = "Degree", values_to = "Temperature") |>
+  mutate(Degree = ordered(Degree, levels = p))
+
+ggplot(gtemp, aes(x = Year, y = Temperature)) +
+  geom_line() +
+  geom_point() +
+  labs(x = 'Year', y = "Temperature anomaly (<sup>o</sup>C)") +
+  geom_line(
+    data = poly_pred,
+    mapping = aes(x = Year, y = Temperature, colour = Degree),
+    linewidth = 1.5,
+    alpha = 0.9
+  ) +
+  scale_color_brewer(name = "Degree", palette = "PuOr") +
+  theme(
+    legend.position = "inside",
+    legend.position.inside = c(0.8, 0.2),
+    axis.title.y = element_markdown()
+  )
+```
+:::
+
+# 广义加性模型
+
+## `mgcv`包拟合GAM
+
+```{r}
+gtemp_gam_m0 <- mgcv::gam(Temperature ~ s(Year), data = gtemp)
+```
+
+
+```{r}
+#| echo: false
+gtemp_gam_m0_pred <-
+  predict(
+    gtemp_gam_m0,
+    newdata = tibble(
+      Year = seq(min(gtemp$Year) - 5, max(gtemp$Year) + 5, length.out = N)
+    ),
+    se.fit = TRUE
+  ) |>
+  as_tibble() |>
+  mutate(
+    Year = seq(min(gtemp$Year) - 5, max(gtemp$Year) + 5, length.out = N),
+    upr = fit + 1.96 * se.fit,
+    lwr = fit - 1.96 * se.fit
+  )
+
+
+ggplot(gtemp, aes(x = Year, y = Temperature)) +
+  geom_point() +
+  geom_line(
+    data = gtemp_gam_m0_pred,
+    mapping = aes(y = fit, x = Year),
+    inherit.aes = FALSE,
+    size = 1,
+    colour = "#025196"
+  ) +
+  geom_ribbon(
+    data = gtemp_gam_m0_pred,
+    mapping = aes(ymin = lwr, ymax = upr, x = Year),
+    alpha = 0.4,
+    inherit.aes = FALSE,
+    fill = "#fdb338"
+  ) +
+  labs(x = 'Year', y = "Temperature anomaly (<sup>o</sup>C)") +
+  theme(axis.title.y = element_markdown())
+```
+
+## GAM 的基本思想
+
+GAM 可用如下形式表示：
+$$
+y_i = \beta_0 + f_1(x_{i1}) + f_2(x_{i2}) + \cdots + f_p(x_{ip}) + \varepsilon_i
+$$
+
+其中$f_j(.)$是理论上描述了自变量与响应变量之间关系的未知函数，我们不知道它的具体形式，但假定它应该是一个平滑函数（smooth function）。然后，我们用由一组基函数（basis functions）线性组合而成的样条函数（spline function）来近似这个未知函数：
+$$
+f_j(x) = \sum_{k=1}^{K_j} \beta_{jk} b_{jk}(x)
+$$
+
+## 样条函数与基函数
 
