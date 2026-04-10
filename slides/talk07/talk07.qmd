@@ -1,0 +1,216 @@
+---
+title: "高等数据统计分析"
+subtitle: "第七讲：广义加性模型（GAM）"
+author: "易湘琦"
+format:
+  revealjs:
+    slide-number: true
+    chalkboard:
+      buttons: false
+    preview-links: auto
+    scrollable: true
+    df-print: default
+    logo: images/JMU_logo.jpg
+    css: styles.css
+    footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
+execute:
+  echo: true
+  message: false
+---
+
+```{r}
+#| echo: false
+library(tidyverse)
+library(mgcv)
+library(gratia)
+library(MASS)
+library(ggtext)
+```
+
+```{r}
+#| echo: false
+theme_set(
+  theme_light(base_size = 16, base_family="serif") +
+    theme(legend.background = element_rect(fill = "transparent"),
+          legend.key = element_rect(fill = "transparent", color = NA),
+          panel.grid.minor = element_blank(),
+          panel.border = element_rect(color = "black",
+                                      linewidth = 0.5,
+                                      fill = NA),
+          plot.margin = margin(5, 5, 5, 5, unit = "pt")
+          )
+  )
+```
+## 你将学到
+
+::: {.incremental style="font-size: 1.2em;"}
+- 线性模型中的"线性"究竟指什么？
+- 广义加性模型（GAM）的基本思想
+- 样条（Splines）与基函数（Basis Functions）
+- GAM 如何通过惩罚项防止过拟合
+- 在 R 中使用 mgcv 包拟合 GAM
+- 可视化与模型诊断
+- 不同类型平滑器的应用场景
+:::
+
+# “线性”模型
+
+## 什么是“线性”模型？
+
+下面的是“线性”模型吗？
+$$
+\begin{align}
+&y_i = \beta_0 + \beta_1 x_i + \beta_2x_i^2 + \varepsilon_i \\
+&y_i = \beta_0 + \beta_1 log(x_i) + \varepsilon_i \\
+&y_i = \beta_0 + \beta_1 x_i w_i + \varepsilon_i \\
+&y_i = \beta_0 + \beta_1 \text{exp}(x_i) + \varepsilon_i \\
+&y_i = \beta_0 + \beta_1 \text{sin}(x_i) + \varepsilon_i \\
+\end{align}
+$$
+
+::: {.fragment}
+下面这些呢？
+$$
+\begin{align}
+&y_i = \beta_0 + \beta_1 x_i^{\beta_2}  + \varepsilon_i \\
+&y_i = \beta_0 + \beta_1 e^{\beta_2x_i} + \varepsilon_i \\
+&v_i = \frac{v_{max}s_i}{k_m + s_i} \\
+\end{align}
+$$
+:::
+
+## 什么是“线性”模型？
+
+> ***"The word ‘linear’ in linear regression basically means linear in the parameters."***
+
+$$
+\begin{align}
+&y_i = \beta_0 + \beta_1 x_i + \beta_2x_i^2 + \varepsilon_i \\
+&y_i = \beta_0 + \beta_1 log(x_i) + \varepsilon_i \\
+&y_i = \beta_0 + \beta_1 x_i w_i + \varepsilon_i \\
+&y_i = \beta_0 + \beta_1 \text{exp}(x_i) + \varepsilon_i \\
+&y_i = \beta_0 + \beta_1 \text{sin}(x_i) + \varepsilon_i \\
+\end{align}
+$$
+
+对于以上的方程，我们都可以定义一个新的自变量，将其转换成我们熟悉的线性模型的形式，比如：
+$$
+\begin{align}
+&y_i = \beta_0 + \beta_1 log(x_i) + \varepsilon_i \\
+&z_i = log(x_i) \\
+&y_i = \beta_0 + \beta_1 z_i + \varepsilon_i \\
+\end{align}
+$$
+
+## “非线性”的示例
+米氏方程（Michaelis-Menten equation）
+$$
+v_i = \frac{v_{max}s_i}{k_m + s_i}
+$$
+
+::: {.panel-tabset}
+### 典型图像
+```{r}
+#| echo: false
+#| fig-align: center
+tibble(
+    s = seq(0, 20, by = 0.1),
+    v_max = 60,
+    k_m = 2
+    ) |>
+    mutate(v = v_max * s / (k_m + s) + rnorm(n())) |>
+    ggplot(aes(s, v)) +
+    geom_point() +
+    geom_smooth(method = "lm")
+```
+### 线性方程的残差
+```{r}
+#| echo: false
+#| fig-align: center
+tibble(
+    s = seq(0, 20, by = 0.1),
+    v_max = 60,
+    k_m = 2
+    ) |>
+  mutate(v = v_max * s / (k_m + s) + rnorm(n())) |>
+  lm(v ~ s, data = _) |>
+  plot(which = 1)
+  
+```
+:::
+
+## 如何处理非线性关系？
+- 通过转换自变量或响应变量，可以将非线性关系转化为线性关系，例如：
+
+$$
+\begin{align}
+&v_i = \frac{v_{max}s_i}{k_m + s_i} \\
+&\frac{1}{v_i} = \frac{k_m + s_i}{v_{max}s_i} = \frac{k_m}{s_i}\frac{1}{v_{max}} + \frac{1}{v_{max}} \\ 
+\end{align}
+$$
+
+- 如果知道变量间的关系可以使用什么样的函数进行刻画，那么我们可以直接使用非线性最小二乘法（`nls()`）进行拟合。
+
+## 多项式拟合
+
+::: {.panel-tabset}
+### HadCRUT4 全球温度数据[^1]
+[^1]: [数据介绍](https://www.metoffice.gov.uk/hadobs/hadcrut4/data/current/series_format.html)
+
+```{r}
+#| echo: false
+gtemp <- 
+  read_csv("data/gtemp.csv")
+
+gtemp |>
+  ggplot(aes(x = Year, y = Temperature)) +
+  geom_point(alpha = 0.6) +
+  geom_line(alpha = 0.4) +
+  labs(x = "Year", y = "Temperature annomaly (<sup>o</sup>C)") +
+  theme(axis.title.y = element_markdown())
+```
+
+### 多项式拟合
+
+```{r}
+#| eval: false
+gtemp_poly_model <- lm(Temperature ~ poly(Year, degree = 3), data = gtemp)
+```
+
+### 多项式拟合曲线
+```{r}
+#| echo: false
+p <- c(1, 3, 8, 15)
+N <- 300
+
+newd <- tibble(Year = seq(min(gtemp$Year), max(gtemp$Year), length.out = N))
+polyFun <- function(i, data = data) {
+  lm(Temperature ~ poly(Year, degree = i), data = data)
+}
+mods <- lapply(p, polyFun, data = gtemp)
+pred <- vapply(mods, predict, numeric(N), newdata = newd)
+colnames(pred) <- p
+newd <- bind_cols(newd, pred)
+polyDat <- gather(newd, Degree, Fitted, -Year)
+polyDat <- mutate(polyDat, Degree = ordered(Degree, levels = p))
+
+ggplot(gtemp, aes(x = Year, y = Temperature)) +
+  geom_line() +
+  geom_point() +
+  labs(x = 'Year', y = expression(Temeprature ~ degree * C)) + geom_line(
+    data = polyDat,
+    mapping = aes(x = Year, y = Fitted, colour = Degree),
+    size = 1.5,
+    alpha = 0.9
+  ) +
+  scale_color_brewer(name = "Degree", palette = "PuOr") +
+  theme(legend.position = "right")
+```
+
+:::
+
+## 多项式拟合的缺点
+- 多项式拟合可能会导致过拟合，尤其是当多项式的阶数较高时。
+- 多项式拟合在数据范围之外的预测可能会非常不准确。
+
+

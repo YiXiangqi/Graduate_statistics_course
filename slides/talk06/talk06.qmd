@@ -630,7 +630,6 @@ vif(mtcars_lm_full)
 $$
 \mathrm{Var}(\hat{\beta}_j)
 \propto \frac{1}{1 - R_j^2}
-
 $$
 
 可见：当 $x_j$ 能被其他解释变量解释得越好时，$R_j^2$ 越接近 1，$\hat{\beta}_j$ 的方差就越大，标准误也越大。

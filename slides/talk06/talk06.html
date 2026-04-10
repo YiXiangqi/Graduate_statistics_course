@@ -928,8 +928,10 @@ disp 0.7909486 0.8879799 1.0000000</code></pre>
 </section>
 <section id="vif-到底在衡量什么" class="slide level2">
 <h2>VIF 到底在衡量什么</h2>
-<p>通过一定的推倒，可以得到： $$ (_j) </p>
-<p>$$</p>
+<p>通过一定的推倒，可以得到： <span class="math display">\[
+\mathrm{Var}(\hat{\beta}_j)
+\propto \frac{1}{1 - R_j^2}
+\]</span></p>
 <p>可见：当 <span class="math inline">\(x_j\)</span> 能被其他解释变量解释得越好时，<span class="math inline">\(R_j^2\)</span> 越接近 1，<span class="math inline">\(\hat{\beta}_j\)</span> 的方差就越大，标准误也越大。</p>
 <p>所以 VIF 描述的是：</p>
 <blockquote>
