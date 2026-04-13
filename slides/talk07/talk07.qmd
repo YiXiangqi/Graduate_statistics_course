@@ -175,6 +175,64 @@ $$
 - C 组均值：$\beta_0 + \beta_2$
 :::
 
+## R 中如何实现二元分类变量？
+
+```{r}
+#| echo: true
+binary_demo <- tibble(
+  group = factor(c("control", "control", "control", "treatment", "treatment", "treatment"),
+                 levels = c("control", "treatment")),
+  score = c(72, 75, 74, 80, 83, 85)
+)
+
+binary_fit <- lm(score ~ group, data = binary_demo)
+
+model.matrix(binary_fit)
+coef(binary_fit)
+```
+
+::: {.fragment}
+- `(Intercept)` 是 control 组均值
+- `grouptreatment` 是 treatment 相对 control 的差值
+:::
+
+## R 中如何实现多水平分类变量？
+
+```{r}
+#| echo: true
+program_demo <- tibble(
+  program = factor(c("A", "A", "B", "B", "C", "C"), levels = c("A", "B", "C")),
+  score = c(78, 80, 84, 85, 90, 92)
+)
+
+program_fit <- lm(score ~ program, data = program_demo)
+
+model.matrix(program_fit)
+coef(program_fit)
+```
+
+::: {.fragment}
+- R 默认使用 treatment contrasts
+- 因而这里只会生成 `programB` 和 `programC` 两列
+- 基线组 A 被吸收到截距 `(Intercept)` 中
+:::
+
+## 对比：不同 contrasts 会改变参数解释
+
+```{r}
+#| echo: true
+model.matrix(~ program, data = program_demo)
+
+contrasts(program_demo$program) <- contr.sum(3)
+model.matrix(~ program, data = program_demo)
+```
+
+::: {.incremental}
+- treatment contrasts：系数表示“相对基线组”的差异
+- sum contrasts：系数表示“相对总体均值”的偏离
+- **拟合值不变，但参数解释会变**
+:::
+
 ## “非线性”的示例
 米氏方程（Michaelis-Menten equation）
 

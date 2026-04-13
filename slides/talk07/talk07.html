@@ -341,6 +341,128 @@ y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
 </ul>
 </div>
 </section>
+<section id="r-中如何实现二元分类变量" class="slide level2">
+<h2>R 中如何实现二元分类变量？</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>binary_demo <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-2"><a href=""></a>  <span class="at">group =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"control"</span>, <span class="st">"control"</span>, <span class="st">"control"</span>, <span class="st">"treatment"</span>, <span class="st">"treatment"</span>, <span class="st">"treatment"</span>),</span>
+<span id="cb1-3"><a href=""></a>                 <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"control"</span>, <span class="st">"treatment"</span>)),</span>
+<span id="cb1-4"><a href=""></a>  <span class="at">score =</span> <span class="fu">c</span>(<span class="dv">72</span>, <span class="dv">75</span>, <span class="dv">74</span>, <span class="dv">80</span>, <span class="dv">83</span>, <span class="dv">85</span>)</span>
+<span id="cb1-5"><a href=""></a>)</span>
+<span id="cb1-6"><a href=""></a></span>
+<span id="cb1-7"><a href=""></a>binary_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(score <span class="sc">~</span> group, <span class="at">data =</span> binary_demo)</span>
+<span id="cb1-8"><a href=""></a></span>
+<span id="cb1-9"><a href=""></a><span class="fu">model.matrix</span>(binary_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  (Intercept) grouptreatment
+1           1              0
+2           1              0
+3           1              0
+4           1              1
+5           1              1
+6           1              1
+attr(,"assign")
+[1] 0 1
+attr(,"contrasts")
+attr(,"contrasts")$group
+[1] "contr.treatment"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">coef</span>(binary_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   (Intercept) grouptreatment 
+      73.66667        9.00000 </code></pre>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li><code>(Intercept)</code> 是 control 组均值</li>
+<li><code>grouptreatment</code> 是 treatment 相对 control 的差值</li>
+</ul>
+</div>
+</section>
+<section id="r-中如何实现多水平分类变量" class="slide level2">
+<h2>R 中如何实现多水平分类变量？</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>program_demo <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb5-2"><a href=""></a>  <span class="at">program =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"C"</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)),</span>
+<span id="cb5-3"><a href=""></a>  <span class="at">score =</span> <span class="fu">c</span>(<span class="dv">78</span>, <span class="dv">80</span>, <span class="dv">84</span>, <span class="dv">85</span>, <span class="dv">90</span>, <span class="dv">92</span>)</span>
+<span id="cb5-4"><a href=""></a>)</span>
+<span id="cb5-5"><a href=""></a></span>
+<span id="cb5-6"><a href=""></a>program_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(score <span class="sc">~</span> program, <span class="at">data =</span> program_demo)</span>
+<span id="cb5-7"><a href=""></a></span>
+<span id="cb5-8"><a href=""></a><span class="fu">model.matrix</span>(program_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  (Intercept) programB programC
+1           1        0        0
+2           1        0        0
+3           1        1        0
+4           1        1        0
+5           1        0        1
+6           1        0        1
+attr(,"assign")
+[1] 0 1 1
+attr(,"contrasts")
+attr(,"contrasts")$program
+[1] "contr.treatment"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">coef</span>(program_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)    programB    programC 
+       79.0         5.5        12.0 </code></pre>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>R 默认使用 treatment contrasts</li>
+<li>因而这里只会生成 <code>programB</code> 和 <code>programC</code> 两列</li>
+<li>基线组 A 被吸收到截距 <code>(Intercept)</code> 中</li>
+</ul>
+</div>
+</section>
+<section id="对比不同-contrasts-会改变参数解释" class="slide level2">
+<h2>对比：不同 contrasts 会改变参数解释</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">model.matrix</span>(<span class="sc">~</span> program, <span class="at">data =</span> program_demo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  (Intercept) programB programC
+1           1        0        0
+2           1        0        0
+3           1        1        0
+4           1        1        0
+5           1        0        1
+6           1        0        1
+attr(,"assign")
+[1] 0 1 1
+attr(,"contrasts")
+attr(,"contrasts")$program
+[1] "contr.treatment"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">contrasts</span>(program_demo<span class="sc">$</span>program) <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">3</span>)</span>
+<span id="cb11-2"><a href=""></a><span class="fu">model.matrix</span>(<span class="sc">~</span> program, <span class="at">data =</span> program_demo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  (Intercept) program1 program2
+1           1        1        0
+2           1        1        0
+3           1        0        1
+4           1        0        1
+5           1       -1       -1
+6           1       -1       -1
+attr(,"assign")
+[1] 0 1 1
+attr(,"contrasts")
+attr(,"contrasts")$program
+  [,1] [,2]
+A    1    0
+B    0    1
+C   -1   -1</code></pre>
+</div>
+</div>
+<ul>
+<li class="fragment">treatment contrasts：系数表示“相对基线组”的差异</li>
+<li class="fragment">sum contrasts：系数表示“相对总体均值”的偏离</li>
+<li class="fragment"><strong>拟合值不变，但参数解释会变</strong></li>
+</ul>
+</section>
 <section id="非线性的示例" class="slide level2">
 <h2>“非线性”的示例</h2>
 <p>米氏方程（Michaelis-Menten equation）</p>
@@ -352,7 +474,7 @@ y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
 </figure>
 </div>
 </div>
@@ -363,7 +485,7 @@ y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-4-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
 </figure>
 </div>
 </div>
@@ -399,7 +521,7 @@ y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-5-1.png" width="960"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-8-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -407,7 +529,7 @@ y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
 </div>
 <div id="tabset-2-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>gtemp_poly_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Temperature <span class="sc">~</span> <span class="fu">poly</span>(Year, <span class="at">degree =</span> <span class="dv">3</span>), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>gtemp_poly_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Temperature <span class="sc">~</span> <span class="fu">poly</span>(Year, <span class="at">degree =</span> <span class="dv">3</span>), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-2-3">
@@ -415,7 +537,7 @@ y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-7-1.png" width="960"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-10-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -435,7 +557,7 @@ y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-8-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -450,10 +572,10 @@ y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
 <section id="mgcv包拟合gam" class="slide level2">
 <h2><code>mgcv</code>包拟合GAM</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>gtemp_gam_m0 <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a>gtemp_gam_m0 <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
-<img data-src="talk07_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"></section>
+<img data-src="talk07_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section>
 <section id="gam-的基本思想" class="slide level2">
 <h2>GAM 的基本思想</h2>
 <p>GAM 可用如下形式表示： <span class="math display">\[
