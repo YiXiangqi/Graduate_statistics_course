@@ -458,8 +458,9 @@ C   -1   -1</code></pre>
 </div>
 <ul>
 <li class="fragment">treatment contrasts：系数表示“相对基线组”的差异</li>
-<li class="fragment">sum contrasts：系数表示“相对总体均值”的偏离</li>
+<li class="fragment">sum contrasts：系数表示“相对各组均值平均值（grand mean）”的偏离</li>
 <li class="fragment"><strong>拟合值不变，但参数解释会变</strong></li>
+<li class="fragment">讲完“怎么解释参数”之后，下面看一个真正由函数形状决定的“非线性”关系</li>
 </ul>
 </section>
 <section id="非线性的示例" class="slide level2">
@@ -798,7 +799,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a><span class="fu">k.check</span>(gtemp_gam_m2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        k'      edf  k-index p-value
-s(Year) 19 10.17207 0.793124       0</code></pre>
+s(Year) 19 10.17207 0.793124  0.0025</code></pre>
 </div>
 </div>
 <p>此时虽然p 值仍较低，但是 edf 明显小于 k’了，这表明模型已经足够灵活，如果残差中仍残留有明显模式，和 k 值的选择无关了。</p>
