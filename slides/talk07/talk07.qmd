@@ -108,6 +108,73 @@ $$
 $$
 :::
 
+## 分类变量怎么进入“线性”模型？
+
+- 关键仍然是：**对参数是线性的**
+- 分类变量本身不能直接做加减乘除，但我们可以把“属于哪一组”写成 0/1 指示变量（indicator / dummy variables）
+
+$$
+y_i = \beta_0 + \beta_1 I(x_i = \text{B}) + \varepsilon_i
+$$
+
+::: {.fragment}
+- 当 $x_i$ 属于基线组 A 时，$I(x_i = \text{B}) = 0$
+- 当 $x_i$ 属于组 B 时，$I(x_i = \text{B}) = 1$
+- 所以模型依旧是对 $\beta_0, \beta_1$ 线性的
+:::
+
+## 二元分类变量：两组均值模型
+
+设 $group_i \in \{\text{control}, \text{treatment}\}$，定义
+
+$$
+D_i = I(group_i = \text{treatment})
+$$
+
+则
+
+$$
+y_i = \beta_0 + \beta_1 D_i + \varepsilon_i
+$$
+
+::: {.incremental}
+- 当 $D_i = 0$（control）时：$E(y_i) = \beta_0$
+- 当 $D_i = 1$（treatment）时：$E(y_i) = \beta_0 + \beta_1$
+- 因此 $\beta_1$ 表示 treatment 与 control 的均值差
+:::
+
+## 多水平分类变量：$K$ 组只需要 $K - 1$ 个参数
+
+若 `program` 有三组：A、B、C，以 A 为基线组，则可定义
+
+$$
+\begin{align}
+D_{Bi} &= I(program_i = \text{B}) \\
+D_{Ci} &= I(program_i = \text{C})
+\end{align}
+$$
+
+于是
+
+$$
+y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
+$$
+
+$$
+\mathbf{X} =
+\begin{bmatrix}
+1 & 0 & 0 \\
+1 & 1 & 0 \\
+1 & 0 & 1
+\end{bmatrix}
+$$
+
+::: {.fragment}
+- A 组均值：$\beta_0$
+- B 组均值：$\beta_0 + \beta_1$
+- C 组均值：$\beta_0 + \beta_2$
+:::
+
 ## “非线性”的示例
 米氏方程（Michaelis-Menten equation）
 
@@ -333,4 +400,3 @@ f_j(x) = \sum_{k=1}^{K_j} \beta_{jk} b_{jk}(x)
 $$
 
 ## 样条函数与基函数
-

@@ -6,8 +6,8 @@
 <script src="talk07_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="talk07_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="talk07_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="talk07_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.9.36">
+<link href="talk07_files/libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.35">
 
   <meta name="author" content="易湘琦">
   <title>高等数据统计分析</title>
@@ -279,6 +279,68 @@
 \]</span></p>
 </div>
 </section>
+<section id="分类变量怎么进入线性模型" class="slide level2">
+<h2>分类变量怎么进入“线性”模型？</h2>
+<ul>
+<li>关键仍然是：<strong>对参数是线性的</strong></li>
+<li>分类变量本身不能直接做加减乘除，但我们可以把“属于哪一组”写成 0/1 指示变量（indicator / dummy variables）</li>
+</ul>
+<p><span class="math display">\[
+y_i = \beta_0 + \beta_1 I(x_i = \text{B}) + \varepsilon_i
+\]</span></p>
+<div class="fragment">
+<ul>
+<li>当 <span class="math inline">\(x_i\)</span> 属于基线组 A 时，<span class="math inline">\(I(x_i = \text{B}) = 0\)</span></li>
+<li>当 <span class="math inline">\(x_i\)</span> 属于组 B 时，<span class="math inline">\(I(x_i = \text{B}) = 1\)</span></li>
+<li>所以模型依旧是对 <span class="math inline">\(\beta_0, \beta_1\)</span> 线性的</li>
+</ul>
+</div>
+</section>
+<section id="二元分类变量两组均值模型" class="slide level2">
+<h2>二元分类变量：两组均值模型</h2>
+<p>设 <span class="math inline">\(group_i \in \{\text{control}, \text{treatment}\}\)</span>，定义</p>
+<p><span class="math display">\[
+D_i = I(group_i = \text{treatment})
+\]</span></p>
+<p>则</p>
+<p><span class="math display">\[
+y_i = \beta_0 + \beta_1 D_i + \varepsilon_i
+\]</span></p>
+<ul>
+<li class="fragment">当 <span class="math inline">\(D_i = 0\)</span>（control）时：<span class="math inline">\(E(y_i) = \beta_0\)</span></li>
+<li class="fragment">当 <span class="math inline">\(D_i = 1\)</span>（treatment）时：<span class="math inline">\(E(y_i) = \beta_0 + \beta_1\)</span></li>
+<li class="fragment">因此 <span class="math inline">\(\beta_1\)</span> 表示 treatment 与 control 的均值差</li>
+</ul>
+</section>
+<section id="多水平分类变量k-组只需要-k---1-个参数" class="slide level2">
+<h2>多水平分类变量：<span class="math inline">\(K\)</span> 组只需要 <span class="math inline">\(K - 1\)</span> 个参数</h2>
+<p>若 <code>program</code> 有三组：A、B、C，以 A 为基线组，则可定义</p>
+<p><span class="math display">\[
+\begin{align}
+D_{Bi} &amp;= I(program_i = \text{B}) \\
+D_{Ci} &amp;= I(program_i = \text{C})
+\end{align}
+\]</span></p>
+<p>于是</p>
+<p><span class="math display">\[
+y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{X} =
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+1 &amp; 1 &amp; 0 \\
+1 &amp; 0 &amp; 1
+\end{bmatrix}
+\]</span></p>
+<div class="fragment">
+<ul>
+<li>A 组均值：<span class="math inline">\(\beta_0\)</span></li>
+<li>B 组均值：<span class="math inline">\(\beta_0 + \beta_1\)</span></li>
+<li>C 组均值：<span class="math inline">\(\beta_0 + \beta_2\)</span></li>
+</ul>
+</div>
+</section>
 <section id="非线性的示例" class="slide level2">
 <h2>“非线性”的示例</h2>
 <p>米氏方程（Michaelis-Menten equation）</p>
@@ -391,8 +453,20 @@
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>gtemp_gam_m0 <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
+<img data-src="talk07_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"></section>
+<section id="gam-的基本思想" class="slide level2">
+<h2>GAM 的基本思想</h2>
+<p>GAM 可用如下形式表示： <span class="math display">\[
+y_i = \beta_0 + f_1(x_{i1}) + f_2(x_{i2}) + \cdots + f_p(x_{ip}) + \varepsilon_i
+\]</span></p>
+<p>其中<span class="math inline">\(f_j(.)\)</span>是理论上描述了自变量与响应变量之间关系的未知函数，我们不知道它的具体形式，但假定它应该是一个平滑函数（smooth function）。然后，我们用由一组基函数（basis functions）线性组合而成的样条函数（spline function）来近似这个未知函数： <span class="math display">\[
+f_j(x) = \sum_{k=1}^{K_j} \beta_{jk} b_{jk}(x)
+\]</span></p>
+</section>
+<section id="样条函数与基函数" class="slide level2">
+<h2>样条函数与基函数</h2>
 
-<img data-src="talk07_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"></section></section>
+</section></section>
 
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
