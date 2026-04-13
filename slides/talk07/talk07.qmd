@@ -229,7 +229,7 @@ model.matrix(~ program, data = program_demo)
 
 ::: {.incremental}
 - treatment contrasts：系数表示“相对基线组”的差异
-- sum contrasts：系数表示“相对总体均值”的偏离
+- sum contrasts：系数表示“相对各组均值平均值（grand mean）”的偏离
 - **拟合值不变，但参数解释会变**
 - 讲完“怎么解释参数”之后，下面看一个真正由函数形状决定的“非线性”关系
 :::
