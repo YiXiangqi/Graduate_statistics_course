@@ -6,8 +6,8 @@
 <script src="talk07_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="talk07_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="talk07_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="talk07_files/libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.9.35">
+<link href="talk07_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.36">
 
   <meta name="author" content="易湘琦">
   <title>高等数据统计分析</title>
@@ -269,7 +269,7 @@
 \end{align}
 \]</span></p>
 <div class="fragment">
-<p>对于以上的方程，我们都可以定义一个新的自变量，将其转换成我们熟悉的线性模型的形式，比如： <span class="math display">\[
+<p>对于以上的方程，可以定义一个新的变量，将其转换成我们熟悉的线性模型的形式，比如： <span class="math display">\[
 \begin{align}
 &amp;y_i = \beta_0 + \beta_1 log(x_i) + \varepsilon_i \\
 &amp;z_i = log(x_i) \\
@@ -280,13 +280,16 @@
 </section>
 <section id="分类变量怎么进入线性模型" class="slide level2">
 <h2>分类变量怎么进入“线性”模型？</h2>
+<div class="fragment">
 <ul>
 <li>关键仍然是：<strong>对参数是线性的</strong></li>
-<li>分类变量本身不能直接做加减乘除，但我们可以把“属于哪一组”写成 0/1 指示变量（indicator / dummy variables）</li>
+<li>分类变量本身不能直接做加减乘除，可以通过定义指示变量（indicator / dummy variables）将其引入线性模型</li>
 </ul>
+<p>例如，对于一个二元分类变量，有两个水平 A 和 B，可以定义一个指示变量：</p>
 <p><span class="math display">\[
 y_i = \beta_0 + \beta_1 I(x_i = \text{B}) + \varepsilon_i
 \]</span></p>
+</div>
 <div class="fragment">
 <ul>
 <li>当 <span class="math inline">\(x_i\)</span> 属于基线组 A 时，<span class="math inline">\(I(x_i = \text{B}) = 0\)</span></li>
@@ -311,47 +314,117 @@ y_i = \beta_0 + \beta_1 D_i + \varepsilon_i
 <li class="fragment">因此 <span class="math inline">\(\beta_1\)</span> 表示 treatment 与 control 的均值差</li>
 </ul>
 </section>
-<section id="多水平分类变量k-组只需要-k---1-个参数" class="slide level2">
-<h2>多水平分类变量：<span class="math inline">\(K\)</span> 组只需要 <span class="math inline">\(K - 1\)</span> 个参数</h2>
-<p>若 <code>program</code> 有三组：A、B、C，以 A 为基线组，则可定义</p>
-<p><span class="math display">\[
+<section id="多水平分类变量" class="slide level2">
+<h2>多水平分类变量</h2>
+<p>对于有 <span class="math inline">\(K\)</span> 个水平的分类变量，只需要定义 <span class="math inline">\(K - 1\)</span> 个 dummy variables。例如，分类变量 <code>color</code>：red、blue 和 green，以 red 为基线水平，则 <span class="math display">\[
 \begin{align}
-D_{Bi} &amp;= I(program_i = \text{B}) \\
-D_{Ci} &amp;= I(program_i = \text{C})
+D_{blue} &amp;= I(color_i = \text{blue}) \\
+D_{green} &amp;= I(color_i = \text{green})
 \end{align}
 \]</span></p>
-<p>于是</p>
-<p><span class="math display">\[
-y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
+<p>于是 <span class="math display">\[
+y_i = \beta_0 + \beta_1 D_{blue} + \beta_2 D_{green} + \varepsilon_i
 \]</span></p>
-<p><span class="math display">\[
-\mathbf{X} =
-\begin{bmatrix}
-1 &amp; 0 &amp; 0 \\
-1 &amp; 1 &amp; 0 \\
-1 &amp; 0 &amp; 1
-\end{bmatrix}
-\]</span></p>
-<div class="fragment">
+<div class="columns">
+<div class="column" style="width:50%;">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Color</th>
+<th>D<sub>blue</sub></th>
+<th>D<sub>green</sub></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Red</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>Blue</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>Green</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:50%;">
+<p>系数解释：</p>
 <ul>
 <li>A 组均值：<span class="math inline">\(\beta_0\)</span></li>
 <li>B 组均值：<span class="math inline">\(\beta_0 + \beta_1\)</span></li>
 <li>C 组均值：<span class="math inline">\(\beta_0 + \beta_2\)</span></li>
 </ul>
-</div>
+</div></div>
 </section>
-<section id="r-中如何实现二元分类变量" class="slide level2">
-<h2>R 中如何实现二元分类变量？</h2>
+<section id="r-示例分类变量进入lm" class="slide level2">
+<h2>R 示例：分类变量进入<code>lm()</code></h2>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">数据</a></li><li><a href="#tabset-1-2">模型拟合</a></li><li><a href="#tabset-1-3">模型设计矩阵和系数解释</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>binary_demo <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb1-2"><a href=""></a>  <span class="at">group =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"control"</span>, <span class="st">"control"</span>, <span class="st">"control"</span>, <span class="st">"treatment"</span>, <span class="st">"treatment"</span>, <span class="st">"treatment"</span>),</span>
-<span id="cb1-3"><a href=""></a>                 <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"control"</span>, <span class="st">"treatment"</span>)),</span>
-<span id="cb1-4"><a href=""></a>  <span class="at">score =</span> <span class="fu">c</span>(<span class="dv">72</span>, <span class="dv">75</span>, <span class="dv">74</span>, <span class="dv">80</span>, <span class="dv">83</span>, <span class="dv">85</span>)</span>
-<span id="cb1-5"><a href=""></a>)</span>
-<span id="cb1-6"><a href=""></a></span>
-<span id="cb1-7"><a href=""></a>binary_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(score <span class="sc">~</span> group, <span class="at">data =</span> binary_demo)</span>
-<span id="cb1-8"><a href=""></a></span>
-<span id="cb1-9"><a href=""></a><span class="fu">model.matrix</span>(binary_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>binary_demo <span class="ot">&lt;-</span></span>
+<span id="cb1-2"><a href=""></a>    <span class="fu">tribble</span>(</span>
+<span id="cb1-3"><a href=""></a>        <span class="sc">~</span>group, <span class="sc">~</span>score,</span>
+<span id="cb1-4"><a href=""></a>        <span class="st">"control"</span>, <span class="dv">72</span>,</span>
+<span id="cb1-5"><a href=""></a>        <span class="st">"control"</span>, <span class="dv">75</span>,</span>
+<span id="cb1-6"><a href=""></a>        <span class="st">"control"</span>, <span class="dv">74</span>,</span>
+<span id="cb1-7"><a href=""></a>        <span class="st">"treatment"</span>, <span class="dv">80</span>,</span>
+<span id="cb1-8"><a href=""></a>        <span class="st">"treatment"</span>, <span class="dv">83</span>,</span>
+<span id="cb1-9"><a href=""></a>        <span class="st">"treatment"</span>, <span class="dv">85</span></span>
+<span id="cb1-10"><a href=""></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb1-11"><a href=""></a>    <span class="fu">mutate</span>(<span class="at">group =</span> <span class="fu">factor</span>(group, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"control"</span>, <span class="st">"treatment"</span>)))</span>
+<span id="cb1-12"><a href=""></a>binary_demo</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  group     score
+  &lt;fct&gt;     &lt;dbl&gt;
+1 control      72
+2 control      75
+3 control      74
+4 treatment    80
+5 treatment    83
+6 treatment    85</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>binary_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(score <span class="sc">~</span> group, <span class="at">data =</span> binary_demo)</span>
+<span id="cb3-2"><a href=""></a><span class="fu">summary</span>(binary_fit )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = score ~ group, data = binary_demo)
+
+Residuals:
+      1       2       3       4       5       6 
+-1.6667  1.3333  0.3333 -2.6667  0.3333  2.3333 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)      73.667      1.202  61.294 4.24e-07 ***
+grouptreatment    9.000      1.700   5.295  0.00611 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 2.082 on 4 degrees of freedom
+Multiple R-squared:  0.8752,    Adjusted R-squared:  0.8439 
+F-statistic: 28.04 on 1 and 4 DF,  p-value: 0.006107</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-3">
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a><span class="fu">model.matrix</span>(binary_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  (Intercept) grouptreatment
 1           1              0
@@ -366,7 +439,10 @@ attr(,"contrasts")
 attr(,"contrasts")$group
 [1] "contr.treatment"</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="fu">coef</span>(binary_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">coef</span>(binary_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   (Intercept) grouptreatment 
       73.66667        9.00000 </code></pre>
@@ -378,114 +454,422 @@ attr(,"contrasts")$group
 <li><code>grouptreatment</code> 是 treatment 相对 control 的差值</li>
 </ul>
 </div>
-</section>
-<section id="r-中如何实现多水平分类变量" class="slide level2">
-<h2>R 中如何实现多水平分类变量？</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>program_demo <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb5-2"><a href=""></a>  <span class="at">program =</span> <span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"C"</span>), <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>)),</span>
-<span id="cb5-3"><a href=""></a>  <span class="at">score =</span> <span class="fu">c</span>(<span class="dv">78</span>, <span class="dv">80</span>, <span class="dv">84</span>, <span class="dv">85</span>, <span class="dv">90</span>, <span class="dv">92</span>)</span>
-<span id="cb5-4"><a href=""></a>)</span>
-<span id="cb5-5"><a href=""></a></span>
-<span id="cb5-6"><a href=""></a>program_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(score <span class="sc">~</span> program, <span class="at">data =</span> program_demo)</span>
-<span id="cb5-7"><a href=""></a></span>
-<span id="cb5-8"><a href=""></a><span class="fu">model.matrix</span>(program_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  (Intercept) programB programC
-1           1        0        0
-2           1        0        0
-3           1        1        0
-4           1        1        0
-5           1        0        1
-6           1        0        1
-attr(,"assign")
-[1] 0 1 1
-attr(,"contrasts")
-attr(,"contrasts")$program
-[1] "contr.treatment"</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a><span class="fu">coef</span>(program_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>(Intercept)    programB    programC 
-       79.0         5.5        12.0 </code></pre>
+</div></div>
 </div>
 </div>
-<div class="fragment">
-<ul>
-<li>R 默认使用 treatment contrasts</li>
-<li>因而这里只会生成 <code>programB</code> 和 <code>programC</code> 两列</li>
-<li>基线组 A 被吸收到截距 <code>(Intercept)</code> 中</li>
-</ul>
 </div>
 </section>
-<section id="对比不同-contrasts-会改变参数解释" class="slide level2">
-<h2>对比：不同 contrasts 会改变参数解释</h2>
+<section id="r-示例分类变量进入lm-1" class="slide level2">
+<h2>R 示例：分类变量进入<code>lm()</code></h2>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1"><code>iris</code>数据集</a></li><li><a href="#tabset-2-2">模型拟合</a></li><li><a href="#tabset-2-3">模型设计矩阵和系数解释</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">model.matrix</span>(<span class="sc">~</span> program, <span class="at">data =</span> program_demo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a><span class="fu">summary</span>(iris)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  (Intercept) programB programC
-1           1        0        0
-2           1        0        0
-3           1        1        0
-4           1        1        0
-5           1        0        1
-6           1        0        1
-attr(,"assign")
-[1] 0 1 1
-attr(,"contrasts")
-attr(,"contrasts")$program
-[1] "contr.treatment"</code></pre>
+<pre><code>  Sepal.Length    Sepal.Width     Petal.Length    Petal.Width   
+ Min.   :4.300   Min.   :2.000   Min.   :1.000   Min.   :0.100  
+ 1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.600   1st Qu.:0.300  
+ Median :5.800   Median :3.000   Median :4.350   Median :1.300  
+ Mean   :5.843   Mean   :3.057   Mean   :3.758   Mean   :1.199  
+ 3rd Qu.:6.400   3rd Qu.:3.300   3rd Qu.:5.100   3rd Qu.:1.800  
+ Max.   :7.900   Max.   :4.400   Max.   :6.900   Max.   :2.500  
+       Species  
+ setosa    :50  
+ versicolor:50  
+ virginica :50  
+                
+                
+                </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a><span class="fu">contrasts</span>(program_demo<span class="sc">$</span>program) <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">3</span>)</span>
-<span id="cb11-2"><a href=""></a><span class="fu">model.matrix</span>(<span class="sc">~</span> program, <span class="at">data =</span> program_demo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-2-2">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>iris_fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(Sepal.Length <span class="sc">~</span> Species, <span class="at">data =</span> iris)</span>
+<span id="cb11-2"><a href=""></a><span class="fu">summary</span>(iris_fit)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  (Intercept) program1 program2
-1           1        1        0
-2           1        1        0
-3           1        0        1
-4           1        0        1
-5           1       -1       -1
-6           1       -1       -1
-attr(,"assign")
-[1] 0 1 1
-attr(,"contrasts")
-attr(,"contrasts")$program
-  [,1] [,2]
-A    1    0
-B    0    1
-C   -1   -1</code></pre>
+<pre><code>
+Call:
+lm(formula = Sepal.Length ~ Species, data = iris)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.6880 -0.3285 -0.0060  0.3120  1.3120 
+
+Coefficients:
+                  Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         5.0060     0.0728  68.762  &lt; 2e-16 ***
+Speciesversicolor   0.9300     0.1030   9.033 8.77e-16 ***
+Speciesvirginica    1.5820     0.1030  15.366  &lt; 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.5148 on 147 degrees of freedom
+Multiple R-squared:  0.6187,    Adjusted R-squared:  0.6135 
+F-statistic: 119.3 on 2 and 147 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
+</div>
+<div id="tabset-2-3">
+<div class="columns">
+<div class="column" style="width:65%;">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 150 × 3
+   Intercept Speciesversicolor Speciesvirginica
+       &lt;dbl&gt;             &lt;dbl&gt;            &lt;dbl&gt;
+ 1         1                 0                0
+ 2         1                 0                0
+ 3         1                 0                0
+ 4         1                 0                0
+ 5         1                 0                0
+ 6         1                 0                0
+ 7         1                 0                0
+ 8         1                 0                0
+ 9         1                 0                0
+10         1                 0                0
+# ℹ 140 more rows</code></pre>
+</div>
+</div>
+</div><div class="column" style="width:35%;">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  Term              value
+  &lt;chr&gt;             &lt;dbl&gt;
+1 (Intercept)       5.01 
+2 Speciesversicolor 0.930
+3 Speciesvirginica  1.58 </code></pre>
+</div>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+</section>
+<section id="多个分类变量" class="slide level2">
+<h2>多个分类变量</h2>
 <ul>
-<li class="fragment">treatment contrasts：系数表示“相对基线组”的差异</li>
-<li class="fragment">sum contrasts：系数表示“相对各组均值平均值（grand mean）”的偏离</li>
-<li class="fragment"><strong>拟合值不变，但参数解释会变</strong></li>
-<li class="fragment">讲完“怎么解释参数”之后，下面看一个真正由函数形状决定的“非线性”关系</li>
+<li>分类变量 A 有两个水平：a1 和 a2</li>
+<li>分类变量 B 有两个水平：b1 和 b2</li>
 </ul>
+<p>定义： <span class="math display">\[
+\begin{align}
+D_A &amp;= I(A_i = a2) \\
+D_B &amp;= I(B_i = b2)
+\end{align}
+\]</span></p>
+<p>于是 <span class="math display">\[
+y_i = \beta_0 + \beta_1 D_A + \beta_2 D_B + \varepsilon_i
+\]</span></p>
+<div class="columns">
+<div class="column" style="width:30%;">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>A/B</th>
+<th>D<sub>A</sub></th>
+<th>D<sub>B</sub></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>a1/b1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>a2/b1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>a1/b2</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>a2/b2</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:70%;">
+<p>系数解释：</p>
+<ul>
+<li>(a1,b1) 组均值：<span class="math inline">\(\beta_0\)</span></li>
+<li>(a2,b1) 组均值：<span class="math inline">\(\beta_0 + \beta_1\)</span></li>
+<li>(a1,b2) 组均值：<span class="math inline">\(\beta_0 + \beta_2\)</span></li>
+<li>(a2,b2) 组均值：<span class="math inline">\(\beta_0 + \beta_1 + \beta_2\)</span></li>
+</ul>
+</div></div>
+</section>
+<section id="多个分类变量交互效应" class="slide level2">
+<h2>多个分类变量：交互效应</h2>
+<p>如果我们认为 A 和 B 之间存在交互效应，那么模型可以写成： <span class="math display">\[
+y_i = \beta_0 + \beta_1 D_A + \beta_2 D_B + \beta_3 (D_A \times D_B) + \varepsilon_i
+\]</span></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: center;">A/B</th>
+<th style="text-align: center;">D<sub>A</sub></th>
+<th style="text-align: center;">D<sub>B</sub></th>
+<th style="text-align: center;">D<sub>A</sub> <span class="math inline">\(\times\)</span> D<sub>B</sub></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a1/b1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">a2/b1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">a1/b2</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">a2/b2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="r-示例多个分类变量进入lm" class="slide level2">
+<h2>R 示例：多个分类变量进入<code>lm()</code></h2>
+<p><code>palmerpenguins::penguins</code>数据集：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a>palmerpenguins<span class="sc">::</span>penguins</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 344 × 8
+   species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+   &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;       &lt;int&gt;
+ 1 Adelie  Torgersen           39.1          18.7               181        3750
+ 2 Adelie  Torgersen           39.5          17.4               186        3800
+ 3 Adelie  Torgersen           40.3          18                 195        3250
+ 4 Adelie  Torgersen           NA            NA                  NA          NA
+ 5 Adelie  Torgersen           36.7          19.3               193        3450
+ 6 Adelie  Torgersen           39.3          20.6               190        3650
+ 7 Adelie  Torgersen           38.9          17.8               181        3625
+ 8 Adelie  Torgersen           39.2          19.6               195        4675
+ 9 Adelie  Torgersen           34.1          18.1               193        3475
+10 Adelie  Torgersen           42            20.2               190        4250
+# ℹ 334 more rows
+# ℹ 2 more variables: sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="r-示例多个分类变量进入lm-1" class="slide level2">
+<h2>R 示例：多个分类变量进入<code>lm()</code></h2>
+<p>问题：企鹅体重的物种间差异和性别间差异？</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a>penguins_lm_m0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(body_mass_g <span class="sc">~</span> species <span class="sc">+</span> sex, <span class="at">data =</span> palmerpenguins<span class="sc">::</span>penguins)</span>
+<span id="cb17-2"><a href=""></a>penguins_lm_m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(body_mass_g <span class="sc">~</span> species <span class="sc">*</span> sex, <span class="at">data =</span> palmerpenguins<span class="sc">::</span>penguins)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a><span class="fu">summary</span>(penguins_lm_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = body_mass_g ~ species * sex, data = palmerpenguins::penguins)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-827.21 -213.97   11.03  206.51  861.03 
+
+Coefficients:
+                         Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)               3368.84      36.21  93.030  &lt; 2e-16 ***
+speciesChinstrap           158.37      64.24   2.465  0.01420 *  
+speciesGentoo             1310.91      54.42  24.088  &lt; 2e-16 ***
+sexmale                    674.66      51.21  13.174  &lt; 2e-16 ***
+speciesChinstrap:sexmale  -262.89      90.85  -2.894  0.00406 ** 
+speciesGentoo:sexmale      130.44      76.44   1.706  0.08886 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 309.4 on 327 degrees of freedom
+  (11 observations deleted due to missingness)
+Multiple R-squared:  0.8546,    Adjusted R-squared:  0.8524 
+F-statistic: 384.3 on 5 and 327 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+</section>
+<section id="r-示例多个分类变量进入lm-2" class="slide level2">
+<h2>R 示例：多个分类变量进入<code>lm()</code></h2>
+<p>使用<code>anova()</code>获取不同变量的显著性：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a><span class="fu">anova</span>(penguins_lm_m1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Response: body_mass_g
+             Df    Sum Sq  Mean Sq F value    Pr(&gt;F)    
+species       2 145190219 72595110 758.358 &lt; 2.2e-16 ***
+sex           1  37090262 37090262 387.460 &lt; 2.2e-16 ***
+species:sex   2   1676557   838278   8.757 0.0001973 ***
+Residuals   327  31302628    95727                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>注意：</p>
+<ul>
+<li>这里的<code>anova()</code>给出的显著性对应于顺序平方和（Sequential Sum of Squares），Type I。</li>
+<li>对于非平衡数据，不同变量进入模型的顺序会影响<code>anova()</code>的结果。</li>
+<li>对于非平衡数据，建议使用 Type II 或 Type III 的平方和来获取变量的显著性，可以使用<code>car::Anova()</code>函数实现。</li>
+</ul>
+</section>
+<section id="caranova" class="slide level2">
+<h2><code>car::Anova()</code></h2>
+<ul>
+<li>对于非平衡数据，如果有充足理由认为不存在交互效应，可以使用 Type II 的平方和</li>
+<li>这时候对于每个变量显著性的解读需要基于<strong>其他变量已经在模型中</strong>的前提下进行。</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>car<span class="sc">::</span><span class="fu">Anova</span>(penguins_lm_m1, <span class="at">type =</span> <span class="st">"II"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Anova Table (Type II tests)
+
+Response: body_mass_g
+               Sum Sq  Df F value    Pr(&gt;F)    
+species     143401584   2 749.016 &lt; 2.2e-16 ***
+sex          37090262   1 387.460 &lt; 2.2e-16 ***
+species:sex   1676557   2   8.757 0.0001973 ***
+Residuals    31302628 327                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="caranova-1" class="slide level2">
+<h2><code>car::Anova()</code></h2>
+<ul>
+<li>对于非平衡数据，如果存在交互效应，可以使用 Type III 的平方和</li>
+<li>这时候对于每个变量显著性的解读需要基于<strong>其他变量已经在模型中</strong>的前提下进行。</li>
+<li>需要注意的是，Type III 的平方和对于模型中变量的编码方式（contrasts）非常敏感，需要使用 sum contrasts。</li>
+</ul>
+<p>如果我们认为 A 和 B 之间存在交互效应，那么模型可以写成： <span class="math display">\[
+y_i = \beta_0 + \beta_1 D_A + \beta_2 D_B + \beta_3 (D_A \times D_B) + \varepsilon_i
+\]</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: center;">A/B</th>
+<th style="text-align: center;">D<sub>A</sub></th>
+<th style="text-align: center;">D<sub>B</sub></th>
+<th style="text-align: center;">D<sub>A</sub> <span class="math inline">\(\times\)</span> D<sub>B</sub></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">a1/b1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">a2/b1</td>
+<td style="text-align: center;">-1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">-1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">a1/b2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">-1</td>
+<td style="text-align: center;">-1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">a2/b2</td>
+<td style="text-align: center;">-1</td>
+<td style="text-align: center;">-1</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:50%;">
+<ul>
+<li><span class="math inline">\(\beta_0\)</span> 表示各组均值的平均值（grand mean）</li>
+<li><span class="math inline">\(\beta_1\)</span> 表示 a1 组相对于各组均值平均值的偏离</li>
+<li><span class="math inline">\(\beta_2\)</span> 表示 b1 组相对于各组均值平均值的偏离</li>
+<li><span class="math inline">\(\beta_3\)</span> 表示 A 和 B 之间的交互效应</li>
+</ul>
+</div></div>
+</section>
+<section id="contrasts函数" class="slide level2">
+<h2><code>contrasts()</code>函数</h2>
+<p>R 中因子（factor）的默认编码方式是 treatment contrasts，即以第一个水平作为基线水平，其他水平相对于基线水平进行编码。可以使用<code>contrasts()</code>函数查看或修改因子的编码方式。例如：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="fu">library</span>(palmerpenguins)</span>
+<span id="cb24-2"><a href=""></a><span class="fu">contrasts</span>(penguins<span class="sc">$</span>species)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          Chinstrap Gentoo
+Adelie            0      0
+Chinstrap         1      0
+Gentoo            0      1</code></pre>
+</div>
+</div>
+<p>指定 sum contrasts 后，重新拟合：</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a><span class="fu">contrasts</span>(penguins<span class="sc">$</span>species) <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">3</span>)</span>
+<span id="cb26-2"><a href=""></a><span class="fu">contrasts</span>(penguins<span class="sc">$</span>sex) <span class="ot">&lt;-</span> <span class="fu">contr.sum</span>(<span class="dv">2</span>)</span>
+<span id="cb26-3"><a href=""></a>penguins_lm_m1_sum <span class="ot">&lt;-</span> <span class="fu">lm</span>(body_mass_g <span class="sc">~</span> species <span class="sc">*</span> sex, <span class="at">data =</span> penguins)</span>
+<span id="cb26-4"><a href=""></a>car<span class="sc">::</span><span class="fu">Anova</span>(penguins_lm_m1_sum, <span class="at">type =</span> <span class="st">"III"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Anova Table (Type III tests)
+
+Response: body_mass_g
+                Sum Sq  Df   F value    Pr(&gt;F)    
+(Intercept) 5232595969   1 54661.828 &lt; 2.2e-16 ***
+species      143001222   2   746.924 &lt; 2.2e-16 ***
+sex           29851220   1   311.838 &lt; 2.2e-16 ***
+species:sex    1676557   2     8.757 0.0001973 ***
+Residuals     31302628 327                        
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
 </section>
 <section id="非线性的示例" class="slide level2">
 <h2>“非线性”的示例</h2>
 <p>米氏方程（Michaelis-Menten equation）</p>
 <div class="panel-tabset">
-<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">典型图像</a></li><li><a href="#tabset-1-2">线性方程的残差</a></li></ul>
+<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">典型图像</a></li><li><a href="#tabset-3-2">残差图像</a></li></ul>
 <div class="tab-content">
-<div id="tabset-1-1">
+<div id="tabset-3-1">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-6-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-1-2">
+<div id="tabset-3-2">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-7-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
 </figure>
 </div>
 </div>
@@ -497,12 +881,17 @@ C   -1   -1</code></pre>
 <section id="如何处理非线性关系" class="slide level2">
 <h2>如何处理非线性关系？</h2>
 <ul>
-<li>通过转换自变量或响应变量，可以将非线性关系转化为线性关系，例如：</li>
+<li>通过一定变换，可以将非线性关系转化为线性关系，例如：</li>
 </ul>
 <p><span class="math display">\[
 \begin{align}
 &amp;v_i = \frac{v_{max}s_i}{k_m + s_i} \\
-&amp;\frac{1}{v_i} = \frac{k_m + s_i}{v_{max}s_i} = \frac{k_m}{s_i}\frac{1}{v_{max}} + \frac{1}{v_{max}} \\
+\end{align}
+\]</span></p>
+<p>米式方程两边同时取倒数：</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;\frac{1}{v_i} = \frac{k_m + s_i}{v_{max}s_i} = \frac{k_m}{v_{max}}\frac{1}{s_i} + \frac{1}{v_{max}} \\
 \end{align}
 \]</span></p>
 <div class="fragment">
@@ -514,30 +903,30 @@ C   -1   -1</code></pre>
 <section id="多项式拟合" class="slide level2 scrollable">
 <h2>多项式拟合</h2>
 <div class="panel-tabset">
-<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">HadCRUT4 全球温度数据</a><sup>1</sup></li><li><a href="#tabset-2-2">多项式拟合</a></li><li><a href="#tabset-2-3">多项式拟合曲线</a></li></ul>
+<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">HadCRUT4 全球温度数据</a><sup>1</sup></li><li><a href="#tabset-4-2">多项式拟合</a></li><li><a href="#tabset-4-3">多项式拟合曲线</a></li></ul>
 <div class="tab-content">
-<div id="tabset-2-1">
+<div id="tabset-4-1">
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-8-1.png" width="960"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-20-1.png" width="960"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-2-2">
+<div id="tabset-4-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>gtemp_poly_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Temperature <span class="sc">~</span> <span class="fu">poly</span>(Year, <span class="at">degree =</span> <span class="dv">3</span>), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a>gtemp_poly_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(Temperature <span class="sc">~</span> <span class="fu">poly</span>(Year, <span class="at">degree =</span> <span class="dv">3</span>), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<div id="tabset-2-3">
+<div id="tabset-4-3">
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-10-1.png" width="960"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-22-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -557,7 +946,7 @@ C   -1   -1</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-23-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -572,10 +961,10 @@ C   -1   -1</code></pre>
 <section id="mgcv包拟合gam" class="slide level2">
 <h2><code>mgcv</code>包拟合GAM</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a>gtemp_gam_m0 <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a>gtemp_gam_m0 <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
-<img data-src="talk07_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"></section>
+<img data-src="talk07_files/figure-revealjs/unnamed-chunk-25-1.png" width="960" class="r-stretch"></section>
 <section id="gam-的基本思想" class="slide level2">
 <h2>GAM 的基本思想</h2>
 <p>GAM 可用如下形式表示： <span class="math display">\[
@@ -592,11 +981,11 @@ f_j(x) = \sum_{k=1}^{K_j} \beta_{jk} b_{jk}(x)
 <section id="样条函数与基函数" class="slide level2">
 <h2>样条函数与基函数</h2>
 
-<img data-src="talk07_files/figure-revealjs/unnamed-chunk-14-1.png" width="960" class="r-stretch"></section>
+<img data-src="talk07_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"></section>
 <section id="样条函数与基函数-1" class="slide level2">
 <h2>样条函数与基函数</h2>
 
-<img data-src="talk07_files/figure-revealjs/unnamed-chunk-15-1.png" width="960" class="r-stretch"></section>
+<img data-src="talk07_files/figure-revealjs/unnamed-chunk-27-1.png" width="960" class="r-stretch"></section>
 <section id="样条函数与基函数-2" class="slide level2">
 <h2>样条函数与基函数</h2>
 
@@ -604,14 +993,14 @@ f_j(x) = \sum_{k=1}^{K_j} \beta_{jk} b_{jk}(x)
 <section id="样条函数与基函数-3" class="slide level2">
 <h2>样条函数与基函数</h2>
 
-<img data-src="talk07_files/figure-revealjs/unnamed-chunk-17-1.png" width="960" class="r-stretch"></section>
-<section id="三次b样条函数cubic-b-splines" class="slide level2">
-<h2>三次B样条函数（Cubic B-splines）</h2>
+<img data-src="talk07_files/figure-revealjs/unnamed-chunk-29-1.png" width="960" class="r-stretch"></section>
+<section id="三次样条函数cubic-b-splines" class="slide level2">
+<h2>三次样条函数（Cubic B-splines）</h2>
 <div class="panel-tabset">
-<ul id="tabset-3" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-3-1">特点</a></li><li><a href="#tabset-3-2">典型图像</a></li></ul>
+<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1">特点</a></li><li><a href="#tabset-5-2">典型图像</a></li></ul>
 <div class="tab-content">
-<div id="tabset-3-1">
-<p>三次B样条函数是一种常用的样条函数，其基函数具有以下特点：</p>
+<div id="tabset-5-1">
+<p>三次样条函数是一种常用的样条函数，其基函数具有以下特点：</p>
 <ul>
 <li>由三次多项式片段组成，每个片段在两个相邻的节点（knots）之间定义。</li>
 <li>基函数影响范围有限，为相邻5个节点内的区间提供非零值，这使得它们具有局部支持（local support）的性质。</li>
@@ -619,12 +1008,12 @@ f_j(x) = \sum_{k=1}^{K_j} \beta_{jk} b_{jk}(x)
 <li>可以通过调整节点的位置和数量来控制函数的灵活性和拟合能力。</li>
 </ul>
 </div>
-<div id="tabset-3-2">
+<div id="tabset-5-2">
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-18-1.png" width="960"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-30-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -636,7 +1025,7 @@ f_j(x) = \sum_{k=1}^{K_j} \beta_{jk} b_{jk}(x)
 <section id="过拟合-vs.-欠拟合" class="slide level2">
 <h2>过拟合 vs.&nbsp;欠拟合</h2>
 
-<img data-src="talk07_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
+<img data-src="talk07_files/figure-revealjs/unnamed-chunk-31-1.png" width="960" class="r-stretch"></section>
 <section id="wiggliness-vs.-smooth" class="slide level2">
 <h2>wiggliness vs.&nbsp;smooth</h2>
 <p>GAM 在拟合的过程中引入了一个惩罚项（penalty term）来控制函数的wiggliness（即函数的弯曲程度）： <span class="math display">\[
@@ -652,12 +1041,12 @@ wiggliness是通过函数的二阶导数来衡量的。函数越wiggly，二阶�
 <h2><code>mgcv</code>包与惩罚参数的选择</h2>
 <p><code>mgcv</code>包会通过一定方法，来自动选择最优的惩罚参数，从而在拟合数据和控制函数复杂度之间找到一个平衡点。</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a>gtemp_gam_m1 <span class="ot">&lt;-</span> <span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp, <span class="at">method =</span> <span class="st">"REML"</span>) </span>
-<span id="cb15-2"><a href=""></a><span class="co"># 默认的method是GCV.Cp，REML通常更稳定。</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a>gtemp_gam_m1 <span class="ot">&lt;-</span> <span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp, <span class="at">method =</span> <span class="st">"REML"</span>) </span>
+<span id="cb30-2"><a href=""></a><span class="co"># 默认的method是GCV.Cp，REML通常更稳定。</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>通过以下方式可以看到选择的惩罚参数：</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a>gtemp_gam_m1<span class="sc">$</span>sp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a>gtemp_gam_m1<span class="sc">$</span>sp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    s(Year) 
 0.005013152 </code></pre>
@@ -667,9 +1056,9 @@ wiggliness是通过函数的二阶导数来衡量的。函数越wiggly，二阶�
 <section id="gam模型结果解读" class="slide level2 scrollable">
 <h2><code>gam()</code>模型结果解读</h2>
 <div class="panel-tabset">
-<ul id="tabset-4" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-4-1">模型<code>summary()</code></a></li><li><a href="#tabset-4-2">edf</a></li><li><a href="#tabset-4-3">p值</a></li></ul>
+<ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">模型<code>summary()</code></a></li><li><a href="#tabset-6-2">edf</a></li><li><a href="#tabset-6-3"><em>p</em> 值</a></li></ul>
 <div class="tab-content">
-<div id="tabset-4-1">
+<div id="tabset-6-1">
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -696,16 +1085,16 @@ R-sq.(adj) =   0.88   Deviance explained = 88.6%
 </div>
 </div>
 </div>
-<div id="tabset-4-2">
+<div id="tabset-6-2">
 <p>edf（effective degrees of freedom）是一个衡量平滑函数复杂度的指标。edf越大，函数越wiggly；edf越小，函数越平滑。</p>
 <ul>
-<li>edf = 1时，函数是一条直线，惩罚想抑制了所有的wiggliness。</li>
+<li>edf = 1时，函数是一条直线，惩罚项抑制了所有的wiggliness。</li>
 <li>edf = 2时，函数的关系大致是二次的（一个简单的U形或倒U形）。</li>
 <li>edf &gt; 2时，函数呈现非线性，且数值越高越复杂。</li>
 </ul>
 </div>
-<div id="tabset-4-3">
-<p>p值用于检验平滑函数是否显著不同于零函数（即没有关系）。如果p值小于某个显著性水平（如0.05），我们可以拒绝零函数的假设。</p>
+<div id="tabset-6-3">
+<p>这里 <em>p</em> 值用于检验平滑函数是否显著不同于零函数（即没有关系）。如果 <em>p</em> 值小于某个显著性水平（如0.05），我们可以拒绝零函数的假设。</p>
 <p>预计作业：用实例说明，零函数究竟是下列哪种情况：</p>
 <ol type="1">
 <li>一条直线，可能斜率不为零。</li>
@@ -718,18 +1107,18 @@ R-sq.(adj) =   0.88   Deviance explained = 88.6%
 <section id="gam模型结果解读-1" class="slide level2">
 <h2><code>gam()</code>模型结果解读</h2>
 <div class="panel-tabset">
-<ul id="tabset-5" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-5-1"><code>plot()</code></a></li><li><a href="#tabset-5-2">图像</a></li></ul>
+<ul id="tabset-7" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-7-1"><code>plot()</code></a></li><li><a href="#tabset-7-2">图像</a></li></ul>
 <div class="tab-content">
-<div id="tabset-5-1">
+<div id="tabset-7-1">
 <p><code>plot()</code>函数可以用来可视化平滑函数的拟合结果，包括拟合曲线、置信区间以及残差分布等信息（用<code>?plot.gam</code>查看帮助文档）。</p>
 </div>
-<div id="tabset-5-2">
+<div id="tabset-7-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a><span class="fu">plot</span>(gtemp_gam_m1, <span class="at">shade =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a><span class="fu">plot</span>(gtemp_gam_m1, <span class="at">shade =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-23-1.png" width="960"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-35-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -742,26 +1131,26 @@ R-sq.(adj) =   0.88   Deviance explained = 88.6%
 <h2>模型检验</h2>
 <p><code>gam.check()</code>函数可以用来检验GAM模型的拟合情况，包括残差的分布、拟合值与残差的关系等。</p>
 <div class="panel-tabset">
-<ul id="tabset-6" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-6-1">图像</a></li><li><a href="#tabset-6-2">输出文本</a></li><li><a href="#tabset-6-3">p值</a></li></ul>
+<ul id="tabset-8" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-8-1">图像</a></li><li><a href="#tabset-8-2">输出文本</a></li><li><a href="#tabset-8-3"><em>p</em> 值</a></li></ul>
 <div class="tab-content">
-<div id="tabset-6-1">
+<div id="tabset-8-1">
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-24-1.png" width="960"></p>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-36-1.png" width="960"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-6-2">
+<div id="tabset-8-2">
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Method: REML   Optimizer: outer newton
 full convergence after 5 iterations.
-Gradient range [-1.46227e-08,3.407143e-09]
+Gradient range [-1.462278e-08,3.407131e-09]
 (score -91.23654 &amp; scale 0.01628721).
 Hessian positive definite, eigenvalue range [2.894852,85.14233].
 Model rank =  10 / 10 
@@ -776,8 +1165,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-6-3">
-<p>这里的p值对应的零假设（Null hypothesis）是：</p>
+<div id="tabset-8-3">
+<p>这里的 <em>p</em> 值对应的零假设（Null hypothesis）是：</p>
 <ul>
 <li>H0: 残差是随机分布的，没有系统性的模式。</li>
 <li>H1: 残差存在系统性的模式，可能表明模型拟合不充分或者存在某些未捕捉到的结构。</li>
@@ -789,17 +1178,22 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </section>
 <section id="k-的设定" class="slide level2">
 <h2>k 的设定</h2>
-<p>k 值： - k 是基函数的维数（数量）。 - 通过 <code>s()</code> 函数中的 <code>k</code> 参数来指定。 - k 的默认值在单变量平滑器中通常是 10。</p>
+<p>k 值：</p>
+<ul>
+<li>k 是基函数的维数（数量）。</li>
+<li>通过 <code>s()</code> 函数中的 <code>k</code> 参数来指定。</li>
+<li>k 的默认值在单变量平滑器中通常是 10。</li>
+</ul>
 <p>将k值设置为20，看看模型检验的结果：</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a>gtemp_gam_m2 <span class="ot">&lt;-</span> <span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year, <span class="at">k =</span> <span class="dv">20</span>), <span class="at">data =</span> gtemp, <span class="at">method =</span> <span class="st">"REML"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href=""></a>gtemp_gam_m2 <span class="ot">&lt;-</span> <span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year, <span class="at">k =</span> <span class="dv">20</span>), <span class="at">data =</span> gtemp, <span class="at">method =</span> <span class="st">"REML"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>这里使用了<code>k.check()</code>函数来检查k值的情况：</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a><span class="fu">k.check</span>(gtemp_gam_m2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a><span class="fu">k.check</span>(gtemp_gam_m2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        k'      edf  k-index p-value
-s(Year) 19 10.17207 0.793124  0.0025</code></pre>
+s(Year) 19 10.17207 0.793124  0.0075</code></pre>
 </div>
 </div>
 <p>此时虽然p 值仍较低，但是 edf 明显小于 k’了，这表明模型已经足够灵活，如果残差中仍残留有明显模式，和 k 值的选择无关了。</p>
@@ -808,17 +1202,17 @@ s(Year) 19 10.17207 0.793124  0.0025</code></pre>
 <h2>ISIT 数据集</h2>
 <p>ISIT 数据集<sup>1</sup>记录了不同站位荧光强度的垂直剖面：</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href=""></a><span class="co">#｜ echo: false</span></span>
-<span id="cb24-2"><a href=""></a>ISIT <span class="ot">&lt;-</span> </span>
-<span id="cb24-3"><a href=""></a>  <span class="fu">read_table</span>(<span class="st">"data/ISIT.txt"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb24-4"><a href=""></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(Station, Month,Year, Season), factor))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href=""></a><span class="co">#｜ echo: false</span></span>
+<span id="cb39-2"><a href=""></a>ISIT <span class="ot">&lt;-</span> </span>
+<span id="cb39-3"><a href=""></a>  <span class="fu">read_table</span>(<span class="st">"data/ISIT.txt"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb39-4"><a href=""></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(Station, Month,Year, Season), factor))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="panel-tabset">
-<ul id="tabset-7" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-7-1"><code>print()</code></a></li><li><a href="#tabset-7-2"><code>glimpse()</code></a></li></ul>
+<ul id="tabset-9" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-9-1"><code>print()</code></a></li><li><a href="#tabset-9-2"><code>glimpse()</code></a></li></ul>
 <div class="tab-content">
-<div id="tabset-7-1">
+<div id="tabset-9-1">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>ISIT</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href=""></a>ISIT</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 789 × 14
    SampleDepth Sources Station  Time Latitude Longitude   Xkm   Ykm Month Year 
@@ -839,9 +1233,9 @@ s(Year) 19 10.17207 0.793124  0.0025</code></pre>
 </div>
 </div>
 </div>
-<div id="tabset-7-2">
+<div id="tabset-9-2">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a><span class="fu">glimpse</span>(ISIT)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href=""></a><span class="fu">glimpse</span>(ISIT)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 789
 Columns: 14
@@ -868,22 +1262,62 @@ $ RelativeDepth &lt;dbl&gt; 3422, 3357, 3392, 3325, 2871, 2934, 2903, 2839, 2449
 <section id="不同站位的垂直剖面" class="slide level2">
 <h2>不同站位的垂直剖面</h2>
 
-<img data-src="talk07_files/figure-revealjs/unnamed-chunk-31-1.png" width="960" class="r-stretch"></section>
-<section id="gam-拟合-isit-数据" class="slide level2 scrollable">
+<img data-src="talk07_files/figure-revealjs/unnamed-chunk-43-1.png" width="960" class="r-stretch"></section>
+<section id="gam-拟合-isit-数据" class="slide level2">
 <h2>GAM 拟合 ISIT 数据</h2>
 <p>这里通过 <code>by</code> 参数来为不同的站位拟合不同的平滑函数：</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a>ISIT_gam_m0 <span class="ot">&lt;-</span> <span class="fu">gam</span>(SampleDepth <span class="sc">~</span> <span class="fu">s</span>(Sources, <span class="at">by =</span> Station), <span class="at">data =</span> ISIT_station_1289, <span class="at">method =</span> <span class="st">"REML"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href=""></a>ISIT_gam_m0 <span class="ot">&lt;-</span> <span class="fu">gam</span>(Sources <span class="sc">~</span> <span class="fu">s</span>(SampleDepth, <span class="at">by =</span> Station), <span class="at">data =</span> ISIT_station_1289, <span class="at">method =</span> <span class="st">"REML"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>作业：</p>
+<div class="panel-tabset">
+<ul id="tabset-10" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-10-1">代码</a></li><li><a href="#tabset-10-2">图像</a></li></ul>
+<div class="tab-content">
+<div id="tabset-10-1">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href=""></a>ISIT_station_1289 <span class="sc">|&gt;</span></span>
+<span id="cb45-2"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">pred =</span> <span class="fu">predict</span>(ISIT_gam_m0)) <span class="sc">|&gt;</span></span>
+<span id="cb45-3"><a href=""></a>  <span class="fu">arrange</span>(Station, SampleDepth) <span class="sc">|&gt;</span></span>
+<span id="cb45-4"><a href=""></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb45-5"><a href=""></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(SampleDepth, Sources)) <span class="sc">+</span></span>
+<span id="cb45-6"><a href=""></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(SampleDepth, pred), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb45-7"><a href=""></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb45-8"><a href=""></a>  <span class="fu">scale_x_reverse</span>() <span class="sc">+</span> </span>
+<span id="cb45-9"><a href=""></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Station)<span class="sc">+</span></span>
+<span id="cb45-10"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"Depth (m)"</span>) <span class="sc">+</span></span>
+<span id="cb45-11"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Sources"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-10-2">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="talk07_files/figure-revealjs/unnamed-chunk-46-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="预计作业" class="slide level2 scrollable">
+<h2>预计作业</h2>
 <ol type="1">
 <li>使用 <code>summary()</code>，<code>plot()</code> 和 <code>gam.check()</code> 来解读模型结果。</li>
-<li>以上模型与下面模型有何区别。</li>
+<li><code>ISIT_gam_m0</code>与下面模型有何区别。</li>
 <li><code>ISIT_gam_m0</code>是否需要优化，如何优化？</li>
 </ol>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href=""></a>ISIT_gam_m1 <span class="ot">&lt;-</span> <span class="fu">gam</span>(SampleDepth <span class="sc">~</span> Station <span class="sc">+</span> <span class="fu">s</span>(Sources, <span class="at">by =</span> Station), <span class="at">data =</span> ISIT_station_1289, <span class="at">method =</span> <span class="st">"REML"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href=""></a>ISIT_gam_m1 <span class="ot">&lt;-</span> <span class="fu">gam</span>(Sources <span class="sc">~</span> Station <span class="sc">+</span> <span class="fu">s</span>(SampleDepth, <span class="at">by =</span> Station), <span class="at">data =</span> ISIT_station_1289, <span class="at">method =</span> <span class="st">"REML"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section>
+<section id="参考资料" class="slide level2">
+<h2>参考资料</h2>
+<ul>
+<li>Wood, S. N. (2017). Generalized additive models: an introduction with R. CRC press.</li>
+<li>Zuur, A. F., Ieno, E. N., Walker, N., Saveliev, A. A., &amp; Smith, G. M. (2009). Mixed effects models and extensions in ecology with R. Springer Science &amp; Business Media.</li>
+</ul>
 
 </section></section>
 

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.35">
+<meta name="generator" content="quarto-1.9.36">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -69,7 +69,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="homework06_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="homework06_files/libs/quarto-html/anchor.min.js"></script>
 <link href="homework06_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="homework06_files/libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="homework06_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="homework06_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="homework06_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="homework06_files/libs/bootstrap/bootstrap-138a6193a3bd40baf1e627da441a4734.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -116,25 +116,19 @@ window.Quarto = {
   <ul>
   <li><a href="#作业目标" id="toc-作业目标" class="nav-link active" data-scroll-target="#作业目标">作业目标</a></li>
   <li><a href="#提交要求必须遵守" id="toc-提交要求必须遵守" class="nav-link" data-scroll-target="#提交要求必须遵守">提交要求（必须遵守）</a></li>
-  <li><a href="#本次作业会用到的-r-包" id="toc-本次作业会用到的-r-包" class="nav-link" data-scroll-target="#本次作业会用到的-r-包">本次作业会用到的 R 包</a></li>
   <li><a href="#数据准备" id="toc-数据准备" class="nav-link" data-scroll-target="#数据准备">数据准备</a></li>
-  <li><a href="#part-1嵌套模型比较与顺序平方和" id="toc-part-1嵌套模型比较与顺序平方和" class="nav-link" data-scroll-target="#part-1嵌套模型比较与顺序平方和">Part 1：嵌套模型比较与顺序平方和</a>
+  <li><a href="#section-a一般线性-f-检验" id="toc-section-a一般线性-f-检验" class="nav-link" data-scroll-target="#section-a一般线性-f-检验">Section A：一般线性 F 检验</a>
   <ul class="collapse">
-  <li><a href="#回顾三个模型" id="toc-回顾三个模型" class="nav-link" data-scroll-target="#回顾三个模型">回顾：三个模型</a></li>
-  <li><a href="#顺序平方和的两个等价定义" id="toc-顺序平方和的两个等价定义" class="nav-link" data-scroll-target="#顺序平方和的两个等价定义">顺序平方和的两个等价定义</a></li>
-  <li><a href="#整体-f-检验与部分-f-检验" id="toc-整体-f-检验与部分-f-检验" class="nav-link" data-scroll-target="#整体-f-检验与部分-f-检验">整体 F 检验与部分 F 检验</a></li>
+  <li><a href="#关键概念回顾" id="toc-关键概念回顾" class="nav-link" data-scroll-target="#关键概念回顾">关键概念回顾</a></li>
+  <li><a href="#研究问题" id="toc-研究问题" class="nav-link" data-scroll-target="#研究问题">研究问题</a></li>
   </ul></li>
-  <li><a href="#part-2anova-与-drop1-的结果解读" id="toc-part-2anova-与-drop1-的结果解读" class="nav-link" data-scroll-target="#part-2anova-与-drop1-的结果解读">Part 2：<code>anova()</code> 与 <code>drop1()</code> 的结果解读</a>
+  <li><a href="#section-br2调整-r2-与部分-r2" id="toc-section-br2调整-r2-与部分-r2" class="nav-link" data-scroll-target="#section-br2调整-r2-与部分-r2">Section B：<span class="math inline">\(R^2\)</span>、调整 <span class="math inline">\(R^2\)</span> 与部分 <span class="math inline">\(R^2\)</span></a>
   <ul class="collapse">
-  <li><a href="#当-anova-直接用于单个线性模型" id="toc-当-anova-直接用于单个线性模型" class="nav-link" data-scroll-target="#当-anova-直接用于单个线性模型">当 <code>anova()</code> 直接用于单个线性模型</a></li>
-  <li><a href="#drop1-的思路" id="toc-drop1-的思路" class="nav-link" data-scroll-target="#drop1-的思路"><code>drop1()</code> 的思路</a></li>
+  <li><a href="#关键概念回顾-1" id="toc-关键概念回顾-1" class="nav-link" data-scroll-target="#关键概念回顾-1">关键概念回顾</a></li>
   </ul></li>
-  <li><a href="#part-3多重共线性与-vif-的手动计算" id="toc-part-3多重共线性与-vif-的手动计算" class="nav-link" data-scroll-target="#part-3多重共线性与-vif-的手动计算">Part 3：多重共线性与 VIF 的手动计算</a>
+  <li><a href="#section-c多重共线性诊断" id="toc-section-c多重共线性诊断" class="nav-link" data-scroll-target="#section-c多重共线性诊断">Section C：多重共线性诊断</a>
   <ul class="collapse">
-  <li><a href="#先观察解释变量之间的关系" id="toc-先观察解释变量之间的关系" class="nav-link" data-scroll-target="#先观察解释变量之间的关系">先观察解释变量之间的关系</a></li>
-  <li><a href="#回顾-vif-的定义" id="toc-回顾-vif-的定义" class="nav-link" data-scroll-target="#回顾-vif-的定义">回顾 VIF 的定义</a></li>
-  <li><a href="#自定义函数-vif_man" id="toc-自定义函数-vif_man" class="nav-link" data-scroll-target="#自定义函数-vif_man">自定义函数 <code>vif_man</code></a></li>
-  <li><a href="#进一步思考条件数" id="toc-进一步思考条件数" class="nav-link" data-scroll-target="#进一步思考条件数">进一步思考：条件数</a></li>
+  <li><a href="#关键概念回顾-2" id="toc-关键概念回顾-2" class="nav-link" data-scroll-target="#关键概念回顾-2">关键概念回顾</a></li>
   </ul></li>
   <li><a href="#文档表达与规范" id="toc-文档表达与规范" class="nav-link" data-scroll-target="#文档表达与规范">文档表达与规范</a></li>
   <li><a href="#ai-使用声明必填模板" id="toc-ai-使用声明必填模板" class="nav-link" data-scroll-target="#ai-使用声明必填模板">AI 使用声明（必填模板）</a>
@@ -142,6 +136,7 @@ window.Quarto = {
   <li><a href="#情况-1我使用了-ai-工具" id="toc-情况-1我使用了-ai-工具" class="nav-link" data-scroll-target="#情况-1我使用了-ai-工具">情况 1：我使用了 AI 工具</a></li>
   <li><a href="#情况-2我未使用-ai-工具" id="toc-情况-2我未使用-ai-工具" class="nav-link" data-scroll-target="#情况-2我未使用-ai-工具">情况 2：我未使用 AI 工具</a></li>
   </ul></li>
+  <li><a href="#完成作业用时" id="toc-完成作业用时" class="nav-link" data-scroll-target="#完成作业用时">完成作业用时</a></li>
   </ul>
 </nav>
 </div>
@@ -150,7 +145,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">作业06：多元线性回归与多重共线性的诊断</h1>
-<p class="subtitle lead">复习第六讲内容，掌握多元线性回归中的模型比较、顺序平方和与共线性诊断</p>
+<p class="subtitle lead">复习第六讲内容，掌握多元线性回归中的假设检验、模型比较与共线性诊断</p>
 </div>
 
 
@@ -173,14 +168,17 @@ window.Quarto = {
 </header>
 
 
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <section id="作业目标" class="level2">
 <h2 class="anchored" data-anchor-id="作业目标">作业目标</h2>
 <p>本次作业对应第六讲 <code>talk06.qmd</code>，目标是：</p>
 <ol type="1">
-<li>理解多元线性回归中“控制其他变量不变”这一系数解释逻辑。</li>
-<li>学会用嵌套模型比较理解整体 F 检验、部分 F 检验与顺序平方和。</li>
-<li>理解 <code>anova()</code> 与 <code>drop1()</code> 在线性模型中的不同含义。</li>
-<li>学会手动计算方差膨胀因子（VIF），并据此诊断多重共线性。</li>
+<li>掌握多元线性回归中假设检验的一般方法（一般线性 F 检验）。</li>
+<li>理解 <span class="math inline">\(R^2\)</span>、调整 <span class="math inline">\(R^2\)</span> 与部分 <span class="math inline">\(R^2\)</span> 的含义与计算。</li>
+<li>学会使用 VIF 和条件数诊断多重共线性问题。</li>
 </ol>
 <p>预计完成时间：<strong>2-3 小时</strong>。</p>
 </section>
@@ -198,16 +196,9 @@ window.Quarto = {
 <li>报告完成本次作业花费的时间。</li>
 </ul>
 </section>
-<section id="本次作业会用到的-r-包" class="level2">
-<h2 class="anchored" data-anchor-id="本次作业会用到的-r-包">本次作业会用到的 R 包</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
 <section id="数据准备" class="level2">
 <h2 class="anchored" data-anchor-id="数据准备">数据准备</h2>
-<p>本次作业继续使用 <code>mtcars</code> 数据集。为了便于展示车型名称，先整理出一个新的数据框：</p>
+<p>本次作业使用 <code>mtcars</code> 数据集，以 <code>mpg</code>（每加仑英里数）作为响应变量，<code>hp</code>（马力）、<code>wt</code>（车重）和 <code>disp</code>（排量）作为解释变量。</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="ot">&lt;-</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  mtcars <span class="sc">|&gt;</span></span>
@@ -231,361 +222,142 @@ window.Quarto = {
 # ℹ 22 more rows</code></pre>
 </div>
 </div>
-<p>本讲中我们主要关心 <code>mpg</code> 与 <code>hp</code>、<code>wt</code>、<code>disp</code> 之间的关系。先拟合几个后续会反复使用的模型：</p>
+<p>先拟合几个后续会反复使用的模型：</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mtcars_lm_null <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> mtcars_df)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mtcars_lm_hp <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>mtcars_lm_hp_wt <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> wt, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>mtcars_lm_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> wt <span class="sc">+</span> disp, <span class="at">data =</span> mtcars_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>mtcars_lm_full <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> wt <span class="sc">+</span> disp, <span class="at">data =</span> mtcars_df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<hr>
 </section>
-<section id="part-1嵌套模型比较与顺序平方和" class="level2">
-<h2 class="anchored" data-anchor-id="part-1嵌套模型比较与顺序平方和">Part 1：嵌套模型比较与顺序平方和</h2>
-<section id="回顾三个模型" class="level3">
-<h3 class="anchored" data-anchor-id="回顾三个模型">回顾：三个模型</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(mtcars_lm_hp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>mpg ~ hp</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(mtcars_lm_hp_wt)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>mpg ~ hp + wt</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">formula</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>mpg ~ hp + wt + disp</code></pre>
-</div>
-</div>
-<p>对于任意一个线性模型，都可以通过残差平方和衡量“模型还没解释掉多少变异”：</p>
-<p><span class="math display">\[
-\mathrm{SSE} = \sum_{i = 1}^{n} (y_i - \hat{y}_i)^2
-\]</span></p>
-<p>下面先提取几个模型的残差平方和：</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sse_hp <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">resid</span>(mtcars_lm_hp)<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>sse_hp_wt <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">resid</span>(mtcars_lm_hp_wt)<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>sse_full <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">resid</span>(mtcars_lm_full)<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sse_hp =</span> sse_hp,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sse_hp_wt =</span> sse_hp_wt,</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">sse_full =</span> sse_full</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   sse_hp sse_hp_wt  sse_full 
- 447.6743  195.0478  194.9907 </code></pre>
-</div>
-</div>
-</section>
-<section id="顺序平方和的两个等价定义" class="level3">
-<h3 class="anchored" data-anchor-id="顺序平方和的两个等价定义">顺序平方和的两个等价定义</h3>
-<p>对于已有变量组 <span class="math inline">\(A\)</span> 和新加入的变量组 <span class="math inline">\(B\)</span>，顺序平方和可以写为</p>
-<p><span class="math display">\[
-\mathrm{SSR}(B \mid A)
-= \mathrm{SSE}(A) - \mathrm{SSE}(A, B)
-\]</span></p>
-<p>也可以写为</p>
-<p><span class="math display">\[
-\mathrm{SSR}(B \mid A)
-= \sum_{i=1}^n \left(\hat{y}_{i, A,B} - \hat{y}_{i, A}\right)^2
-\]</span></p>
-<p>这两个公式一个从“残差平方和减少了多少”出发，另一个从“拟合值多解释了多少变异”出发。它们在理论上是等价的。</p>
-<p>下面先看一个具体例子：在已经有 <code>hp</code> 的基础上，再加入变量组 <code>wt + disp</code>。</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ssr_group_from_sse <span class="ot">&lt;-</span> sse_hp <span class="sc">-</span> sse_full</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>yhat_hp <span class="ot">&lt;-</span> <span class="fu">fitted</span>(mtcars_lm_hp)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>yhat_full <span class="ot">&lt;-</span> <span class="fu">fitted</span>(mtcars_lm_full)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>ssr_group_from_fitted <span class="ot">&lt;-</span> <span class="fu">sum</span>((yhat_full <span class="sc">-</span> yhat_hp)<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ssr_group_from_sse =</span> ssr_group_from_sse,</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">ssr_group_from_fitted =</span> ssr_group_from_fitted</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   ssr_group_from_sse ssr_group_from_fitted 
-             252.6836              252.6836 </code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mtcars_lm_hp, mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 6
-  Res.Df   RSS    Df `Sum of Sq`     F    `Pr(&gt;F)`
-   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
-1     30  448.    NA         NA   NA   NA         
-2     28  195.     2        253.  18.1  0.00000885</code></pre>
-</div>
-</div>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>第一题
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>通过手动计算，验证顺序平方和的两个等价定义。</p>
-<ol type="1">
-<li>令 <span class="math inline">\(A = \{\texttt{hp}\}\)</span>，<span class="math inline">\(B = \{\texttt{wt}, \texttt{disp}\}\)</span>，分别使用 <span class="math display">\[
-\mathrm{SSR}(B \mid A) = \mathrm{SSE}(A) - \mathrm{SSE}(A, B)
-\]</span> 和 <span class="math display">\[
-\mathrm{SSR}(B \mid A) = \sum_{i=1}^n \left(\hat{y}_{i, A,B} - \hat{y}_{i, A}\right)^2
-\]</span> 计算顺序平方和。</li>
-<li>比较你得到的两个数值，它们应该满足什么关系？</li>
-<li>说明这个顺序平方和在模型比较中的统计含义。</li>
-<li>结合 <code>anova(mtcars_lm_hp, mtcars_lm_full)</code> 的结果，说明这个两自由度顺序平方和如何进入一般线性 F 检验。</li>
-</ol>
-</div>
-</div>
-</section>
-<section id="整体-f-检验与部分-f-检验" class="level3">
-<h3 class="anchored" data-anchor-id="整体-f-检验与部分-f-检验">整体 F 检验与部分 F 检验</h3>
-<p>整体 F 检验把“只有截距”的模型作为简化模型，而部分 F 检验则比较两个一般的嵌套模型。</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mtcars_lm_null, mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 6
-  Res.Df   RSS    Df `Sum of Sq`     F  `Pr(&gt;F)`
-   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
-1     31 1126.    NA         NA   NA   NA       
-2     28  195.     3        931.  44.6  8.65e-11</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mtcars_lm_hp, mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 6
-  Res.Df   RSS    Df `Sum of Sq`     F    `Pr(&gt;F)`
-   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
-1     30  448.    NA         NA   NA   NA         
-2     28  195.     2        253.  18.1  0.00000885</code></pre>
-</div>
-</div>
-<p>请结合上面的两个比较思考：</p>
+<section id="section-a一般线性-f-检验" class="level2">
+<h2 class="anchored" data-anchor-id="section-a一般线性-f-检验">Section A：一般线性 F 检验</h2>
+<section id="关键概念回顾" class="level3">
+<h3 class="anchored" data-anchor-id="关键概念回顾">关键概念回顾</h3>
+<p><strong>一般线性 F 检验</strong>用于比较嵌套模型：</p>
 <ul>
-<li>哪一个对应“模型整体是否具有解释力”？</li>
-<li>哪一个对应“在控制 <code>hp</code> 后，<code>wt</code> 与 <code>disp</code> 是否还能整体提高拟合”？</li>
+<li><strong>简化模型（Reduced Model）</strong> <span class="math inline">\(M_R\)</span>：原假设约束下的模型</li>
+<li><strong>完整模型（Full Model）</strong> <span class="math inline">\(M_F\)</span>：包含更多参数的模型</li>
+</ul>
+<p>F 统计量定义为：</p>
+<p><span class="math display">\[
+F = \frac{[\text{SSE}(M_R) - \text{SSE}(M_F)] / q}{\text{SSE}(M_F) / (n - p_F - 1)}
+\]</span></p>
+<p>其中：</p>
+<ul>
+<li><span class="math inline">\(q\)</span> 是约束个数（被检验的参数个数）</li>
+<li><span class="math inline">\(p_F\)</span> 是完整模型中解释变量的个数</li>
+<li><span class="math inline">\(n\)</span> 是样本量</li>
 </ul>
 </section>
+<section id="研究问题" class="level3">
+<h3 class="anchored" data-anchor-id="研究问题">研究问题</h3>
+<p><strong>研究问题</strong>：在已经控制 <code>hp</code>（马力）后，<code>wt</code>（车重）和 <code>disp</code>（排量）是否还能整体提升对 <code>mpg</code>（每加仑英里数）的解释力？</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span><strong>第一题：</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>写出该研究问题对应的<strong>原假设</strong> <span class="math inline">\(H_0\)</span> 和<strong>备择假设</strong> <span class="math inline">\(H_A\)</span>。</li>
+<li>根据假设，构建对应的<strong>简化模型</strong>（Reduced Model）和<strong>完整模型</strong>（Full Model）。</li>
+<li>手动计算 F 统计量，并使用 <code>pf()</code> 函数计算 p 值。</li>
+<li>使用 <code>anova()</code> 函数验证你的计算结果。</li>
+<li>基于统计结果，回答研究问题：控制 <code>hp</code> 后，<code>wt</code> 和 <code>disp</code> 是否还能提供额外解释力？</li>
+</ol>
+</div>
+</div>
+<hr>
 </section>
-<section id="part-2anova-与-drop1-的结果解读" class="level2">
-<h2 class="anchored" data-anchor-id="part-2anova-与-drop1-的结果解读">Part 2：<code>anova()</code> 与 <code>drop1()</code> 的结果解读</h2>
-<section id="当-anova-直接用于单个线性模型" class="level3">
-<h3 class="anchored" data-anchor-id="当-anova-直接用于单个线性模型">当 <code>anova()</code> 直接用于单个线性模型</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 5
-     Df `Sum Sq` `Mean Sq` `F value`  `Pr(&gt;F)`
-  &lt;int&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-1     1 678.      678.      97.4      1.28e-10
-2     1 253.      253.      36.3      1.72e- 6
-3     1   0.0571    0.0571   0.00820  9.29e- 1
-4    28 195.        6.96    NA       NA       </code></pre>
-</div>
-</div>
-<p>对单个 <code>lm</code> 对象使用 <code>anova()</code> 时，输出的是按变量进入顺序得到的<strong>顺序平方和</strong>（Type I sum of squares）。</p>
-<p>在模型</p>
-<p><span class="math display">\[
-\texttt{mpg} \sim \texttt{hp} + \texttt{wt} + \texttt{disp}
-\]</span></p>
-<p>中：</p>
+</section>
+<section id="section-br2调整-r2-与部分-r2" class="level2">
+<h2 class="anchored" data-anchor-id="section-br2调整-r2-与部分-r2">Section B：<span class="math inline">\(R^2\)</span>、调整 <span class="math inline">\(R^2\)</span> 与部分 <span class="math inline">\(R^2\)</span></h2>
+<section id="关键概念回顾-1" class="level3">
+<h3 class="anchored" data-anchor-id="关键概念回顾-1">关键概念回顾</h3>
 <ul>
-<li><code>hp</code> 这一行衡量的是 <code>hp</code> 在最先进入模型时解释了多少变异；</li>
-<li><code>wt</code> 这一行衡量的是 <code>wt</code> 在 <code>hp</code> 已经进入后又额外解释了多少变异；</li>
-<li><code>disp</code> 这一行衡量的是 <code>disp</code> 在 <code>hp</code> 和 <code>wt</code> 已经进入后又额外解释了多少变异。</li>
+<li><p><strong>决定系数 <span class="math inline">\(R^2\)</span></strong>：模型解释的变异占总变异的比例 <span class="math display">\[
+R^2 = 1 - \frac{\text{SSE}}{\text{SST}}
+\]</span></p></li>
+<li><p><strong>调整 <span class="math inline">\(R^2\)</span></strong>：对模型复杂度进行惩罚的 <span class="math inline">\(R^2\)</span> <span class="math display">\[
+\bar{R}^2 = 1 - \frac{\text{SSE}/(n-p-1)}{\text{SST}/(n-1)}
+\]</span></p></li>
 </ul>
-<p>因此，这个表的结果会受到<strong>变量顺序</strong>影响。</p>
-</section>
-<section id="drop1-的思路" class="level3">
-<h3 class="anchored" data-anchor-id="drop1-的思路"><code>drop1()</code> 的思路</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">drop1</span>(mtcars_lm_full, <span class="at">test =</span> <span class="st">"F"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 4 × 6
-     Df `Sum of Sq`   RSS   AIC `F value` `Pr(&gt;F)`
-  &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-1    NA     NA       195.  65.8  NA       NA      
-2     1     51.7     247.  71.4   7.42     0.0110 
-3     1     88.5     283.  75.8  12.7      0.00133
-4     1      0.0571  195.  63.8   0.00820  0.929  </code></pre>
-</div>
-</div>
-<p><code>drop1()</code> 从完整模型出发，每次删除一个变量，并把删去后的模型与完整模型进行比较。因此它回答的是：</p>
-<blockquote class="blockquote">
-<p>在其他变量已经保留在模型中的前提下，删去某一个变量是否会显著恶化模型拟合？</p>
-</blockquote>
-<p>所以，<code>drop1(..., test = "F")</code> 给出的更接近“控制其他变量后的单个变量检验”，与系数 t 检验在一自由度下是对应的。</p>
-<p>为了更清楚地看到 <code>drop1()</code> 的含义，可以手动做一次：</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mtcars_lm_no_disp <span class="ot">&lt;-</span> <span class="fu">lm</span>(mpg <span class="sc">~</span> hp <span class="sc">+</span> wt, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mtcars_lm_no_disp, mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 6
-  Res.Df   RSS    Df `Sum of Sq`        F `Pr(&gt;F)`
-   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-1     29  195.    NA     NA      NA         NA    
-2     28  195.     1      0.0571  0.00820    0.929</code></pre>
-</div>
-</div>
+<p>其中 <span class="math inline">\(p\)</span> 是解释变量个数。</p>
+<ul>
+<li><strong>部分 <span class="math inline">\(R^2\)</span></strong>：衡量在已有变量基础上，新变量组能额外解释多少剩余变异 <span class="math display">\[
+R^2_{\text{partial}} = \frac{\text{SSE}(M_R) - \text{SSE}(M_F)}{\text{SSE}(M_R)}
+\]</span></li>
+</ul>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>第二题
+<span class="screen-reader-only">Important</span><strong>第二题：</strong>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>当 <code>anova()</code> 函数被应用于一个线性模型时，如何解读其返回结果？和 <code>drop1()</code> 的结果有什么不同？</p>
-<p>请至少回答以下几点：</p>
 <ol type="1">
-<li><code>anova(mtcars_lm_full)</code> 表中每一行的原假设分别是什么？</li>
-<li>为什么说 <code>anova(mtcars_lm_full)</code> 的结果依赖变量进入模型的顺序？</li>
-<li><code>drop1(mtcars_lm_full, test = "F")</code> 中每一行的检验在统计意义上对应什么问题？</li>
-<li>比较 <code>anova(mtcars_lm_full)</code> 与 <code>drop1(mtcars_lm_full, test = "F")</code> 对 <code>disp</code> 的结论，并解释为什么它们的出发点不同。</li>
+<li>手动计算完整模型（<code>mpg ~ hp + wt + disp</code>）的 <span class="math inline">\(R^2\)</span> 和调整 <span class="math inline">\(R^2\)</span>，并与 <code>summary()</code> 输出的结果进行验证。</li>
+<li>对于简化模型（<code>mpg ~ hp</code>）和完整模型，计算<strong>部分 <span class="math inline">\(R^2\)</span></strong>，即 <code>wt + disp</code> 这组变量在 <code>hp</code> 基础上能额外解释多少残差变异。</li>
+<li>解释部分 <span class="math inline">\(R^2\)</span> 的实际含义。</li>
 </ol>
 </div>
 </div>
+<hr>
 </section>
 </section>
-<section id="part-3多重共线性与-vif-的手动计算" class="level2">
-<h2 class="anchored" data-anchor-id="part-3多重共线性与-vif-的手动计算">Part 3：多重共线性与 VIF 的手动计算</h2>
-<section id="先观察解释变量之间的关系" class="level3">
-<h3 class="anchored" data-anchor-id="先观察解释变量之间的关系">先观察解释变量之间的关系</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">|&gt;</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(hp, wt, disp) <span class="sc">|&gt;</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairs</span>(<span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"steelblue"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="homework06_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>mtcars_df <span class="sc">|&gt;</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(hp, wt, disp) <span class="sc">|&gt;</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>            hp        wt      disp
-hp   1.0000000 0.6587479 0.7909486
-wt   0.6587479 1.0000000 0.8879799
-disp 0.7909486 0.8879799 1.0000000</code></pre>
-</div>
-</div>
-<p>从散点图和相关矩阵中可以初步看出，这几个解释变量之间存在一定程度的线性相关。</p>
-</section>
-<section id="回顾-vif-的定义" class="level3">
-<h3 class="anchored" data-anchor-id="回顾-vif-的定义">回顾 VIF 的定义</h3>
-<p>对第 <span class="math inline">\(j\)</span> 个解释变量，如果把它当作响应变量、其余解释变量当作自变量做一个辅助回归，并记该辅助回归的决定系数为 <span class="math inline">\(R_j^2\)</span>，那么</p>
+<section id="section-c多重共线性诊断" class="level2">
+<h2 class="anchored" data-anchor-id="section-c多重共线性诊断">Section C：多重共线性诊断</h2>
+<section id="关键概念回顾-2" class="level3">
+<h3 class="anchored" data-anchor-id="关键概念回顾-2">关键概念回顾</h3>
+<p><strong>方差膨胀因子（VIF）</strong> 用于诊断每个解释变量与其他解释变量的线性重叠程度：</p>
+<p>对第 <span class="math inline">\(j\)</span> 个解释变量，设辅助回归的决定系数为 <span class="math inline">\(R_j^2\)</span>，则</p>
 <p><span class="math display">\[
-\mathrm{VIF}_j = \frac{1}{1 - R_j^2}
+\text{VIF}_j = \frac{1}{1 - R_j^2}
 \]</span></p>
-<p>例如，要计算 <code>hp</code> 的 VIF，就可以拟合辅助回归：</p>
+<p>其中，<span class="math inline">\(R_j^2\)</span> 不是原始回归模型的 <span class="math inline">\(R^2\)</span>，而是将第 <span class="math inline">\(j\)</span> 个变量当作响应变量，用其余所有解释变量去回归它得到的决定系数。</p>
+<p><strong>经验法则</strong>：</p>
+<ul>
+<li>VIF 接近 1：几乎没有共线性问题</li>
+<li>VIF 在 1 到 5 之间：通常可以接受</li>
+<li>VIF 大于 5：需要警惕</li>
+<li>VIF 大于 10：存在较严重的共线性问题</li>
+</ul>
+<p><strong>条件数（Condition Number）</strong> 是从整体设计矩阵角度诊断共线性的方法：</p>
+<p>对标准化后的设计矩阵 <span class="math inline">\(\mathbf{X}\)</span>，条件数定义为最大奇异值与最小奇异值的比值：</p>
 <p><span class="math display">\[
-\texttt{hp} = \gamma_0 + \gamma_1 \texttt{wt} + \gamma_2 \texttt{disp} + e
+\kappa(\mathbf{X}) = \frac{\sigma_{\max}(\mathbf{X})}{\sigma_{\min}(\mathbf{X})}
 \]</span></p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>hp_aux_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(hp <span class="sc">~</span> wt <span class="sc">+</span> disp, <span class="at">data =</span> mtcars_df)</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hp_aux_lm)<span class="sc">$</span>r.squared</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.6345874</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> <span class="fu">summary</span>(hp_aux_lm)<span class="sc">$</span>r.squared)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2.736633</code></pre>
-</div>
-</div>
-</section>
-<section id="自定义函数-vif_man" class="level3">
-<h3 class="anchored" data-anchor-id="自定义函数-vif_man">自定义函数 <code>vif_man</code></h3>
-<p>下面给出一个函数框架。你可以先理解其思路，再补充或重写。</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>vif_man <span class="ot">&lt;-</span> <span class="cf">function</span>(model) {</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  model_matrix <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(model)[, <span class="sc">-</span><span class="dv">1</span>, drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  predictor_names <span class="ot">&lt;-</span> <span class="fu">colnames</span>(model_matrix)</span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  vif_values <span class="ot">&lt;-</span></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">map_dbl</span>(</span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>      predictor_names,</span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">function</span>(var_name) {</span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>        y_aux <span class="ot">&lt;-</span> model_matrix[, var_name]</span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>        x_aux <span class="ot">&lt;-</span> model_matrix[, <span class="fu">setdiff</span>(predictor_names, var_name), drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>        aux_df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(x_aux) <span class="sc">|&gt;</span></span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">y_aux =</span> y_aux)</span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>        aux_formula <span class="ot">&lt;-</span></span>
-<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>          <span class="fu">reformulate</span>(</span>
-<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">termlabels =</span> <span class="fu">setdiff</span>(predictor_names, var_name),</span>
-<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">response =</span> <span class="st">"y_aux"</span></span>
-<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>          )</span>
-<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>        aux_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(aux_formula, <span class="at">data =</span> aux_df)</span>
-<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>        r_squared_aux <span class="ot">&lt;-</span> <span class="fu">summary</span>(aux_lm)<span class="sc">$</span>r.squared</span>
-<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> r_squared_aux)</span>
-<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(vif_values) <span class="ot">&lt;-</span> predictor_names</span>
-<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>  vif_values</span>
-<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vif_man</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      hp       wt     disp 
-2.736633 4.844618 7.324517 </code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vif</span>(mtcars_lm_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      hp       wt     disp 
-2.736633 4.844618 7.324517 </code></pre>
-</div>
-</div>
+<ul>
+<li><span class="math inline">\(\kappa &lt; 10\)</span>：通常问题不大</li>
+<li><span class="math inline">\(10 \le \kappa &lt; 30\)</span>：提示中等程度的共线性</li>
+<li><span class="math inline">\(\kappa \ge 30\)</span>：常被视为较明显的共线性问题</li>
+</ul>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span>第三题
+<span class="screen-reader-only">Important</span><strong>第三题：</strong>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>自定义一个函数 <code>vif_man</code> 用于计算线性模型中各解释变量的 VIF，并与 <code>car</code> 包中 <code>vif()</code> 函数的结果进行比较。</p>
-<p>请至少完成以下内容：</p>
 <ol type="1">
-<li>解释 <code>vif_man()</code> 的基本思路：它为什么要对每个解释变量分别做一次辅助回归？</li>
-<li>给出 <code>mtcars_lm_full</code> 中 <code>hp</code>、<code>wt</code>、<code>disp</code> 的 VIF 结果，并与 <code>vif()</code> 的输出比较。</li>
-<li>如果你手动写出的 <code>vif_man()</code> 与 <code>vif()</code> 结果一致，这说明什么？</li>
-<li>结合本题结果，说明多重共线性会如何影响回归系数的标准误、单个变量的显著性检验以及结果解释。</li>
+<li>定义一个新函数 <code>vif_man()</code>，手动计算完整模型（<code>mpg ~ hp + wt + disp</code>）中各变量的 VIF，并与 <code>car::vif()</code> 的结果进行比较验证。</li>
+<li>根据 VIF 值，判断是否存在多重共线性问题。</li>
+<li>结合相关矩阵和条件数（kappa）对多重共线性进行综合判断。</li>
 </ol>
 </div>
 </div>
-</section>
-<section id="进一步思考条件数" class="level3">
-<h3 class="anchored" data-anchor-id="进一步思考条件数">进一步思考：条件数</h3>
-<p>除了 VIF，还可以从整体设计矩阵出发，用条件数初步判断共线性问题。</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>x_predictors <span class="ot">&lt;-</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">model.matrix</span>(mtcars_lm_full)[, <span class="sc">-</span><span class="dv">1</span>] <span class="sc">|&gt;</span></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kappa</span>(x_predictors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 4.669886</code></pre>
-</div>
-</div>
-<p>这不是必做题，但你可以把它和 VIF 的结论放在一起思考：一个是逐个变量地看“它能否被其他变量解释”，另一个是整体地看“设计矩阵是否接近线性相关”。</p>
+<hr>
 </section>
 </section>
 <section id="文档表达与规范" class="level2">
@@ -615,7 +387,12 @@ disp 0.7909486 0.8879799 1.0000000</code></pre>
 <li>本次作业未使用任何 AI 工具。</li>
 <li>我确认并对最终提交内容负责：是</li>
 </ul>
+<hr>
 </section>
+</section>
+<section id="完成作业用时" class="level2">
+<h2 class="anchored" data-anchor-id="完成作业用时">完成作业用时</h2>
+<p>请在此处填写完成作业大约花费的时间：_______ 小时</p>
 </section>
 
 </main>

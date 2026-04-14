@@ -97,7 +97,7 @@ $$
 $$
 
 ::: {.fragment}
-对于以上的方程，我们都可以定义一个新的自变量，将其转换成我们熟悉的线性模型的形式，比如：
+对于以上的方程，可以定义一个新的变量，将其转换成我们熟悉的线性模型的形式，比如：
 $$
 \begin{align}
 &y_i = \beta_0 + \beta_1 log(x_i) + \varepsilon_i \\
@@ -109,12 +109,16 @@ $$
 
 ## 分类变量怎么进入“线性”模型？
 
+::: {.fragment}
 - 关键仍然是：**对参数是线性的**
-- 分类变量本身不能直接做加减乘除，但我们可以把“属于哪一组”写成 0/1 指示变量（indicator / dummy variables）
+- 分类变量本身不能直接做加减乘除，可以通过定义指示变量（indicator / dummy variables）将其引入线性模型
+
+例如，对于一个二元分类变量，有两个水平 A 和 B，可以定义一个指示变量：
 
 $$
 y_i = \beta_0 + \beta_1 I(x_i = \text{B}) + \varepsilon_i
 $$
+:::
 
 ::: {.fragment}
 - 当 $x_i$ 属于基线组 A 时，$I(x_i = \text{B}) = 0$
@@ -142,51 +146,87 @@ $$
 - 因此 $\beta_1$ 表示 treatment 与 control 的均值差
 :::
 
-## 多水平分类变量：$K$ 组只需要 $K - 1$ 个参数
-
-若 `program` 有三组：A、B、C，以 A 为基线组，则可定义
-
+## 多水平分类变量
+对于有 $K$ 个水平的分类变量，只需要定义 $K - 1$ 个 dummy variables。例如，分类变量 `color`：red、blue 和 green，以 red 为基线水平，则
 $$
 \begin{align}
-D_{Bi} &= I(program_i = \text{B}) \\
-D_{Ci} &= I(program_i = \text{C})
+D_{blue} &= I(color_i = \text{blue}) \\
+D_{green} &= I(color_i = \text{green})
 \end{align}
 $$
 
 于是
-
 $$
-y_i = \beta_0 + \beta_1 D_{Bi} + \beta_2 D_{Ci} + \varepsilon_i
-$$
-
-$$
-\mathbf{X} =
-\begin{bmatrix}
-1 & 0 & 0 \\
-1 & 1 & 0 \\
-1 & 0 & 1
-\end{bmatrix}
+y_i = \beta_0 + \beta_1 D_{blue} + \beta_2 D_{green} + \varepsilon_i
 $$
 
-::: {.fragment}
+:::: {.columns}
+
+::: {.column width="50%"}
+
+|Color |D<sub>blue</sub>	|D<sub>green</sub>|
+|------|-------|----|
+|Red	|0	|0
+|Blue	|1	|0
+|Green	|0	|1
+
+:::
+
+::: {.column width="50%"}
+
+系数解释：
+
 - A 组均值：$\beta_0$
 - B 组均值：$\beta_0 + \beta_1$
 - C 组均值：$\beta_0 + \beta_2$
+
 :::
 
-## R 中如何实现二元分类变量？
+::::
 
+
+## R 示例：分类变量进入`lm()`
+
+::: {.panel-tabset}
+
+### 数据
 ```{r}
 #| echo: true
-binary_demo <- tibble(
-  group = factor(c("control", "control", "control", "treatment", "treatment", "treatment"),
-                 levels = c("control", "treatment")),
-  score = c(72, 75, 74, 80, 83, 85)
-)
+binary_demo <-
+    tribble(
+        ~group, ~score,
+        "control", 72,
+        "control", 75,
+        "control", 74,
+        "treatment", 80,
+        "treatment", 83,
+        "treatment", 85
+    ) |>
+    mutate(group = factor(group, levels = c("control", "treatment")))
+binary_demo
+```
 
+### 模型拟合 
+
+```{r}
 binary_fit <- lm(score ~ group, data = binary_demo)
+summary(binary_fit )
+```
 
+### 模型设计矩阵和系数解释
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r}
 model.matrix(binary_fit)
+```
+:::
+
+::: {.column width="50%"}
+
+```{r}
 coef(binary_fit)
 ```
 
@@ -195,43 +235,198 @@ coef(binary_fit)
 - `grouptreatment` 是 treatment 相对 control 的差值
 :::
 
-## R 中如何实现多水平分类变量？
+:::
 
+::::
+
+:::
+
+
+## R 示例：分类变量进入`lm()`
+
+::: {.panel-tabset}
+### `iris`数据集
+```{r}
+summary(iris)
+```
+
+### 模型拟合
 ```{r}
 #| echo: true
-program_demo <- tibble(
-  program = factor(c("A", "A", "B", "B", "C", "C"), levels = c("A", "B", "C")),
-  score = c(78, 80, 84, 85, 90, 92)
+iris_fit <- lm(Sepal.Length ~ Species, data = iris)
+summary(iris_fit)
+```
+
+### 模型设计矩阵和系数解释
+
+:::: {.columns}
+
+::: {.column width="65%"}
+
+```{r}
+#| echo: false
+model.matrix(iris_fit) |> as_tibble() |> rename(
+    Intercept = `(Intercept)`
 )
+```
+:::
+::: {.column width="35%"}
 
-program_fit <- lm(score ~ program, data = program_demo)
-
-model.matrix(program_fit)
-coef(program_fit)
+```{r}
+#| echo: false
+coef(iris_fit) |> as_tibble(rownames = "Term")
 ```
 
-::: {.fragment}
-- R 默认使用 treatment contrasts
-- 因而这里只会生成 `programB` 和 `programC` 两列
-- 基线组 A 被吸收到截距 `(Intercept)` 中
 :::
 
-## 对比：不同 contrasts 会改变参数解释
+::::
+
+:::
+
+## 多个分类变量
+
+- 分类变量 A 有两个水平：a1 和 a2
+- 分类变量 B 有两个水平：b1 和 b2
+
+定义：
+$$
+\begin{align}
+D_A &= I(A_i = a2) \\
+D_B &= I(B_i = b2)
+\end{align}
+$$
+
+于是
+$$
+y_i = \beta_0 + \beta_1 D_A + \beta_2 D_B + \varepsilon_i
+$$
+
+:::: {.columns}
+
+::: {.column width="30%"}
+
+|A/B |D<sub>A</sub>	|D<sub>B</sub>|
+|------|-------|----|
+|a1/b1	|0	|0	|
+|a2/b1	|1	|0	|
+|a1/b2	|0	|1	|
+|a2/b2	|1	|1	|
+
+:::
+
+::: {.column width="70%"}
+
+系数解释：
+
+- (a1,b1) 组均值：$\beta_0$
+- (a2,b1) 组均值：$\beta_0 + \beta_1$
+- (a1,b2) 组均值：$\beta_0 + \beta_2$
+- (a2,b2) 组均值：$\beta_0 + \beta_1 + \beta_2$
+
+:::
+
+::::  
+
+
+## 多个分类变量：交互效应
+如果我们认为 A 和 B 之间存在交互效应，那么模型可以写成：
+$$
+y_i = \beta_0 + \beta_1 D_A + \beta_2 D_B + \beta_3 (D_A \times D_B) + \varepsilon_i
+$$
+
+|A/B |D<sub>A</sub>	|D<sub>B</sub>|D<sub>A</sub> $\times$ D<sub>B</sub>|
+|:----:|:-----:|:----:|:-----:|
+|a1/b1	|0	|0  |0  |  
+|a2/b1	|1	|0  |0  |  
+|a1/b2	|0	|1  |0  |  
+|a2/b2	|1	|1  |1  |  
+
+## R 示例：多个分类变量进入`lm()`
+`palmerpenguins::penguins`数据集：
+```{r}
+#| echo: true
+palmerpenguins::penguins
+```
+
+## R 示例：多个分类变量进入`lm()`
+问题：企鹅体重的物种间差异和性别间差异？
+
+```{r}
+penguins_lm_m0 <- lm(body_mass_g ~ species + sex, data = palmerpenguins::penguins)
+penguins_lm_m1 <- lm(body_mass_g ~ species * sex, data = palmerpenguins::penguins)
+```
+
+```{r}
+summary(penguins_lm_m1)
+```
+
+## R 示例：多个分类变量进入`lm()`
+使用`anova()`获取不同变量的显著性：
+
+```{r}
+anova(penguins_lm_m1)
+```
+注意：
+
+- 这里的`anova()`给出的显著性对应于顺序平方和（Sequential Sum of Squares），Type I。
+- 对于非平衡数据，不同变量进入模型的顺序会影响`anova()`的结果。
+- 对于非平衡数据，建议使用 Type II 或 Type III 的平方和来获取变量的显著性，可以使用`car::Anova()`函数实现。
+
+## `car::Anova()`
+
+- 对于非平衡数据，如果有充足理由认为不存在交互效应，可以使用 Type II 的平方和
+- 这时候对于每个变量显著性的解读需要基于**其他变量已经在模型中**的前提下进行。
+```{r}
+car::Anova(penguins_lm_m1, type = "II")
+```
+
+## `car::Anova()`
+
+- 对于非平衡数据，如果存在交互效应，可以使用 Type III 的平方和
+- 这时候对于每个变量显著性的解读需要基于**其他变量已经在模型中**的前提下进行。
+- 需要注意的是，Type III 的平方和对于模型中变量的编码方式（contrasts）非常敏感，需要使用 sum contrasts。
+
+如果我们认为 A 和 B 之间存在交互效应，那么模型可以写成：
+$$
+y_i = \beta_0 + \beta_1 D_A + \beta_2 D_B + \beta_3 (D_A \times D_B) + \varepsilon_i
+$$
+
+:::: {.columns}
+
+::: {.column width="50%"}
+|A/B |D<sub>A</sub>	|D<sub>B</sub>|D<sub>A</sub> $\times$ D<sub>B</sub>|
+|:----:|:-----:|:----:|:-----:|
+|a1/b1	|1	|1  |1  |  
+|a2/b1	|-1	|1  |-1  |  
+|a1/b2	|1	|-1  |-1  |  
+|a2/b2	|-1	|-1  |1  |  
+:::
+::: {.column width="50%"}
+- $\beta_0$ 表示各组均值的平均值（grand mean）
+- $\beta_1$ 表示 a1 组相对于各组均值平均值的偏离
+- $\beta_2$ 表示 b1 组相对于各组均值平均值的偏离
+- $\beta_3$ 表示 A 和 B 之间的交互效应
+
+:::
+::::
+
+## `contrasts()`函数
+R 中因子（factor）的默认编码方式是 treatment contrasts，即以第一个水平作为基线水平，其他水平相对于基线水平进行编码。可以使用`contrasts()`函数查看或修改因子的编码方式。例如：
 
 ```{r}
 #| echo: true
-model.matrix(~ program, data = program_demo)
-
-contrasts(program_demo$program) <- contr.sum(3)
-model.matrix(~ program, data = program_demo)
+library(palmerpenguins)
+contrasts(penguins$species)
 ```
 
-::: {.incremental}
-- treatment contrasts：系数表示“相对基线组”的差异
-- sum contrasts：系数表示“相对各组均值平均值（grand mean）”的偏离
-- **拟合值不变，但参数解释会变**
-- 讲完“怎么解释参数”之后，下面看一个真正由函数形状决定的“非线性”关系
-:::
+指定 sum contrasts 后，重新拟合：
+```{r}
+#| echo: true
+contrasts(penguins$species) <- contr.sum(3)
+contrasts(penguins$sex) <- contr.sum(2)
+penguins_lm_m1_sum <- lm(body_mass_g ~ species * sex, data = penguins)
+car::Anova(penguins_lm_m1_sum, type = "III")
+```
 
 ## “非线性”的示例
 米氏方程（Michaelis-Menten equation）
@@ -253,7 +448,7 @@ tibble(
     annotate("text", x = 5, y = 55, label = latex2exp::TeX(r"($v = \frac{v_{max}s}{k_m + s}$)"), size = 10) +
     labs(x = "Substrate concentration (S)", y = "Reaction velocity (V)")
 ```
-### 线性方程的残差
+### 残差图像
 ```{r}
 #| echo: false
 #| fig-align: center
@@ -270,12 +465,19 @@ tibble(
 :::
 
 ## 如何处理非线性关系？
-- 通过转换自变量或响应变量，可以将非线性关系转化为线性关系，例如：
+- 通过一定变换，可以将非线性关系转化为线性关系，例如：
 
 $$
 \begin{align}
 &v_i = \frac{v_{max}s_i}{k_m + s_i} \\
-&\frac{1}{v_i} = \frac{k_m + s_i}{v_{max}s_i} = \frac{k_m}{s_i}\frac{1}{v_{max}} + \frac{1}{v_{max}} \\ 
+\end{align}
+$$
+
+米式方程两边同时取倒数：
+
+$$
+\begin{align}
+&\frac{1}{v_i} = \frac{k_m + s_i}{v_{max}s_i} = \frac{k_m}{v_{max}}\frac{1}{s_i} + \frac{1}{v_{max}} \\ 
 \end{align}
 $$
 
@@ -664,12 +866,12 @@ f2 <-
 f2
 ```
 
-## 三次B样条函数（Cubic B-splines）
+## 三次样条函数（Cubic B-splines）
 
 ::: {.panel-tabset}
 
 ### 特点
-三次B样条函数是一种常用的样条函数，其基函数具有以下特点：
+三次样条函数是一种常用的样条函数，其基函数具有以下特点：
 
 - 由三次多项式片段组成，每个片段在两个相邻的节点（knots）之间定义。
 - 基函数影响范围有限，为相邻5个节点内的区间提供非零值，这使得它们具有局部支持（local support）的性质。
@@ -769,13 +971,13 @@ summary(gtemp_gam_m1)
 ### edf
 edf（effective degrees of freedom）是一个衡量平滑函数复杂度的指标。edf越大，函数越wiggly；edf越小，函数越平滑。
 
-- edf = 1时，函数是一条直线，惩罚想抑制了所有的wiggliness。
+- edf = 1时，函数是一条直线，惩罚项抑制了所有的wiggliness。
 - edf = 2时，函数的关系大致是二次的（一个简单的U形或倒U形）。
 - edf > 2时，函数呈现非线性，且数值越高越复杂。
 
-### p值
+### *p* 值
 
-p值用于检验平滑函数是否显著不同于零函数（即没有关系）。如果p值小于某个显著性水平（如0.05），我们可以拒绝零函数的假设。
+这里 *p* 值用于检验平滑函数是否显著不同于零函数（即没有关系）。如果 *p* 值小于某个显著性水平（如0.05），我们可以拒绝零函数的假设。
 
 预计作业：用实例说明，零函数究竟是下列哪种情况：
 
@@ -814,8 +1016,8 @@ text_output <- capture.output(gam.check(gtemp_gam_m1))
 cat(text_output, sep = "\n") 
 ```
 
-### p值
-这里的p值对应的零假设（Null hypothesis）是：
+### *p* 值
+这里的 *p* 值对应的零假设（Null hypothesis）是：
 
 - H0: 残差是随机分布的，没有系统性的模式。
 - H1: 残差存在系统性的模式，可能表明模型拟合不充分或者存在某些未捕捉到的结构。
@@ -827,6 +1029,7 @@ cat(text_output, sep = "\n")
 ## k 的设定
 
 k 值：
+
 - k 是基函数的维数（数量）。
 - 通过 `s()` 函数中的 `k` 参数来指定。
 - k 的默认值在单变量平滑器中通常是 10。
@@ -850,9 +1053,10 @@ ISIT 数据集[^2]记录了不同站位荧光强度的垂直剖面：
 ```{r}
 #｜ echo: false
 ISIT <- 
-  read_table("data/ISIT.txt") %>%
+  read_table("data/ISIT.txt") |>
   mutate(across(c(Station, Month,Year, Season), factor))
 ```
+
 ::: {.panel-tabset}
 
 ### `print()`
@@ -887,15 +1091,55 @@ ISIT_station_1289 |>
 
 这里通过 `by` 参数来为不同的站位拟合不同的平滑函数：
 ```{r}
-ISIT_gam_m0 <- gam(SampleDepth ~ s(Sources, by = Station), data = ISIT_station_1289, method = "REML")
+ISIT_gam_m0 <- gam(Sources ~ s(SampleDepth, by = Station), data = ISIT_station_1289, method = "REML")
 ```
 
-作业：
+::: {.panel-tabset}
+
+### 代码
+```{r}
+#| eval: false
+ISIT_station_1289 |>
+  mutate(pred = predict(ISIT_gam_m0)) |>
+  arrange(Station, SampleDepth) |>
+  ggplot() +
+  geom_point(aes(SampleDepth, Sources)) +
+  geom_line(aes(SampleDepth, pred), linetype = 2) +
+  coord_flip() +
+  scale_x_reverse() + 
+  facet_wrap(~Station)+
+  xlab("Depth (m)") +
+  ylab("Sources")
+```
+
+### 图像
+```{r}
+#| echo: false
+ISIT_station_1289 |>
+  mutate(pred = predict(ISIT_gam_m0)) |>
+  arrange(Station, SampleDepth) |>
+  ggplot() +
+  geom_point(aes(SampleDepth, Sources)) +
+  geom_line(aes(SampleDepth, pred), linetype = 2) +
+  coord_flip() +
+  scale_x_reverse() + 
+  facet_wrap(~Station)+
+  xlab("Depth (m)") +
+  ylab("Sources")
+```
+:::
+
+## 预计作业
 
 1. 使用 `summary()`，`plot()` 和 `gam.check()` 来解读模型结果。 
-2. 以上模型与下面模型有何区别。
+2. `ISIT_gam_m0`与下面模型有何区别。
 3. `ISIT_gam_m0`是否需要优化，如何优化？
 
 ```{r}
-ISIT_gam_m1 <- gam(SampleDepth ~ Station + s(Sources, by = Station), data = ISIT_station_1289, method = "REML")
+ISIT_gam_m1 <- gam(Sources ~ Station + s(SampleDepth, by = Station), data = ISIT_station_1289, method = "REML")
 ``` 
+
+## 参考资料
+
+- Wood, S. N. (2017). Generalized additive models: an introduction with R. CRC press.
+- Zuur, A. F., Ieno, E. N., Walker, N., Saveliev, A. A., & Smith, G. M. (2009). Mixed effects models and extensions in ecology with R. Springer Science & Business Media.

@@ -16,3 +16,5 @@ slides/talk01/talk01.zip
 */.DS_Store
 */*/.DS_Store
 .worktrees/
+.qwen/
+docs/

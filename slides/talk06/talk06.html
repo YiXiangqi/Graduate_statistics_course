@@ -983,9 +983,9 @@ disp 0.7909486 0.8879799 1.0000000</code></pre>
 <span id="cb41-2"><a href=""></a>  <span class="fu">model.matrix</span>(mtcars_lm_full)[, <span class="sc">-</span><span class="dv">1</span>] <span class="sc">|&gt;</span></span>
 <span id="cb41-3"><a href=""></a>  <span class="fu">scale</span>(<span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb41-4"><a href=""></a></span>
-<span id="cb41-5"><a href=""></a><span class="fu">kappa</span>(x_predictors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb41-5"><a href=""></a><span class="fu">kappa</span>(x_predictors, <span class="at">exact =</span> <span class="cn">TRUE</span>) <span class="co"># exact = TRUE </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4.669886</code></pre>
+<pre><code>[1] 5.469549</code></pre>
 </div>
 </div>
 </div>
@@ -1010,10 +1010,11 @@ disp 0.7909486 0.8879799 1.0000000</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1588.348</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href=""></a><span class="fu">kappa</span>(x_predictors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href=""></a><span class="fu">kappa</span>(x_predictors, <span class="at">exact =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4.669886</code></pre>
+<pre><code>[1] 5.469549</code></pre>
 </div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href=""></a><span class="co"># exact logical. Should the result be exact (up to small rounding error) as opposed to fast (but quite inaccurate)?</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>第一个结果来自原始模型矩阵；第二个结果来自更适合诊断共线性的标准化预测变量矩阵。</p>
 </section>

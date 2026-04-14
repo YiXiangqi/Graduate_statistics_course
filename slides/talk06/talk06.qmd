@@ -693,7 +693,7 @@ x_predictors <-
   model.matrix(mtcars_lm_full)[, -1] |>
   scale(center = TRUE, scale = TRUE)
 
-kappa(x_predictors)
+kappa(x_predictors, exact = TRUE) # exact = TRUE 
 ```
 :::
 
@@ -710,7 +710,8 @@ max(svd_x) / min(svd_x)
 
 ```{r}
 kappa(model.matrix(mtcars_lm_full))
-kappa(x_predictors)
+kappa(x_predictors, exact = TRUE)
+# exact logical. Should the result be exact (up to small rounding error) as opposed to fast (but quite inaccurate)?
 ```
 
 第一个结果来自原始模型矩阵；第二个结果来自更适合诊断共线性的标准化预测变量矩阵。

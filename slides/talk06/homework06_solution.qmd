@@ -62,14 +62,17 @@ c(SSE_reduced = sse_reduced, SSE_full = sse_full)
 ```
 
 计算 F 统计量：
+$$
+F =
+\frac{\bigl[\mathrm{SSE}(M_R) - \mathrm{SSE}(M_F)\bigr] / q}
+{\mathrm{SSE}(M_F) / (n - p_F - 1)}
+$$
+
 
 - $q = 2$（约束个数，即被检验的参数个数）
 - $n = 32$（样本量）
 - $p_F = 3$（完整模型中解释变量的个数）
 
-$$
-F = \frac{(272.30 - 169.88) / 2}{169.88 / (32 - 3 - 1)} = \frac{102.42 / 2}{169.88 / 28} = \frac{51.21}{6.07} = 8.44
-$$
 
 ```{r}
 q <- 2
@@ -93,11 +96,11 @@ p_value_manual
 anova(mtcars_lm_hp, mtcars_lm_full)
 ```
 
-结果完全一致：F = 8.44，p = 0.0017。
+结果完全一致。
 
 **5. 结论**
 
-由于 p 值 = 0.0017 < 0.05，我们拒绝原假设。结论：**在控制 `hp` 后，`wt` 和 `disp` 作为一个变量组能显著提升对 `mpg` 的解释力**。
+由于 p 值 << 0.05，我们拒绝原假设。结论：**在控制 `hp` 后，`wt` 和 `disp` 作为一个变量组能显著提升对 `mpg` 的解释力**。
 
 ---
 
@@ -119,7 +122,7 @@ sst
 计算 $R^2$：
 
 $$
-R^2 = 1 - \frac{\text{SSE}}{\text{SST}} = 1 - \frac{169.88}{847.27} = 0.7995
+R^2 = 1 - \frac{\text{SSE}}{\text{SST}}
 $$
 
 ```{r}
@@ -130,7 +133,7 @@ r_squared_manual
 计算调整 $R^2$：
 
 $$
-\bar{R}^2 = 1 - \frac{169.88 / 28}{847.27 / 31} = 1 - \frac{6.067}{27.332} = 0.7779
+{R}_{\text{adj}}^2 = 1 - \frac{\mathrm{SSE}/(n-p-1)}{\mathrm{SST}/(n-1)}
 $$
 
 ```{r}
@@ -150,7 +153,7 @@ c(AdjR2_manual = adj_r_squared_manual, AdjR2_builtin = summary(mtcars_lm_full)$a
 **2. 计算部分 $R^2$**
 
 $$
-R^2_{\text{partial}} = \frac{\text{SSE}(M_R) - \text{SSE}(M_F)}{\text{SSE}(M_R)} = \frac{272.30 - 169.88}{272.30} = \frac{102.42}{272.30} = 0.3763
+R^2_{\text{partial}} = \frac{\text{SSE}(M_R) - \text{SSE}(M_F)}{\text{SSE}(M_R)} 
 $$
 
 ```{r}
@@ -160,7 +163,7 @@ partial_r_squared
 
 **3. 部分 $R^2$ 的实际含义**
 
-部分 $R^2$ = 0.376 表示：**在 `hp` 尚未解释掉的那部分变异中，`wt` 和 `disp` 又额外解释了约 37.6%**。也就是说，即使 `hp` 已经进入模型，`wt` 和 `disp` 还能再解释超过三分之一的剩余残差变异，说明这两个变量作为一个整体提供了有价值的额外信息。
+部分 $R^2$ = 0.56 表示：**在 `hp` 尚未解释掉的那部分变异中，`wt` 和 `disp` 又额外解释了约 56%**。也就是说，即使 `hp` 已经进入模型，`wt` 和 `disp` 还能再解释超过一半的剩余残差变异，说明这两个变量作为一个整体提供了有价值的额外信息。
 
 ---
 
@@ -172,33 +175,32 @@ partial_r_squared
 
 ```{r}
 vif_man <- function(model) {
-  model_matrix <- model.matrix(model)[, -1, drop = FALSE]
-  predictor_names <- colnames(model_matrix)
+  # 提取模型矩阵（不包括截距项）
+  x <- model.matrix(model)[, -1]
   
-  vif_values <-
-    map_dbl(
-      predictor_names,
-      function(var_name) {
-        y_aux <- model_matrix[, var_name]
-        x_aux <- model_matrix[, setdiff(predictor_names, var_name), drop = FALSE]
-        
-        aux_df <- as_tibble(x_aux) |>
-          mutate(y_aux = y_aux)
-        
-        aux_formula <-
-          reformulate(
-            termlabels = setdiff(predictor_names, var_name),
-            response = "y_aux"
-          )
-        
-        aux_lm <- lm(aux_formula, data = aux_df)
-        r_squared_aux <- summary(aux_lm)$r.squared
-        1 / (1 - r_squared_aux)
-      }
-    )
+  # 初始化 VIF 向量
+  vif_values <- numeric(ncol(x))
   
-  names(vif_values) <- predictor_names
-  vif_values
+  # 循环计算每个预测变量的 VIF
+  for (j in seq_along(vif_values)) {
+    # 当前预测变量
+    x_j <- x[, j]
+    
+    # 其他预测变量
+    x_other <- x[, -j, drop = FALSE]
+    
+    # 拟合回归模型：x_j ~ x_other
+    fit <- lm(x_j ~ ., data = as.data.frame(x_other))
+    
+    # 提取 R^2
+    r_squared_j <- summary(fit)$r.squared
+    
+    # 计算 VIF
+    vif_values[j] <- 1 / (1 - r_squared_j)
+  }
+  
+  names(vif_values) <- colnames(x)
+  return(vif_values)
 }
 ```
 
@@ -215,17 +217,11 @@ data.frame(
 )
 ```
 
-结果完全一致。
+结果一致。
 
 **2. VIF 判断**
 
-从结果可以看到：
-
-- `hp` 的 VIF = 2.89
-- `wt` 的 VIF = 2.89  
-- `disp` 的 VIF = 1.69
-
-所有 VIF 值都小于 5，根据经验法则：**不存在严重的多重共线性问题**。
+从结果可以看到，所有 VIF 值都小于 10，根据经验法则：**不存在严重的多重共线性问题**。
 
 **3. 综合判断**
 
@@ -244,40 +240,11 @@ x_predictors <-
   model.matrix(mtcars_lm_full)[, -1] |>
   scale(center = TRUE, scale = TRUE)
 
-kappa(x_predictors)
+kappa(x_predictors, exact = TRUE)
 ```
 
-条件数 $\kappa = 10.79$，略高于 10，但远低于 30。根据经验规则：
+条件数 $\kappa = 5.5$。根据经验规则：
 
-| 指标 | 值 | 判断 |
-|------|-----|------|
-| VIF (hp) | 2.89 | < 5，可接受 |
-| VIF (wt) | 2.89 | < 5，可接受 |
-| VIF (disp) | 1.69 | < 5，可接受 |
-| 条件数 $\kappa$ | 10.79 | 略高于 10，接近边界 |
 
-**综合结论**：虽然条件数略高于常用的 10 阈值，但所有 VIF 值都在可接受范围内。从整体来看，**不存在严重的多重共线性问题**，`hp`、`wt` 和 `disp` 之间的线性相关性并不足以对回归系数的估计造成实质性影响。
+**综合结论**：从整体来看，**不存在严重的多重共线性问题**，`hp`、`wt` 和 `disp` 之间的线性相关性并不足以对回归系数的估计造成实质性影响。
 
----
-
-## 参考公式汇总
-
-### 一般线性 F 检验
-$$
-F = \frac{[\text{SSE}(M_R) - \text{SSE}(M_F)] / q}{\text{SSE}(M_F) / (n - p_F - 1)}
-$$
-
-### $R^2$ 与调整 $R^2$
-$$
-R^2 = 1 - \frac{\text{SSE}}{\text{SST}}, \quad \bar{R}^2 = 1 - \frac{\text{SSE}/(n-p-1)}{\text{SST}/(n-1)}
-$$
-
-### 部分 $R^2$
-$$
-R^2_{\text{partial}} = \frac{\text{SSE}(M_R) - \text{SSE}(M_F)}{\text{SSE}(M_R)}
-$$
-
-### VIF
-$$
-\text{VIF}_j = \frac{1}{1 - R_j^2}
-$$
