@@ -62,47 +62,56 @@ gtemp <-
 
 ---
 
-## Section A：双因素方差分析
+## Section A：两因素方差分析与平方和类型
 
 ### 关键概念回顾
 
-**双因素方差分析**用于检验两个分类变量对连续响应变量的主效应及交互效应。
+当响应变量是连续变量、解释变量是分类变量时，我们可以把方差分析写成线性模型的形式来理解。对于本题，`species` 和 `sex` 都是分类变量，因此可以把“企鹅体重在不同组之间是否有差异”写成一个两因素 ANOVA / 线性模型问题来分析。
 
-与单因素方差分析类似，双因素方差分析同样可以写成线性模型的形式，使用指示变量（dummy variables）对分类变量进行编码。
-
-### 研究问题
-
-**研究问题**：企鹅体重（body_mass_g）在不同物种（species）和不同性别（sex）之间是否存在显著差异？
+同时要注意：当数据不是 perfectly balanced 时，ANOVA 表中每一项的平方和可能会依赖变量进入模型的顺序。因此，在解释 `anova()` 输出时，必须结合数据平衡性和 sums of squares 类型一起考虑。
 
 ::: {.callout-important}
-## **第一题（QA.1）：**
+## **QA.1**
 
-1. 使用 `aov()` 函数拟合双因素方差模型：`body_mass_g ~ species + sex`
-2. 解读 `summary(aov())` 的输出结果。
-3. 回答研究问题：物种和性别对企鹅体重是否有显著影响？
+数据集：`palmerpenguins::penguins`
+
+1. 使用两因素方差分析研究企鹅体重 `body_mass_g` 是否会因 `species` 和 `sex` 的不同而显著变化。
+2. 使用 `aov()` 或与之等价的线性模型形式，对模型 `body_mass_g ~ species + sex` 进行分析。
+3. 解读输出结果，并分别回答：
+   - `species` 是否显著？
+   - `sex` 是否显著？
+   - 你的统计结论应该如何用自然语言表达？
 :::
 
----
-
 ::: {.callout-important}
-## **第二题（QA.2）：**
+## **QA.2**
 
-1. 首先，**自己探索**：使用 `table()` 或 `count()` 函数检查数据集中 species 和 sex 的分布情况。
-2. 该数据集是**平衡**的还是**非平衡**的？请说明判断依据。
-3. 使用 `lm()` + `anova()` 重新拟合模型（与 QA.1 相同的模型结构），记录 ANOVA 表。
-4. **交换变量顺序**重新拟合：`body_mass_g ~ sex + species`，记录 ANOVA 表。
-5. 比较两次 `anova()` 的结果，**它们相同吗？为什么？**
+1. 使用 `count()` 或 `table()` 检查 `species` 与 `sex` 的组合频数。
+2. 判断这个数据集在 QA.1 中是否是 perfectly balanced，并说明理由。
+3. 使用 `lm()` 和 `anova()` 重新分析 QA.1 的同一个模型：
+
+   ```r
+   penguins_lm_a <- lm(body_mass_g ~ species + sex, data = penguins_df)
+   anova(penguins_lm_a)
+   ```
+
+4. 交换解释变量顺序，重新拟合并比较结果：
+
+   ```r
+   penguins_lm_b <- lm(body_mass_g ~ sex + species, data = penguins_df)
+   anova(penguins_lm_b)
+   ```
+
+5. 比较两张 ANOVA 表。它们是否完全相同？如果不同，请解释为什么这种差异会出现。
 :::
 
----
-
 ::: {.callout-important}
-## **第三题（QA.3）：**
+## **QA.3**
 
-1. R 中 `anova()` 函数默认使用的是**哪种类型的平方和**？（提示：查阅 `?anova.lm`）
-2. 对于非平衡数据，这种平方和类型是**好的选择吗？为什么？**
-3. 使用 `car::Anova()` 重新进行分析（尝试 Type II），记录结果。
-4. 比较 `anova()` 和 `car::Anova()` 的结果，它们有何不同？如何解释这种差异？
+1. `anova.lm()` 默认对应哪一种 sums of squares？
+2. 对当前这个分析问题来说，这是否是一个理想的选择？请说明理由。
+3. 如果不是，请使用更合适的方法重新分析（例如用 `car::Anova()` 的 Type II sums of squares），并解释为什么它更合适。
+4. 比较默认 `anova()` 与 `car::Anova()` 的差异，说明你最终会依据哪一种分析给出结论。
 :::
 
 ---
