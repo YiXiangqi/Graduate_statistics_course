@@ -203,7 +203,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="数据与准备">数据与准备</h2>
 <p>本次作业会使用两个数据来源：</p>
 <ol type="1">
-<li><code>palmerpenguins::penguins</code>，用于复习分类变量进入线性模型与两因素方差分析。</li>
+<li><code>penguins_df</code>（由 <code>palmerpenguins::penguins</code> 过滤 <code>species</code>、<code>sex</code> 和 <code>body_mass_g</code> 后并删除缺失值得到），用于复习分类变量进入线性模型与两因素方差分析。</li>
 <li><code>gtemp.csv</code>，用于练习时间序列温度异常的 GAM 分析。</li>
 </ol>
 <div class="cell">
@@ -233,7 +233,7 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>数据集：<code>palmerpenguins::penguins</code></p>
+<p>数据集：<code>penguins_df</code>（由 <code>palmerpenguins::penguins</code> 清洗得到）</p>
 <ol type="1">
 <li>使用两因素方差分析研究企鹅体重 <code>body_mass_g</code> 是否会因 <code>species</code> 和 <code>sex</code> 的不同而显著变化。</li>
 <li>使用 <code>aov()</code> 或与之等价的线性模型形式，对模型 <code>body_mass_g ~ species + sex</code> 进行分析。</li>
@@ -282,7 +282,7 @@ window.Quarto = {
 <ol type="1">
 <li><code>anova.lm()</code> 默认对应哪一种 sums of squares？</li>
 <li>对当前这个分析问题来说，这是否是一个理想的选择？请说明理由。</li>
-<li>如果不是，请使用更合适的方法重新分析（例如用 <code>car::Anova()</code> 的 Type II sums of squares），并解释为什么它更合适。</li>
+<li>如果不是，请使用更合适的方法重新分析（例如对这里的加性无交互模型 <code>body_mass_g ~ species + sex</code> 使用 <code>car::Anova()</code> 的 Type II sums of squares），并解释为什么它更合适。</li>
 <li>比较默认 <code>anova()</code> 与 <code>car::Anova()</code> 的差异，说明你最终会依据哪一种分析给出结论。</li>
 </ol>
 </div>

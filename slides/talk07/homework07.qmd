@@ -47,7 +47,7 @@ library(palmerpenguins)
 
 本次作业会使用两个数据来源：
 
-1. `palmerpenguins::penguins`，用于复习分类变量进入线性模型与两因素方差分析。
+1. `penguins_df`（由 `palmerpenguins::penguins` 过滤 `species`、`sex` 和 `body_mass_g` 后并删除缺失值得到），用于复习分类变量进入线性模型与两因素方差分析。
 2. `gtemp.csv`，用于练习时间序列温度异常的 GAM 分析。
 
 ```{r}
@@ -73,7 +73,7 @@ gtemp <-
 ::: {.callout-important}
 ## **QA.1**
 
-数据集：`palmerpenguins::penguins`
+数据集：`penguins_df`（由 `palmerpenguins::penguins` 清洗得到）
 
 1. 使用两因素方差分析研究企鹅体重 `body_mass_g` 是否会因 `species` 和 `sex` 的不同而显著变化。
 2. 使用 `aov()` 或与之等价的线性模型形式，对模型 `body_mass_g ~ species + sex` 进行分析。
@@ -110,7 +110,7 @@ gtemp <-
 
 1. `anova.lm()` 默认对应哪一种 sums of squares？
 2. 对当前这个分析问题来说，这是否是一个理想的选择？请说明理由。
-3. 如果不是，请使用更合适的方法重新分析（例如用 `car::Anova()` 的 Type II sums of squares），并解释为什么它更合适。
+3. 如果不是，请使用更合适的方法重新分析（例如对这里的加性无交互模型 `body_mass_g ~ species + sex` 使用 `car::Anova()` 的 Type II sums of squares），并解释为什么它更合适。
 4. 比较默认 `anova()` 与 `car::Anova()` 的差异，说明你最终会依据哪一种分析给出结论。
 :::
 
