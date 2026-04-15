@@ -313,10 +313,11 @@ window.Quarto = {
 </ul></li>
 <li>先模拟一组<strong>线性关系</strong>数据，例如 <span class="math display">\[
 y = 2x + 5 + \varepsilon ,
-\]</span> 然后拟合 <code>gam(y ~ s(x))</code>，报告 smooth term 的 <code>edf</code> 与 p 值，并解释这说明了什么。</li>
+\]</span> 建议先用 <code>set.seed()</code> 固定随机结果；取一个适中的样本量（例如 <code>n = 100</code> 左右）；让 <code>x</code> 在一个清楚的范围内变化（例如 <code>0</code> 到 <code>10</code>）；噪声项用较温和的水平（例如标准差不要太大）。然后拟合 <code>gam(y ~ s(x))</code>，报告 smooth term 的 <code>edf</code> 与 p 值，并解释这说明了什么。</li>
 <li>再模拟一组<strong>明显非线性关系</strong>数据，例如 <span class="math display">\[
 y = x^2 + \varepsilon ,
-\]</span> 同样拟合 <code>gam(y ~ s(x))</code>，比较 <code>edf</code> 与 p 值。</li>
+\]</span> 同样建议保持和上一步类似的 <code>n</code>、<code>x</code> 范围和噪声水平，再拟合 <code>gam(y ~ s(x))</code>，比较 <code>edf</code> 与 p 值。</li>
+<li>作为比较时，请顺便留意：在线性情形下，<code>edf</code> 是否接近 1？</li>
 <li>基于两组模拟结果，回答：smooth term 的 p 值更像是在检验“没有效应”还是“关系为线性”？</li>
 <li>请在结论中明确说明，为什么“smooth term 显著”并不等同于“已经证明关系一定是非线性的”。</li>
 </ol>
