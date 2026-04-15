@@ -1,0 +1,231 @@
+---
+title: "作业07：分类变量、方差分析与广义加性模型"
+subtitle: "复习第七讲内容，围绕两因素方差分析、平方和类型与 GAM 的解释和诊断开展练习"
+author: 易湘琦
+author-title: ""
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    df-print: tibble
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(mgcv)
+library(car)
+library(palmerpenguins)
+```
+
+## 作业目标
+
+本次作业对应第七讲 `talk07.qmd`，目标是：
+
+1. 理解分类变量进入线性模型后，如何用两因素方差分析回答研究问题。
+2. 理解平衡设计、非平衡设计与不同 sums of squares 之间的关系。
+3. 理解 `summary(gam())` 中 smooth term p 值所对应的零假设。
+4. 学会解释和诊断一个时间趋势 GAM，并在必要时改进默认设置。
+
+预计完成时间：**2-3 小时**。
+
+## 提交要求（必须遵守）
+
+- 提交：
+  - `homework07.qmd`
+  - `homework07.html`
+  - 若渲染时生成同名资源文件夹，也应一并提交
+- 所有代码必须可运行，渲染后 HTML 不报错。
+- 文末必须包含 **AI 使用声明**（按模板填写；未使用也要填写）。
+- 报告完成本次作业花费的时间。
+
+## 数据与准备
+
+本次作业会使用两个数据来源：
+
+1. `palmerpenguins::penguins`，用于复习分类变量进入线性模型与两因素方差分析。
+2. `gtemp.csv`，用于练习时间序列温度异常的 GAM 分析。
+
+```{r}
+penguins_df <-
+  penguins |>
+  select(species, sex, body_mass_g) |>
+  drop_na()
+
+gtemp <-
+  read_csv("data/gtemp.csv")
+```
+
+---
+
+## Section A：双因素方差分析
+
+### 关键概念回顾
+
+**双因素方差分析**用于检验两个分类变量对连续响应变量的主效应及交互效应。
+
+与单因素方差分析类似，双因素方差分析同样可以写成线性模型的形式，使用指示变量（dummy variables）对分类变量进行编码。
+
+### 研究问题
+
+**研究问题**：企鹅体重（body_mass_g）在不同物种（species）和不同性别（sex）之间是否存在显著差异？
+
+::: {.callout-important}
+## **第一题（QA.1）：**
+
+1. 使用 `aov()` 函数拟合双因素方差模型：`body_mass_g ~ species + sex`
+2. 解读 `summary(aov())` 的输出结果。
+3. 回答研究问题：物种和性别对企鹅体重是否有显著影响？
+:::
+
+---
+
+::: {.callout-important}
+## **第二题（QA.2）：**
+
+1. 首先，**自己探索**：使用 `table()` 或 `count()` 函数检查数据集中 species 和 sex 的分布情况。
+2. 该数据集是**平衡**的还是**非平衡**的？请说明判断依据。
+3. 使用 `lm()` + `anova()` 重新拟合模型（与 QA.1 相同的模型结构），记录 ANOVA 表。
+4. **交换变量顺序**重新拟合：`body_mass_g ~ sex + species`，记录 ANOVA 表。
+5. 比较两次 `anova()` 的结果，**它们相同吗？为什么？**
+:::
+
+---
+
+::: {.callout-important}
+## **第三题（QA.3）：**
+
+1. R 中 `anova()` 函数默认使用的是**哪种类型的平方和**？（提示：查阅 `?anova.lm`）
+2. 对于非平衡数据，这种平方和类型是**好的选择吗？为什么？**
+3. 使用 `car::Anova()` 重新进行分析（尝试 Type II），记录结果。
+4. 比较 `anova()` 和 `car::Anova()` 的结果，它们有何不同？如何解释这种差异？
+:::
+
+---
+
+## Section B：GAM p 值理解
+
+### 关键概念回顾
+
+使用 `mgcv::gam()` 拟合 GAM 模型后，`summary()` 会输出 "Approximate significance of smooth terms"，包括：
+
+- **edf**（effective degrees of freedom）：有效自由度，反映平滑函数的复杂度
+- **p 值**：用于检验平滑函数是否显著不同于零函数
+
+### 研究问题
+
+`summary()` 输出中平滑函数的 p 值对应的**零假设**是什么？
+
+::: {.callout-important}
+## **第四题（QB.1）：**
+
+1. 零假设是：
+   - A. 平滑函数等于零函数（即响应变量与预测变量之间完全没有关系）
+   - B. 平滑函数是线性函数（即关系是线性的）
+   
+   请查阅文档或通过**模拟��验**来验证你的答案。
+
+2. 设计一个模拟实验：
+   - 生成一组已知的**线性关系**数据（如 $y = 2x + 5 + \varepsilon$）
+   - 使用 `gam()` 拟合 $y ~ s(x)$
+   - 检查 p 值。你得到了什么结果？这说明了什么？
+
+3. 再生成一组已知的**非线性关系**数据（如 $y = x^2 + \varepsilon$）
+   - 使用 `gam()` 拟合 $y ~ s(x)$
+   - 检查 p 值。你得到了什么结果？
+:::
+
+---
+
+## Section C：GAM 实战
+
+### 数据准备
+
+本次练习使用 HadCRUT4 全球温度异常数据：
+
+```{r}
+gtemp <-
+  read_csv("data/gtemp.csv")
+
+gtemp
+```
+
+---
+
+::: {.callout-important}
+## **第五题（QC.1）：**
+
+1. 使用**默认设置**拟合 GAM 模型：
+   ```r
+   gtemp_gam <- gam(Temperature ~ s(Year), data = gtemp)
+   ```
+2. 解释 `s()` 函数中 `k` 和 `bs` 参数的含义（查阅 `?smooth.terms`）。
+3. 解释 `gam()` 函数中 `method` 参数的含义（查阅 `?gam`）。
+4. 这些参数的**默认值**分别是什么？
+:::
+
+---
+
+::: {.callout-important}
+## **第六题（QC.2）：**
+
+1. 解读 `summary(gtemp_gam)` 的输出结果。
+2. 使用 `gam.check()` 对模型进行诊断。
+3. 根据诊断结果，评估**默认的 k 值**是否足够。
+4. 如果不够，可能出现什么问题？需要如何改进？
+:::
+
+---
+
+::: {.callout-important}
+## **第七题（QC.3）：**
+
+1. 重新拟合 GAM，使用以下参数：
+   - `method = "REML"`（更稳健的惩罚参数选择方法）
+   - `bs = "cr"`（cubic regression spline，三次回归样条）
+   - `k = 20`（增加基函数数量）
+
+   ```r
+   gtemp_gam2 <- gam(Temperature ~ s(Year, k = 20, bs = "cr"), 
+                      data = gtemp, method = "REML")
+   ```
+2. 解读 `summary(gtemp_gam2)` 的输出结果。
+3. 与默认设置（QC.1）的结果进行比较，edf 和 p 值有何变化？
+4. 使用 `gam.check()` 再次诊断，比较诊断结果。
+5. 综合以上分析，你推荐使用哪种设置？为什么？
+:::
+
+---
+
+## 文档表达与规范
+
+1. 文档结构清晰：有分节标题、列表、必要文字说明。
+2. 代码与结果对应，可复现。
+3. 每个部分有结论文字，而不只给代码。
+4. `qmd` 成功渲染出 `html`。
+
+## AI 使用声明（必填模板）
+
+请在文末保留并填写以下模板（未使用也要填写）。
+
+### 情况 1：我使用了 AI 工具
+
+- 工具名称：
+- 具体使用环节（如：报错排查 / 语法查询 / 代码草稿）：
+- 我做的人工核查与修改：
+- 我确认并对最终提交内容负责：是
+
+### 情况 2：我未使用 AI 工具
+
+- 本次作业未使用任何 AI 工具。
+- 我确认并对最终提交内容负责：是
+
+---
+
+## 完成作业用时
+
+请在此处填写完成作业大约花费的时间：\_\_\_\_\_\_\_ 小时
