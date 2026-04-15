@@ -116,96 +116,75 @@ gtemp <-
 
 ---
 
-## Section B：GAM p 值理解
+## Section B：smooth term p 值的零假设
 
 ### 关键概念回顾
 
-使用 `mgcv::gam()` 拟合 GAM 模型后，`summary()` 会输出 "Approximate significance of smooth terms"，包括：
-
-- **edf**（effective degrees of freedom）：有效自由度，反映平滑函数的复杂度
-- **p 值**：用于检验平滑函数是否显著不同于零函数
-
-### 研究问题
-
-`summary()` 输出中平滑函数的 p 值对应的**零假设**是什么？
+使用 `mgcv::gam()` 拟合广义加性模型后，`summary()` 会在 “Approximate significance of smooth terms” 这一部分给出 smooth term 的检验结果。很多同学容易把这个 p 值误解为“是否显著偏离线性”，但这并不是本题想当然接受的解释。你需要用模拟来判断，这个 p 值真正对应的原假设是什么。
 
 ::: {.callout-important}
-## **第四题（QB.1）：**
+## **QB.1**
 
-1. 零假设是：
-   - A. 平滑函数等于零函数（即响应变量与预测变量之间完全没有关系）
-   - B. 平滑函数是线性函数（即关系是线性的）
-   
-   请查阅文档或通过**模拟��验**来验证你的答案。
+请围绕下面的问题完成一个小型模拟实验：
 
-2. 设计一个模拟实验：
-   - 生成一组已知的**线性关系**数据（如 $y = 2x + 5 + \varepsilon$）
-   - 使用 `gam()` 拟合 $y ~ s(x)$
-   - 检查 p 值。你得到了什么结果？这说明了什么？
-
-3. 再生成一组已知的**非线性关系**数据（如 $y = x^2 + \varepsilon$）
-   - 使用 `gam()` 拟合 $y ~ s(x)$
-   - 检查 p 值。你得到了什么结果？
+1. `summary()` 中 smooth term 的 p 值，原假设更接近下面哪一种？
+   - A. 该变量对响应变量没有作用，平滑函数是零函数；
+   - B. 该变量与响应变量之间的关系是线性的。
+2. 先模拟一组**线性关系**数据，例如
+   $$
+   y = 2x + 5 + \varepsilon ,
+   $$
+   然后拟合 `gam(y ~ s(x))`，报告 smooth term 的 `edf` 与 p 值，并解释这说明了什么。
+3. 再模拟一组**明显非线性关系**数据，例如
+   $$
+   y = x^2 + \varepsilon ,
+   $$
+   同样拟合 `gam(y ~ s(x))`，比较 `edf` 与 p 值。
+4. 基于两组模拟结果，回答：smooth term 的 p 值更像是在检验“没有效应”还是“关系为线性”？
+5. 请在结论中明确说明，为什么“smooth term 显著”并不等同于“已经证明关系一定是非线性的”。
 :::
 
 ---
 
-## Section C：GAM 实战
+## Section C：HadCRUT4 温度异常的 GAM 分析
 
-### 数据准备
+### 关键概念回顾
 
-本次练习使用 HadCRUT4 全球温度异常数据：
-
-```{r}
-gtemp <-
-  read_csv("data/gtemp.csv")
-
-gtemp
-```
-
----
+第七讲中，我们用 `gtemp.csv` 研究全球温度异常随年份变化的长期趋势。`gam(Temperature ~ s(Year), data = gtemp)` 提供了一个灵活的非参数趋势模型，但默认设置并不一定总是最合适，因此需要结合模型输出和诊断结果来判断。
 
 ::: {.callout-important}
-## **第五题（QC.1）：**
+## **QC.1**
 
-1. 使用**默认设置**拟合 GAM 模型：
-   ```r
-   gtemp_gam <- gam(Temperature ~ s(Year), data = gtemp)
-   ```
-2. 解释 `s()` 函数中 `k` 和 `bs` 参数的含义（查阅 `?smooth.terms`）。
-3. 解释 `gam()` 函数中 `method` 参数的含义（查阅 `?gam`）。
-4. 这些参数的**默认值**分别是什么？
-:::
-
----
-
-::: {.callout-important}
-## **第六题（QC.2）：**
-
-1. 解读 `summary(gtemp_gam)` 的输出结果。
-2. 使用 `gam.check()` 对模型进行诊断。
-3. 根据诊断结果，评估**默认的 k 值**是否足够。
-4. 如果不够，可能出现什么问题？需要如何改进？
-:::
-
----
-
-::: {.callout-important}
-## **第七题（QC.3）：**
-
-1. 重新拟合 GAM，使用以下参数：
-   - `method = "REML"`（更稳健的惩罚参数选择方法）
-   - `bs = "cr"`（cubic regression spline，三次回归样条）
-   - `k = 20`（增加基函数数量）
+1. 使用默认设置拟合下面的模型：
 
    ```r
-   gtemp_gam2 <- gam(Temperature ~ s(Year, k = 20, bs = "cr"), 
-                      data = gtemp, method = "REML")
+   gtemp_gam_default <- gam(Temperature ~ s(Year), data = gtemp)
    ```
-2. 解读 `summary(gtemp_gam2)` 的输出结果。
-3. 与默认设置（QC.1）的结果进行比较，edf 和 p 值有何变化？
-4. 使用 `gam.check()` 再次诊断，比较诊断结果。
-5. 综合以上分析，你推荐使用哪种设置？为什么？
+
+2. 解释 `s()` 中参数 `k` 与 `bs` 的含义。
+3. 解释 `gam()` 中参数 `method` 的含义。
+4. 查明这些参数在这里的默认值分别是什么。
+:::
+
+::: {.callout-important}
+## **QC.2**
+
+1. 解读 `summary(gtemp_gam_default)` 的输出结果。
+2. 使用 `gam.check(gtemp_gam_default)` 对模型进行诊断。
+3. 根据诊断结果，判断默认 `k` 是否足够，并说明你的依据。
+4. 如果你认为默认 `k` 不够，请解释这可能导致什么问题。
+:::
+
+::: {.callout-important}
+## **QC.3**
+
+1. 用更合适的设置重新拟合模型：
+   - 使用 `method = "REML"`；
+   - 使用 cubic regression spline，即 `bs = "cr"`；
+   - 选择一个比默认值更合理的 `k`，并解释你的选择。
+2. 解读新模型的 `summary()` 输出。
+3. 比较默认模型与新模型在 `edf`、smooth term 检验结果和诊断输出上的差异。
+4. 结合统计结果与模型诊断，说明你最终更推荐哪一个模型设定，以及为什么。
 :::
 
 ---
@@ -214,8 +193,8 @@ gtemp
 
 1. 文档结构清晰：有分节标题、列表、必要文字说明。
 2. 代码与结果对应，可复现。
-3. 每个部分有结论文字，而不只给代码。
-4. `qmd` 成功渲染出 `html`。
+3. 每个部分都要有结论文字，而不只给代码。
+4. `qmd` 能成功渲染出 `html`。
 
 ## AI 使用声明（必填模板）
 
@@ -237,4 +216,4 @@ gtemp
 
 ## 完成作业用时
 
-请在此处填写完成作业大约花费的时间：\_\_\_\_\_\_\_ 小时
+请在此处填写完成本次作业大约花费的时间：_______ 小时

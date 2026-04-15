@@ -121,14 +121,13 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#关键概念回顾" id="toc-关键概念回顾" class="nav-link" data-scroll-target="#关键概念回顾">关键概念回顾</a></li>
   </ul></li>
-  <li><a href="#section-bgam-p-值理解" id="toc-section-bgam-p-值理解" class="nav-link" data-scroll-target="#section-bgam-p-值理解">Section B：GAM p 值理解</a>
+  <li><a href="#section-bsmooth-term-p-值的零假设" id="toc-section-bsmooth-term-p-值的零假设" class="nav-link" data-scroll-target="#section-bsmooth-term-p-值的零假设">Section B：smooth term p 值的零假设</a>
   <ul class="collapse">
   <li><a href="#关键概念回顾-1" id="toc-关键概念回顾-1" class="nav-link" data-scroll-target="#关键概念回顾-1">关键概念回顾</a></li>
-  <li><a href="#研究问题" id="toc-研究问题" class="nav-link" data-scroll-target="#研究问题">研究问题</a></li>
   </ul></li>
-  <li><a href="#section-cgam-实战" id="toc-section-cgam-实战" class="nav-link" data-scroll-target="#section-cgam-实战">Section C：GAM 实战</a>
+  <li><a href="#section-chadcrut4-温度异常的-gam-分析" id="toc-section-chadcrut4-温度异常的-gam-分析" class="nav-link" data-scroll-target="#section-chadcrut4-温度异常的-gam-分析">Section C：HadCRUT4 温度异常的 GAM 分析</a>
   <ul class="collapse">
-  <li><a href="#数据准备" id="toc-数据准备" class="nav-link" data-scroll-target="#数据准备">数据准备</a></li>
+  <li><a href="#关键概念回顾-2" id="toc-关键概念回顾-2" class="nav-link" data-scroll-target="#关键概念回顾-2">关键概念回顾</a></li>
   </ul></li>
   <li><a href="#文档表达与规范" id="toc-文档表达与规范" class="nav-link" data-scroll-target="#文档表达与规范">文档表达与规范</a></li>
   <li><a href="#ai-使用声明必填模板" id="toc-ai-使用声明必填模板" class="nav-link" data-scroll-target="#ai-使用声明必填模板">AI 使用声明（必填模板）</a>
@@ -290,143 +289,104 @@ window.Quarto = {
 <hr>
 </section>
 </section>
-<section id="section-bgam-p-值理解" class="level2">
-<h2 class="anchored" data-anchor-id="section-bgam-p-值理解">Section B：GAM p 值理解</h2>
+<section id="section-bsmooth-term-p-值的零假设" class="level2">
+<h2 class="anchored" data-anchor-id="section-bsmooth-term-p-值的零假设">Section B：smooth term p 值的零假设</h2>
 <section id="关键概念回顾-1" class="level3">
 <h3 class="anchored" data-anchor-id="关键概念回顾-1">关键概念回顾</h3>
-<p>使用 <code>mgcv::gam()</code> 拟合 GAM 模型后，<code>summary()</code> 会输出 “Approximate significance of smooth terms”，包括：</p>
-<ul>
-<li><strong>edf</strong>（effective degrees of freedom）：有效自由度，反映平滑函数的复杂度</li>
-<li><strong>p 值</strong>：用于检验平滑函数是否显著不同于零函数</li>
-</ul>
-</section>
-<section id="研究问题" class="level3">
-<h3 class="anchored" data-anchor-id="研究问题">研究问题</h3>
-<p><code>summary()</code> 输出中平滑函数的 p 值对应的<strong>零假设</strong>是什么？</p>
+<p>使用 <code>mgcv::gam()</code> 拟合广义加性模型后，<code>summary()</code> 会在 “Approximate significance of smooth terms” 这一部分给出 smooth term 的检验结果。很多同学容易把这个 p 值误解为“是否显著偏离线性”，但这并不是本题想当然接受的解释。你需要用模拟来判断，这个 p 值真正对应的原假设是什么。</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span><strong>第四题（QB.1）：</strong>
+<span class="screen-reader-only">Important</span><strong>QB.1</strong>
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>请围绕下面的问题完成一个小型模拟实验：</p>
 <ol type="1">
-<li><p>零假设是：</p>
+<li><code>summary()</code> 中 smooth term 的 p 值，原假设更接近下面哪一种？
 <ul>
-<li>A. 平滑函数等于零函数（即响应变量与预测变量之间完全没有关系）</li>
-<li>B. 平滑函数是线性函数（即关系是线性的）</li>
-</ul>
-<p>请查阅文档或通过<strong>模拟��验</strong>来验证你的答案。</p></li>
-<li><p>设计一个模拟实验：</p>
-<ul>
-<li>生成一组已知的<strong>线性关系</strong>数据（如 <span class="math inline">\(y = 2x + 5 + \varepsilon\)</span>）</li>
-<li>使用 <code>gam()</code> 拟合 <span class="math inline">\(y ~ s(x)\)</span></li>
-<li>检查 p 值。你得到了什么结果？这说明了什么？</li>
+<li>A. 该变量对响应变量没有作用，平滑函数是零函数；</li>
+<li>B. 该变量与响应变量之间的关系是线性的。</li>
 </ul></li>
-<li><p>再生成一组已知的<strong>非线性关系</strong>数据（如 <span class="math inline">\(y = x^2 + \varepsilon\)</span>）</p>
+<li>先模拟一组<strong>线性关系</strong>数据，例如 <span class="math display">\[
+y = 2x + 5 + \varepsilon ,
+\]</span> 然后拟合 <code>gam(y ~ s(x))</code>，报告 smooth term 的 <code>edf</code> 与 p 值，并解释这说明了什么。</li>
+<li>再模拟一组<strong>明显非线性关系</strong>数据，例如 <span class="math display">\[
+y = x^2 + \varepsilon ,
+\]</span> 同样拟合 <code>gam(y ~ s(x))</code>，比较 <code>edf</code> 与 p 值。</li>
+<li>基于两组模拟结果，回答：smooth term 的 p 值更像是在检验“没有效应”还是“关系为线性”？</li>
+<li>请在结论中明确说明，为什么“smooth term 显著”并不等同于“已经证明关系一定是非线性的”。</li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="section-chadcrut4-温度异常的-gam-分析" class="level2">
+<h2 class="anchored" data-anchor-id="section-chadcrut4-温度异常的-gam-分析">Section C：HadCRUT4 温度异常的 GAM 分析</h2>
+<section id="关键概念回顾-2" class="level3">
+<h3 class="anchored" data-anchor-id="关键概念回顾-2">关键概念回顾</h3>
+<p>第七讲中，我们用 <code>gtemp.csv</code> 研究全球温度异常随年份变化的长期趋势。<code>gam(Temperature ~ s(Year), data = gtemp)</code> 提供了一个灵活的非参数趋势模型，但默认设置并不一定总是最合适，因此需要结合模型输出和诊断结果来判断。</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span><strong>QC.1</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p>使用默认设置拟合下面的模型：</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>gtemp_gam_default <span class="ot">&lt;-</span> <span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>解释 <code>s()</code> 中参数 <code>k</code> 与 <code>bs</code> 的含义。</p></li>
+<li><p>解释 <code>gam()</code> 中参数 <code>method</code> 的含义。</p></li>
+<li><p>查明这些参数在这里的默认值分别是什么。</p></li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span><strong>QC.2</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>解读 <code>summary(gtemp_gam_default)</code> 的输出结果。</li>
+<li>使用 <code>gam.check(gtemp_gam_default)</code> 对模型进行诊断。</li>
+<li>根据诊断结果，判断默认 <code>k</code> 是否足够，并说明你的依据。</li>
+<li>如果你认为默认 <code>k</code> 不够，请解释这可能导致什么问题。</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span><strong>QC.3</strong>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>用更合适的设置重新拟合模型：
 <ul>
-<li>使用 <code>gam()</code> 拟合 <span class="math inline">\(y ~ s(x)\)</span></li>
-<li>检查 p 值。你得到了什么结果？</li>
+<li>使用 <code>method = "REML"</code>；</li>
+<li>使用 cubic regression spline，即 <code>bs = "cr"</code>；</li>
+<li>选择一个比默认值更合理的 <code>k</code>，并解释你的选择。</li>
 </ul></li>
-</ol>
-</div>
-</div>
-<hr>
-</section>
-</section>
-<section id="section-cgam-实战" class="level2">
-<h2 class="anchored" data-anchor-id="section-cgam-实战">Section C：GAM 实战</h2>
-<section id="数据准备" class="level3">
-<h3 class="anchored" data-anchor-id="数据准备">数据准备</h3>
-<p>本次练习使用 HadCRUT4 全球温度异常数据：</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>gtemp <span class="ot">&lt;-</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(<span class="st">"data/gtemp.csv"</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>gtemp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 172 × 2
-    Year Temperature
-   &lt;dbl&gt;       &lt;dbl&gt;
- 1  1850      -0.336
- 2  1851      -0.159
- 3  1852      -0.107
- 4  1853      -0.177
- 5  1854      -0.071
- 6  1855      -0.19 
- 7  1856      -0.378
- 8  1857      -0.405
- 9  1858      -0.4  
-10  1859      -0.215
-# ℹ 162 more rows</code></pre>
-</div>
-</div>
-<hr>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span><strong>第五题（QC.1）：</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ol type="1">
-<li><p>使用<strong>默认设置</strong>拟合 GAM 模型：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>gtemp_gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
-<li><p>解释 <code>s()</code> 函数中 <code>k</code> 和 <code>bs</code> 参数的含义（查阅 <code>?smooth.terms</code>）。</p></li>
-<li><p>解释 <code>gam()</code> 函数中 <code>method</code> 参数的含义（查阅 <code>?gam</code>）。</p></li>
-<li><p>这些参数的<strong>默认值</strong>分别是什么？</p></li>
-</ol>
-</div>
-</div>
-<hr>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span><strong>第六题（QC.2）：</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ol type="1">
-<li>解读 <code>summary(gtemp_gam)</code> 的输出结果。</li>
-<li>使用 <code>gam.check()</code> 对模型进行诊断。</li>
-<li>根据诊断结果，评估<strong>默认的 k 值</strong>是否足够。</li>
-<li>如果不够，可能出现什么问题？需要如何改进？</li>
-</ol>
-</div>
-</div>
-<hr>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Important</span><strong>第七题（QC.3）：</strong>
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ol type="1">
-<li>重新拟合 GAM，使用以下参数：
-<ul>
-<li><code>method = "REML"</code>（更稳健的惩罚参数选择方法）</li>
-<li><code>bs = "cr"</code>（cubic regression spline，三次回归样条）</li>
-<li><code>k = 20</code>（增加基函数数量）</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gtemp_gam2 <span class="ot">&lt;-</span> <span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year, <span class="at">k =</span> <span class="dv">20</span>, <span class="at">bs =</span> <span class="st">"cr"</span>), </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> gtemp, <span class="at">method =</span> <span class="st">"REML"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
-<li>解读 <code>summary(gtemp_gam2)</code> 的输出结果。</li>
-<li>与默认设置（QC.1）的结果进行比较，edf 和 p 值有何变化？</li>
-<li>使用 <code>gam.check()</code> 再次诊断，比较诊断结果。</li>
-<li>综合以上分析，你推荐使用哪种设置？为什么？</li>
+<li>解读新模型的 <code>summary()</code> 输出。</li>
+<li>比较默认模型与新模型在 <code>edf</code>、smooth term 检验结果和诊断输出上的差异。</li>
+<li>结合统计结果与模型诊断，说明你最终更推荐哪一个模型设定，以及为什么。</li>
 </ol>
 </div>
 </div>
@@ -438,8 +398,8 @@ window.Quarto = {
 <ol type="1">
 <li>文档结构清晰：有分节标题、列表、必要文字说明。</li>
 <li>代码与结果对应，可复现。</li>
-<li>每个部分有结论文字，而不只给代码。</li>
-<li><code>qmd</code> 成功渲染出 <code>html</code>。</li>
+<li>每个部分都要有结论文字，而不只给代码。</li>
+<li><code>qmd</code> 能成功渲染出 <code>html</code>。</li>
 </ol>
 </section>
 <section id="ai-使用声明必填模板" class="level2">
@@ -465,7 +425,7 @@ window.Quarto = {
 </section>
 <section id="完成作业用时" class="level2">
 <h2 class="anchored" data-anchor-id="完成作业用时">完成作业用时</h2>
-<p>请在此处填写完成作业大约花费的时间：_______ 小时</p>
+<p>请在此处填写完成本次作业大约花费的时间：_______ 小时</p>
 </section>
 
 </main>
