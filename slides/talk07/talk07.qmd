@@ -22,8 +22,6 @@ execute:
 #| echo: false
 library(tidyverse)
 library(mgcv)
-library(gratia)
-library(MASS)
 library(ggtext)
 ```
 
@@ -121,7 +119,7 @@ $$
 :::
 
 ::: {.fragment}
-- 当 $x_i$ 属于基线组 A 时，$I(x_i = \text{B}) = 0$
+- 当 $x_i$ 属于基线组 A 时，$I(x_i = \text{A}) = 0$
 - 当 $x_i$ 属于组 B 时，$I(x_i = \text{B}) = 1$
 - 所以模型依旧是对 $\beta_0, \beta_1$ 线性的
 :::
@@ -166,9 +164,9 @@ $$
 
 |Color |D<sub>blue</sub>	|D<sub>green</sub>|
 |------|-------|----|
-|Red	|0	|0
-|Blue	|1	|0
-|Green	|0	|1
+|red	|0	|0	|
+|blue	|1	|0	|
+|green	|0	|1	|
 
 :::
 
@@ -176,9 +174,9 @@ $$
 
 系数解释：
 
-- A 组均值：$\beta_0$
-- B 组均值：$\beta_0 + \beta_1$
-- C 组均值：$\beta_0 + \beta_2$
+- red 组均值：$\beta_0$
+- blue 组均值：$\beta_0 + \beta_1$
+- green 组均值：$\beta_0 + \beta_2$
 
 :::
 

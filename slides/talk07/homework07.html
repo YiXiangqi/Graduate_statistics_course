@@ -177,9 +177,9 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="作业目标">作业目标</h2>
 <p>本次作业对应第七讲 <code>talk07.qmd</code>，目标是：</p>
 <ol type="1">
-<li>理解分类变量进入线性模型后，如何用两因素方差分析回答研究问题。</li>
-<li>理解平衡设计、非平衡设计与不同 sums of squares 之间的关系。</li>
-<li>理解 <code>summary(gam())</code> 中 smooth term p 值所对应的零假设。</li>
+<li>复习方差分析（<code>aov()</code>）的使用极其与线性回归（<code>lm()</code>）的联系。</li>
+<li>理解平衡设计、非平衡设计与不同 sums of squares (three types of ANOVA Table) 之间的关系。</li>
+<li>理解并验证 <code>summary(gam())</code> 中 smooth term p 值所对应的零假设。</li>
 <li>学会解释和诊断一个时间趋势 GAM，并在必要时改进默认设置。</li>
 </ol>
 <p>预计完成时间：<strong>2-3 小时</strong>。</p>
@@ -256,15 +256,10 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <ol type="1">
-<li><p>使用 <code>count()</code> 或 <code>table()</code> 检查 <code>species</code> 与 <code>sex</code> 的组合频数。</p></li>
-<li><p>判断这个数据集在 QA.1 中是否是 perfectly balanced，并说明理由。</p></li>
-<li><p>使用 <code>lm()</code> 和 <code>anova()</code> 重新分析 QA.1 的同一个模型：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>penguins_lm_a <span class="ot">&lt;-</span> <span class="fu">lm</span>(body_mass_g <span class="sc">~</span> species <span class="sc">+</span> sex, <span class="at">data =</span> penguins_df)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(penguins_lm_a)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
-<li><p>交换解释变量顺序，重新拟合并比较结果：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>penguins_lm_b <span class="ot">&lt;-</span> <span class="fu">lm</span>(body_mass_g <span class="sc">~</span> sex <span class="sc">+</span> species, <span class="at">data =</span> penguins_df)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(penguins_lm_b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
-<li><p>比较两张 ANOVA 表。它们是否完全相同？如果不同，请解释为什么这种差异会出现。</p></li>
+<li>判断这个数据集在 QA.1 中是否是 perfectly balanced，并说明理由。</li>
+<li>使用 <code>lm()</code> 和 <code>anova()</code> 重新分析 QA.1 的同一个模型</li>
+<li>交换解释变量顺序，重新拟合并比较结果：</li>
+<li>比较两张 ANOVA 表。它们是否完全相同？如果不同，请解释为什么这种差异会出现。</li>
 </ol>
 </div>
 </div>
@@ -282,6 +277,7 @@ window.Quarto = {
 <li><code>anova.lm()</code> 默认对应哪一种 sums of squares？</li>
 <li>对当前这个分析问题来说，这是否是一个理想的选择？请说明理由。</li>
 <li>如果不是，请使用更合适的方法重新分析（例如对这里的加性无交互模型 <code>body_mass_g ~ species + sex</code> 使用 <code>car::Anova()</code> 的 Type II sums of squares），并解释为什么它更合适。</li>
+<li>如果需要考虑<code>species</code>和<code>sex</code>的交互效应，应该如何做？</li>
 <li>比较默认 <code>anova()</code> 与 <code>car::Anova()</code> 的差异，说明你最终会依据哪一种分析给出结论。</li>
 </ol>
 </div>
@@ -343,7 +339,7 @@ y = x^2 + \varepsilon ,
 <div class="callout-body-container callout-body">
 <ol type="1">
 <li><p>使用默认设置拟合下面的模型：</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>gtemp_gam_default <span class="ot">&lt;-</span> <span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>gtemp_gam_default <span class="ot">&lt;-</span> <span class="fu">gam</span>(Temperature <span class="sc">~</span> <span class="fu">s</span>(Year), <span class="at">data =</span> gtemp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
 <li><p>解释 <code>s()</code> 中参数 <code>k</code> 与 <code>bs</code> 的含义。</p></li>
 <li><p>解释 <code>gam()</code> 中参数 <code>method</code> 的含义。</p></li>
 <li><p>查明这些参数在这里的默认值分别是什么。</p></li>

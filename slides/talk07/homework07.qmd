@@ -26,9 +26,9 @@ library(palmerpenguins)
 
 本次作业对应第七讲 `talk07.qmd`，目标是：
 
-1. 理解分类变量进入线性模型后，如何用两因素方差分析回答研究问题。
-2. 理解平衡设计、非平衡设计与不同 sums of squares 之间的关系。
-3. 理解 `summary(gam())` 中 smooth term p 值所对应的零假设。
+1. 复习方差分析（`aov()`）的使用极其与线性回归（`lm()`）的联系。
+2. 理解平衡设计、非平衡设计与不同 sums of squares (three types of ANOVA Table) 之间的关系。
+3. 理解并验证 `summary(gam())` 中 smooth term p 值所对应的零假设。
 4. 学会解释和诊断一个时间趋势 GAM，并在必要时改进默认设置。
 
 预计完成时间：**2-3 小时**。
@@ -86,23 +86,10 @@ gtemp <-
 ::: {.callout-important}
 ## **QA.2**
 
-1. 使用 `count()` 或 `table()` 检查 `species` 与 `sex` 的组合频数。
-2. 判断这个数据集在 QA.1 中是否是 perfectly balanced，并说明理由。
-3. 使用 `lm()` 和 `anova()` 重新分析 QA.1 的同一个模型：
-
-   ```r
-   penguins_lm_a <- lm(body_mass_g ~ species + sex, data = penguins_df)
-   anova(penguins_lm_a)
-   ```
-
-4. 交换解释变量顺序，重新拟合并比较结果：
-
-   ```r
-   penguins_lm_b <- lm(body_mass_g ~ sex + species, data = penguins_df)
-   anova(penguins_lm_b)
-   ```
-
-5. 比较两张 ANOVA 表。它们是否完全相同？如果不同，请解释为什么这种差异会出现。
+1. 判断这个数据集在 QA.1 中是否是 perfectly balanced，并说明理由。
+2. 使用 `lm()` 和 `anova()` 重新分析 QA.1 的同一个模型
+3. 交换解释变量顺序，重新拟合并比较结果：
+4. 比较两张 ANOVA 表。它们是否完全相同？如果不同，请解释为什么这种差异会出现。
 :::
 
 ::: {.callout-important}
@@ -111,7 +98,8 @@ gtemp <-
 1. `anova.lm()` 默认对应哪一种 sums of squares？
 2. 对当前这个分析问题来说，这是否是一个理想的选择？请说明理由。
 3. 如果不是，请使用更合适的方法重新分析（例如对这里的加性无交互模型 `body_mass_g ~ species + sex` 使用 `car::Anova()` 的 Type II sums of squares），并解释为什么它更合适。
-4. 比较默认 `anova()` 与 `car::Anova()` 的差异，说明你最终会依据哪一种分析给出结论。
+4. 如果需要考虑`species`和`sex`的交互效应，应该如何做？
+5. 比较默认 `anova()` 与 `car::Anova()` 的差异，说明你最终会依据哪一种分析给出结论。
 :::
 
 ---

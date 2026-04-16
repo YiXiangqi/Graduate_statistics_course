@@ -292,7 +292,7 @@ y_i = \beta_0 + \beta_1 I(x_i = \text{B}) + \varepsilon_i
 </div>
 <div class="fragment">
 <ul>
-<li>当 <span class="math inline">\(x_i\)</span> 属于基线组 A 时，<span class="math inline">\(I(x_i = \text{B}) = 0\)</span></li>
+<li>当 <span class="math inline">\(x_i\)</span> 属于基线组 A 时，<span class="math inline">\(I(x_i = \text{A}) = 0\)</span></li>
 <li>当 <span class="math inline">\(x_i\)</span> 属于组 B 时，<span class="math inline">\(I(x_i = \text{B}) = 1\)</span></li>
 <li>所以模型依旧是对 <span class="math inline">\(\beta_0, \beta_1\)</span> 线性的</li>
 </ul>
@@ -337,17 +337,17 @@ y_i = \beta_0 + \beta_1 D_{blue} + \beta_2 D_{green} + \varepsilon_i
 </thead>
 <tbody>
 <tr class="odd">
-<td>Red</td>
+<td>red</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td>Blue</td>
+<td>blue</td>
 <td>1</td>
 <td>0</td>
 </tr>
 <tr class="odd">
-<td>Green</td>
+<td>green</td>
 <td>0</td>
 <td>1</td>
 </tr>
@@ -356,9 +356,9 @@ y_i = \beta_0 + \beta_1 D_{blue} + \beta_2 D_{green} + \varepsilon_i
 </div><div class="column" style="width:50%;">
 <p>系数解释：</p>
 <ul>
-<li>A 组均值：<span class="math inline">\(\beta_0\)</span></li>
-<li>B 组均值：<span class="math inline">\(\beta_0 + \beta_1\)</span></li>
-<li>C 组均值：<span class="math inline">\(\beta_0 + \beta_2\)</span></li>
+<li>red 组均值：<span class="math inline">\(\beta_0\)</span></li>
+<li>blue 组均值：<span class="math inline">\(\beta_0 + \beta_1\)</span></li>
+<li>green 组均值：<span class="math inline">\(\beta_0 + \beta_2\)</span></li>
 </ul>
 </div></div>
 </section>
@@ -1193,7 +1193,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href=""></a><span class="fu">k.check</span>(gtemp_gam_m2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        k'      edf  k-index p-value
-s(Year) 19 10.17207 0.793124  0.0075</code></pre>
+s(Year) 19 10.17207 0.793124  0.0025</code></pre>
 </div>
 </div>
 <p>此时虽然p 值仍较低，但是 edf 明显小于 k’了，这表明模型已经足够灵活，如果残差中仍残留有明显模式，和 k 值的选择无关了。</p>
