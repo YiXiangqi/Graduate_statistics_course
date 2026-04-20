@@ -1,0 +1,135 @@
+---
+title: "高等数据统计分析"
+subtitle: "第八讲：广义加性模型（GAM）"
+author: "易湘琦"
+format:
+  revealjs:
+    slide-number: true
+    chalkboard:
+      buttons: false
+    preview-links: auto
+    scrollable: true
+    df-print: default
+    logo: images/JMU_logo.jpg
+    css: styles.css
+    footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
+execute:
+  echo: true
+  message: false
+---
+
+```{r}
+#| echo: false
+library(tidyverse)
+library(mgcv)
+library(ggtext)
+```
+
+```{r}
+#| echo: false
+theme_set(
+  theme_light(base_size = 16, base_family="serif") +
+    theme(legend.background = element_rect(fill = "transparent"),
+          legend.key = element_rect(fill = "transparent", color = NA),
+          panel.grid.minor = element_blank(),
+          panel.border = element_rect(color = "black",
+                                      linewidth = 0.5,
+                                      fill = NA),
+          plot.margin = margin(5, 5, 5, 5, unit = "pt")
+          )
+  )
+```
+## 你将学到
+
+::: {.incremental style="font-size: 1.2em;"}
+- 样条函数
+- 模型选择与诊断
+- 
+:::
+
+# 样条函数
+
+## 薄板回归样条 Thin plate regression splines
+
+TPRS 是 mgcv 包中默认的样条函数（`bs = "tp"`），在官方文档（`?smooth.terms`）中:
+
+> “These are low rank isotropic smoothers of any number of covariates.”
+
+- Low rank 指所用样条函数是薄板样条的低秩（简化）版本，需要更少的参数：
+  - 不需要关心节点 (knots) 位置的选择, 会自动选择。
+- isotropic 指协变量坐标系的旋转不会改变平滑的结果。
+  - `gam(y ~ s(x1, x2))`
+  - `x1`和`x2`应该是在同一尺度上的变量。
+  - 考虑了交互效应，但是不能将主效应和交互效应分开。
+- 给定 `k`,TPRS通常是表现最好的样条函数。
+
+
+## 三次回归样条 Cubic regression splines
+
+`bs = "cr"` 是三次回归样条:
+
+- 基函数是分段三次多项式，分段由节点 (knots) 定义
+- 分段三次多项式在节点处连续，并且在节点处的一阶和二阶导数也连续
+- 默认节点位置，由数据范围内的均匀分布的分位数确定，可指定节点位置。
+- 适用于单变量平滑
+- 不能直接处理多变量平滑，需要使用 tensor product smooths (`te()`) 
+
+## 循环三次回归样条 cyclic cubic regression splines
+
+`bs = "cc"` 是循环三次回归样条，在`cr`的基础上额外要求在边界处函数值、一阶和二阶导数值相等，适用于周期性数据。
+
+```{r}
+# source: https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_trend_gl.csv
+pCO2 <- 
+  read_csv("/Users/yixq/Projects_github/Graduate_statistics_course/slides/talk08/data/co2_trend_gl.csv", comment = "#") |>
+  unite(date, year, month, day, remove = FALSE) |>
+  mutate(date = as_date(date)) |>
+  mutate(date_num = as.numeric(date)) |>
+  mutate(day_of_year = yday(date))
+```
+
+
+```{r}
+pCO2 |>
+  pivot_longer(c(smoothed, trend), names_to = "type", values_to = "pCO2") |>
+  ggplot(aes(date, pCO2, color = type)) +
+  geom_line() +
+  labs(x = "Date", y = expression(pCO[2]~" (ppm)"), color = "Type") +
+  theme(legend.position = "top")
+```
+
+
+```{r}
+pCO2_gam_m0 <- gam(smoothed ~ s(date_num, k = 900, bs = "cr"), data = pCO2, method = "REML")
+summary(pCO2_gam_m0)
+k.check(pCO2_gam_m0)
+
+date_num_new <- seq(min(pCO2$date_num), max(pCO2$date_num) + 1000, length.out = 1000)
+predict(pCO2_gam_m0, newdata = data.frame(date_num = date_num_new), se.fit = TRUE) |>
+  as_tibble() |>
+  bind_cols(date_num = date_num_new) |>
+  mutate(date = as_date(date_num)) |>
+  ggplot(aes(date, fit)) +
+  geom_line(color = "blue") +
+  geom_ribbon(aes(ymin = fit - 10 * se.fit, ymax = fit + 10 * se.fit), alpha = 0.2) +
+  labs(x = "Date", y = expression(pCO[2]~" (ppm)")) +
+  theme(legend.position = "top")
+```
+
+
+```{r}
+pCO2_gam_m1 <- gam(smoothed ~ year + s(day_of_year, k = 100, bs = "cc"), data = pCO2, method = "REML")
+summary(pCO2_gam_m1)
+k.check(pCO2_gam_m1)
+plot(pCO2_gam_m1)
+gam.check(pCO2_gam_m1)
+
+pCO2 |>
+  mutate(pred = predict(pCO2_gam_m1)) |>
+  ggplot(aes(date, smoothed)) +
+  geom_line(color = "black") +
+  geom_line(aes(date, pred), color = "red") +
+  labs(x = "Date", y = expression(pCO[2]~" (ppm
+)")) +
+  theme(legend.position = "top")
+```
