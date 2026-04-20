@@ -39,15 +39,18 @@ theme_set(
           )
   )
 ```
+
 ## 你将学到
 
 ::: {.incremental style="font-size: 1.2em;"}
-- 样条函数
-- 模型选择与诊断
-- 
+
+- **mgcv**包中的常用样条函数
+- 模型选择
+- GAM 中的交互效应
+
 :::
 
-# 样条函数
+# **mgcv**包中的常用样条函数
 
 ## 薄板回归样条 Thin plate regression splines
 
@@ -76,60 +79,402 @@ TPRS 是 mgcv 包中默认的样条函数（`bs = "tp"`），在官方文档（`
 
 ## 循环三次回归样条 cyclic cubic regression splines
 
-`bs = "cc"` 是循环三次回归样条，在`cr`的基础上额外要求在边界处函数值、一阶和二阶导数值相等，适用于周期性数据。
+循环三次回归样条:
 
+- `s(..., `bs = "cc"`, ...)`
+- 在 CRS 的基础上额外要求在边界处函数值、一阶和二阶导数值相等
+- 适用于周期性数据。
+
+## GAM 示例：周期性数据
+Mauna Loa *p*CO<sub>2</sub>数据[^1]:
+
+[^1]:数据来源：[https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.csv](https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_daily_mlo.csv)
+
+::: {.panel-tabset}
+
+### 数据读取与处理
 ```{r}
-# source: https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_trend_gl.csv
-pCO2 <- 
-  read_csv("/Users/yixq/Projects_github/Graduate_statistics_course/slides/talk08/data/co2_trend_gl.csv", comment = "#") |>
-  unite(date, year, month, day, remove = FALSE) |>
-  mutate(date = as_date(date)) |>
-  mutate(date_num = as.numeric(date)) |>
-  mutate(day_of_year = yday(date))
+pco2_day <-
+  read_csv(
+    "data/co2_daily_mlo.csv",
+    comment = "#",
+    col_names = c("year", "month", "day", "year_num", "pco2")
+  ) |>
+  unite(date, year, month, day, sep = "-", remove = FALSE) |>
+  mutate(date = as_date(date), day_of_year = yday(date))
+```
+### 数据预览
+```{r}
+pco2_day
 ```
 
-
+### 数据可视化
 ```{r}
-pCO2 |>
-  pivot_longer(c(smoothed, trend), names_to = "type", values_to = "pCO2") |>
-  ggplot(aes(date, pCO2, color = type)) +
-  geom_line() +
-  labs(x = "Date", y = expression(pCO[2]~" (ppm)"), color = "Type") +
-  theme(legend.position = "top")
+#| echo: false
+pco2_day_plot <-
+  pco2_day |>
+    ggplot(aes(date, pco2)) +
+    geom_point(alpha = 0.3, shape = 1, size = 0.5, color = "steelblue") +
+    ylab("*p*CO<sub>2</sub> (ppm)") +
+    xlab("Date (Year)") +
+    theme(axis.title.y = element_markdown())
+```
+:::
+
+## GAM 示例：周期性数据
+Mauna Loa *p*CO<sub>2</sub>数据[^1]:
+
+::: {.panel-tabset}
+
+### 模型拟合
+```{r}
+#| code-line-numbers: "|2|5"
+pco2_day_gam_m0 <- gam(
+  pco2 ~ s(year, k = 53) + s(month, k = 13, bs = "cc"),
+  data = pco2_day,
+  method = "REML",
+  knots = list(month = c(0.5, 12.5))
+)
 ```
 
+### `summary()`
+```{r}
+summary(pco2_day_gam_m0)
+```
+
+### `plot()`
+```{r}
+plot(pco2_day_gam_m0)
+```
+
+### `gam.check()`
 
 ```{r}
-pCO2_gam_m0 <- gam(smoothed ~ s(date_num, k = 900, bs = "cr"), data = pCO2, method = "REML")
-summary(pCO2_gam_m0)
-k.check(pCO2_gam_m0)
+gam.check(pco2_day_gam_m0)
+```
 
-date_num_new <- seq(min(pCO2$date_num), max(pCO2$date_num) + 1000, length.out = 1000)
-predict(pCO2_gam_m0, newdata = data.frame(date_num = date_num_new), se.fit = TRUE) |>
+:::
+
+## GAM 示例：周期性数据
+Mauna Loa *p*CO<sub>2</sub>数据[^1]:
+
+::: {.panel-tabset}
+
+### 模型预测与可视化
+```{r}
+year_seq <- seq(min(pco2_day$year), max(pco2_day$year))
+month_seq <- seq(1, 12)
+newdata <- expand_grid(year = year_seq, month = month_seq)
+
+pco2_day_gam_m0_pred <-
+  predict(pco2_day_gam_m0, newdata = newdata, se.fit = TRUE) |>
   as_tibble() |>
-  bind_cols(date_num = date_num_new) |>
-  mutate(date = as_date(date_num)) |>
-  ggplot(aes(date, fit)) +
-  geom_line(color = "blue") +
-  geom_ribbon(aes(ymin = fit - 10 * se.fit, ymax = fit + 10 * se.fit), alpha = 0.2) +
-  labs(x = "Date", y = expression(pCO[2]~" (ppm)")) +
-  theme(legend.position = "top")
+  bind_cols(newdata) |>
+  mutate(date = as_date(paste(year, month, "15", sep = "-")))
+
+pco2_day_pred_plot <-
+  pco2_day_plot +
+  geom_line(aes(date, fit), data = pco2_day_gam_m0_pred) +
+  geom_ribbon(aes(date, fit, ymin = fit - 2 * se.fit, ymax = fit + 2 * se.fit), data = pco2_day_gam_m0_pred)
 ```
+
+### 可视化结果
+```{r}
+pco2_day_pred_plot
+```
+:::
+
+# 模型选择 Model selection
+
+## 零空间 Null space
+对于标准GAM：
+
+- GAM 在拟合时包含有惩罚项，以防止过拟合。
+- 有些形式的函数会被惩罚，而有些形式的函数不会被惩罚。
+- 不被惩罚的函数组成了零空间（Null space）
+- 随着smoothing parameter (sp)升高，被惩罚的函数形式会不断“退缩”（edf下降），当“退缩”到零空间时就不会继续被惩罚了。
+- 即使 sp 变为无穷大，被惩罚的函数也不会“退缩”为0。
+
+## 零空间 Null space
+看个例子：
+
+::: {.panel-tabset}
+
+### 模拟数据
+```{r}
+set.seed(1) # 设置随机种子以确保结果可重复
+n <- 200
+simu_df <-
+  tibble(
+    x1 = runif(n),
+    x2 = runif(n),
+    x3 = runif(n),
+    y = sin(2 * pi * x1) + rnorm(n, sd = 0.2)
+  )
+```
+
+### 模拟数据图像
+
+```{r}
+#| echo: false
+simu_df |>
+  pivot_longer(cols = starts_with("x"), names_to = "variable", values_to = "value") |>
+  ggplot(aes(x = value, y = y)) +
+  geom_point() +
+  facet_wrap(~ variable, scales = "free_x") +
+  labs(x = "Predictor value", y = "Response (y)")
+```
+### GAM 拟合
+```{r}
+simu_df_gam_m1 <- gam(y ~ s(x1) + s(x2) + s(x3), method = "REML", data = simu_df)
+anova(simu_df_gam_m1)
+```
+:::
+
+## 零空间惩罚 Null space penealty
+
+- 如果添加加对零空间的惩罚，当 sp 逐渐趋于无穷时，函数是会“退缩”到零的
+- 利用这一特性，我们可以让模型自动选择是否保留某些变量或某些平滑项。
+
+```{r}
+#| code-line-numbers: "|3"
+simu_df_gam_m2 <- gam(y ~ s(x1) + s(x2) + s(x3),
+          method = "REML",
+          select = TRUE, 
+          data = simu_df)
+anova(simu_df_gam_m2)
+```
+
+## AIC
+- AIC 是一种常用的模型选择标准，旨在平衡模型的拟合优度和复杂度。
+- AIC 经验法则：
+  - $\Delta AIC > 2$: 小差异
+  - $\Delta AIC > 4$: 中等差异
+  - $\Delta AIC > 10$: 明显差异
+  
+```{r}
+simu_df_gam_m3 <- gam(y ~ s(x1) + s(x2), method = "REML", data = simu_df)
+simu_df_gam_m4 <- gam(y ~ s(x2) + s(x3), method = "REML", data = simu_df)
+AIC(simu_df_gam_m1, simu_df_gam_m2, simu_df_gam_m3, simu_df_gam_m4)
+```
+
+## 假设检验 Hypothesis testing
+
+假设检验在 GAM 中很 tricky，建议阅读官方文档（`?anova.gam`）
+
+- 当只有一个模型时，`anova.gam(model)`对每个参数项和平滑项进行检验，类似于`drop(1)`或者`Type III ANOVA`
+- 当有多个模型时，
+  - ()会进行模型比较，类似于``anova()``函数的功能，可以指定检验方法（如卡方检验、F检验等）
+  - 不要检验可以被惩罚为0的项
+  
+
+## 将线性部分与非线性部分分开
+
+**mgcv** 中默认的薄板样条函数（`s(..., bs = "tp")`）包括线性部分和非线性部分，可以通过以下方式区分
+
+::: {.panel-tabset}
+### 模拟数据
+```{r}
+set.seed(0)
+simu_df2 <- 
+  tibble(
+    x = runif(200),
+    y1 = 2*x + sin(2*pi*x) + rnorm(200, 0, 0.2),
+    y2 = 2*x + rnorm(200, 0, 0.2) 
+  )
+```
+
+### 模型拟合
+```{r}
+# normal model
+simu_df2_gam_m1 <- gam(y1 ~ s(x), 
+                       method = "REML", data = simu_df2)
+
+# Model separating linear and nonlinear parts
+simu_df2_gam_m2 <- gam(y1 ~ x + s(x, m = c(2, 0)), 
+                      method = "REML", data = simu_df2)
+```
+`m = c(2, 0)` 中：
+- 第1个元素表示惩罚项中导数的阶数
+- 第2个元素表示是否将零空间排除平滑函数
+
+### 结果
+```{r}
+summary(simu_df2_gam_m1)
+summary(simu_df2_gam_m2)
+```
+
+:::
+
+## 判断是否线性就足够？
 
 
 ```{r}
-pCO2_gam_m1 <- gam(smoothed ~ year + s(day_of_year, k = 100, bs = "cc"), data = pCO2, method = "REML")
-summary(pCO2_gam_m1)
-k.check(pCO2_gam_m1)
-plot(pCO2_gam_m1)
-gam.check(pCO2_gam_m1)
+# normal model
+simu_df2_gam_m3 <- gam(y2 ~ s(x), 
+                       method = "REML", data = simu_df2)
 
-pCO2 |>
-  mutate(pred = predict(pCO2_gam_m1)) |>
-  ggplot(aes(date, smoothed)) +
-  geom_line(color = "black") +
-  geom_line(aes(date, pred), color = "red") +
-  labs(x = "Date", y = expression(pCO[2]~" (ppm
-)")) +
-  theme(legend.position = "top")
+# Model separating linear and nonlinear parts
+simu_df2_gam_m4 <- gam(y2 ~ x + s(x, m = c(2, 0)), 
+                      method = "REML", data = simu_df2)
+anova(simu_df2_gam_m3)
+anova(simu_df2_gam_m4)
 ```
+
+## 示例：判断是否需要非线性项
+
+Mauna Loa *p*CO<sub>2</sub>的年际变化趋势是否用线性表示就足够？
+```{r}
+plot(pco2_day_gam_m0, select = 1)
+```
+## 示例：判断是否需要非线性项
+
+::: {.panel-tabset}
+
+### 原模型
+
+```{r}
+#| eval: false
+pco2_day_gam_m0 <- gam(
+  pco2 ~ s(year, k = 53) + s(month, k = 13, bs = "cc"),
+  data = pco2_day,
+  method = "REML",
+  knots = list(month = c(0.5, 12.5))
+)
+```
+
+### 模型分解线性和非线性部分
+```{r}
+pco2_day_gam_m1 <- gam(
+  pco2 ~ year + s(year, k = 53, m = c(2, 0)) + s(month, k = 13, bs = "cc"),
+  data = pco2_day,
+  method = "REML",
+  knots = list(month = c(0.5, 12.5))
+)
+```
+:::
+
+## 示例：判断是否需要非线性项
+
+::: {.panel-tabset}
+
+### `plot()`
+```{r}
+plot(pco2_day_gam_m1)
+```
+### `summary()`
+
+```{r}
+summary(pco2_day_gam_m1)
+```
+
+### `gam.check()`
+```{r}
+gam.check(pco2_day_gam_m1)
+```
+
+:::
+
+# GAM 中平滑项与分类变量的交互效应
+
+## `metals`数据集
+
+`metals`[^2]中记录了不同土壤类型（`SoilType`）下的汞含量（`Hg`）随时间（`Date`）的变化情况：
+
+[^2]: 数据来源：[Rose, Yang, Turner and Simpson, 2012](https://doi.org/10.1016/j.gca.2010.12.026])
+
+```{r}
+#| echo: false
+metals <- 
+  read_csv("data/metals.csv") |>
+  mutate(SoilType = factor(SoilType, levels = c("non-eroded", "eroded", "thin")))
+```
+```{r}
+metals
+```
+
+## `metals`数据集
+```{r}
+metals |>
+  ggplot() + 
+  geom_point(aes(Date, Hg, color = SoilType)) +
+  geom_line(aes(Date, Hg, color = SoilType)) +
+  theme(legend.position = "inside",
+        legend.position.inside = c(0.15, 0.8),
+        legend.background = element_rect(fill = "transparent"))
+```
+
+## 构建GAMs
+
+以下 GAM 之间有何区别？
+
+```{r, echo=TRUE}
+Hg_gam0 <- gam(Hg ~ s(Date), data = metals, method = 'REML')
+Hg_gam1 <- gam(Hg ~ s(Date) + SoilType, data = metals, method = 'REML')
+Hg_gam2 <- gam(Hg ~ s(Date, by = SoilType), data = metals, method = 'REML')
+Hg_gam3 <- gam(Hg ~ s(Date, by = SoilType) + SoilType, data = metals, method = 'REML')
+```
+
+## 模型选择：AIC
+```{r}
+AIC(Hg_gam0, Hg_gam1, Hg_gam2, Hg_gam3)
+```
+
+## 模型选择：假设检验
+
+```{r}
+anova(Hg_gam0, Hg_gam1, Hg_gam2, Hg_gam3)
+```
+
+## 模型预测
+
+::: {.panel-tabset}
+
+### 模型预测
+```{r}
+Hg_gam3_pred <-
+  predict(Hg_gam3, se.fit = TRUE) |>
+  as_tibble() |>
+  bind_cols(metals)
+Hg_gam3_pred_plot <-
+  metals |>
+  ggplot() +
+  geom_point(aes(Date, Hg, color = SoilType)) +
+  geom_line(aes(Date, fit, color = SoilType), data = Hg_gam3_pred) +
+  geom_ribbon(aes(Date, fit, ymin = fit - 2 * se.fit, ymax = fit + 2 * se.fit, fill = SoilType), data = Hg_gam3_pred, alpha = 0.2) +
+  theme(legend.position = "inside",
+        legend.position.inside = c(0.15, 0.8),
+        legend.background = element_rect(fill = "transparent"))
+```
+
+### 模型预测结果
+```{r}
+Hg_gam3_pred_plot
+```
+:::
+
+## 比较两个平滑曲线之间是否有显著差异
+
+通过`contrasts()`，将其中的一个平滑曲线作为基准，比较另一个平滑曲线与基准之间的差异：
+```{r}
+metals <- mutate(metals, #构建新列，有序因子
+                 oSoilType = ordered(SoilType,levels = c('non-eroded','eroded','thin')))
+
+Hg_gam4 <- gam(Hg ~ s(Date) + s(Date, by = oSoilType) + SoilType, 
+               data = metals, method = 'REML')
+summary(Hg_gam4)
+summary(Hg_gam3)
+plot(Hg_gam4, select = 1, ylim = c(-20, 20))
+plot(Hg_gam3, select = 2, ylim = c(-20, 20))
+
+plot(Hg_gam4, select = 2, ylim = c(-30, 30))
+plot(Hg_gam3, select = 1, ylim = c(-30, 30))
+
+plot(Hg_gam4, select = 3, ylim = c(-30, 30))
+plot(Hg_gam3, select = 3, ylim = c(-30, 30))
+```
+## `gratia`包中的`difference_smooths()`函数
+
+## 资料
+
+- [Penalized thin plate regression splines in GAMs](https://stat.ethz.ch/R-manual/R-devel/library/mgcv/html/smooth.construct.tp.smooth.spec.html)
