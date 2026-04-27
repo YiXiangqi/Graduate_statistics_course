@@ -1,0 +1,450 @@
+---
+title: "高等数据统计分析"
+subtitle: "第九讲：广义加性模型（GAM）"
+author: "易湘琦"
+format:
+  revealjs:
+    slide-number: true
+    chalkboard:
+      buttons: false
+    preview-links: auto
+    scrollable: true
+    df-print: default
+    logo: images/JMU_logo.jpg
+    css: styles.css
+    footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
+execute:
+  echo: true
+  message: false
+---
+
+```{r}
+#| echo: false
+library(tidyverse)
+library(mgcv)
+library(ggtext)
+library(palmerpenguins)
+library(sp)
+```
+
+```{r}
+#| echo: false
+theme_set(
+  theme_light(base_size = 16, base_family="serif") +
+    theme(legend.background = element_rect(fill = "transparent"),
+          legend.key = element_rect(fill = "transparent", color = NA),
+          panel.grid.minor = element_blank(),
+          panel.border = element_rect(color = "black",
+                                      linewidth = 0.5,
+                                      fill = NA),
+          plot.margin = margin(5, 5, 5, 5, unit = "pt"),
+          legend.position = "inside",
+          legend.position.inside = c(0.95, 0.05)
+          )
+  )
+```
+
+## 你将学到
+
+::: {.incremental style="font-size: 1.5em;"}
+
+- 回顾：
+  - 交互效应的基本概念
+  - 分类变量与分类变量的交互效应
+  - 分类变量与连续变量的交互效应
+
+- 连续变量与连续变量的交互效应
+  - GAM：`s(x, y, ...)`
+  - GAM：`ti(x, y, ...)` 和 `te(x, y, ...)`
+
+:::
+
+# 回顾：交互效应
+
+## 什么是交互效应？
+
+# 分类变量间的交互效应
+
+
+# 分类变量与连续变量间的交互效应 
+
+## `penguins` 数据集
+```{r}
+#| echo: false
+penguins |>
+  ggplot() +
+  geom_point(aes(x = flipper_length_mm, y = body_mass_g, color =species)) +
+  labs(x = "Flipper length (mm)",
+       y = "Body mass (g)") +
+  theme(legend.position.inside = c(0.1, 0.9),
+        legend.title = element_blank())
+```
+
+## `lm()`：`分类变量`$\times$`连续变量`
+
+- 情景1：不存在种间差异
+```{r}
+penguins_lm_m0 <- lm(body_mass_g ~ flipper_length_mm, 
+                     data = penguins)
+```
+
+- 情景2：不同截距，相同斜率
+```{r}
+#| code-fold: true
+penguins_lm_m1 <- lm(body_mass_g ~ flipper_length_mm + species, 
+                     data = penguins)
+```
+
+- 情景3：不同斜率，相同截距
+```{r}
+#| code-fold: true
+penguins_lm_m2 <- lm(body_mass_g ~ flipper_length_mm:species, 
+                     data = penguins)
+
+penguins_lm_m3 <- lm(body_mass_g ~ flipper_length_mm + flipper_length_mm:species, 
+                     data = penguins)
+```
+
+- 情景4: 不同斜率，不同截距
+```{r}
+#| code-fold: true
+penguins_lm_m4 <- lm(body_mass_g ~ flipper_length_mm*species, 
+                     data = penguins)
+```
+
+## `metals` 数据集
+```{r}
+#| echo: false
+metals <- 
+  read_csv("data/metals.csv") |>
+  mutate(SoilType = factor(SoilType, levels = c("non-eroded", "eroded", "thin")))
+```
+```{r}
+#| echo: false
+metals |>
+  ggplot() + 
+  geom_point(aes(Date, Hg, color = SoilType)) +
+  geom_line(aes(Date, Hg, color = SoilType)) +
+  theme(legend.position = "inside",
+        legend.position.inside = c(0.15, 0.8),
+        legend.background = element_rect(fill = "transparent"))
+```
+
+## `gam()`：`分类变量`$\times$`连续变量`
+
+- 情景1：土壤类型间不存在差异
+```{r}
+Hg_gam_m0 <- gam(Hg ~ s(Date), 
+               data = metals, method = 'REML')
+```
+
+- 情景2：不同截距，相同趋势（平滑函数）
+```{r}
+#| code-fold: true
+Hg_gam_m1 <- gam(Hg ~ s(Date) + SoilType,
+               data = metals, method = 'REML')
+```
+- 情景3：相同截距，不同趋势（平滑函数）
+```{r}
+#| code-fold: true
+Hg_gam_m2 <- gam(Hg ~ s(Date, by = SoilType),
+               data = metals, method = 'REML')
+```
+- 情景4：不同截距，不同趋势（平滑函数）
+```{r}
+#| code-fold: true
+Hg_gam_m3 <- gam(Hg ~ s(Date, by = SoilType) + SoilType,
+               data = metals, method = 'REML')
+```
+
+# 连续变量与连续变量的交互效应
+
+# GAM `s(x, y, ...)`
+
+## `sp::meuse` 数据集
+`sp`包中的`meuse` 数据集记录了 meuse 河洪泛区土壤重金属浓度及相关参数。
+```{r}
+#| echo: false
+data(meuse)
+rmarkdown::paged_table(meuse)
+```
+
+## 重金属镉（cadmium）的空间分布
+
+::: {.panel-tabset}
+
+### 空间分布图
+
+```{r}
+#| code-fold: true
+meuse |>
+  ggplot() +
+  geom_point(aes(x, y, color = cadmium)) +
+  scale_color_viridis_c() +
+  theme(legend.position = "inside",
+        legend.position.inside = c(0.1, 0.8))
+```
+
+### 直方图
+
+```{r}
+#| echo: false
+meuse |>
+  ggplot() +
+  geom_histogram(aes(cadmium), bins = 15) +
+  xlab("Cadmium concentration (mg kg <sup>-1</sup>)") +
+  theme(axis.title.x = element_markdown())
+```
+
+:::
+
+## 重金属镉（cadmium）的空间分布
+
+::: {.panel-tabset}
+
+### 对数化后的直方图
+```{r}
+#| code-fold: true
+#| code-line-numbers: "|3"
+meuse |>
+  ggplot() +
+  geom_histogram(aes(cadmium), bins = 15) +
+  scale_x_log10() +
+  xlab("Cadmium concentration (mg kg <sup>-1</sup>)") +
+  theme(axis.title.x = element_markdown())
+```
+
+### 对数化后的空间分布图
+
+```{r}
+#| code-fold: true
+#| code-line-numbers: "|4"
+meuse |>
+  ggplot() +
+  geom_point(aes(x, y, color = cadmium)) +
+  scale_color_viridis_c(trans = "log10") +
+  theme(legend.position = "inside",
+        legend.position.inside = c(0.1, 0.8))
+```
+
+:::
+
+## 构建GAM刻画镉的空间分布特征
+
+```{r, echo=TRUE}
+cadmium_gam_m0 <- gam(cadmium ~ s(x, y), data = meuse, method = "REML")
+summary(cadmium_gam_m0)
+```
+## GAM模型检验
+```{r}
+gam.check(cadmium_gam_m0)
+```
+
+## GAM可视化：`plot.gam()`
+```{r}
+plot(cadmium_gam_m0)
+```
+## GAM可视化：`plot.gam()`
+
+```{r}
+plot(cadmium_gam_m0, scheme = 1)
+```
+
+## GAM可视化：`plot.gam()`
+
+```{r}
+plot(cadmium_gam_m0, scheme = 2)
+```
+
+## GAM可视化：`plot.gam()`
+
+```{r}
+plot(cadmium_gam_m0, scheme = 2, too.far = 0.05)
+```
+
+## GAM可视化：`plot.gam()`
+
+```{r}
+#| eval: false
+?plot.gam
+```
+
+## GAM可视化：`vis.gam()`
+
+```{r}
+vis.gam(x = cadmium_gam_m0, view = c("x", "y"), plot.type = "persp") 
+```
+
+## GAM可视化：`vis.gam()`
+
+```{r}
+vis.gam(x = cadmium_gam_m0, view = c("x", "y"), plot.type = "contour") 
+```
+
+## GAM可视化：`vis.gam()`
+
+```{r}
+vis.gam(x = cadmium_gam_m0, view = c("x", "y"), plot.type = "contour",
+        too.far = 0.1)
+```
+
+## GAM可视化：`vis.gam()`
+
+```{r}
+vis.gam(x = cadmium_gam_m0, view = c("x", "y"), plot.type = "contour", too.far = 0.05)   
+```
+
+## GAM可视化：`vis.gam()`
+
+```{r}
+vis.gam(x = cadmium_gam_m0, view = c("x", "y"), plot.type = "persp", se = 2)    
+```
+
+## GAM可视化：`vis.gam()`
+
+```{r}
+#| code-fold: true
+par(mfrow = c(1, 3))
+vis.gam(cadmium_gam_m0, view = c("x", "y"), plot.type = "persp", theta = 220)
+vis.gam(cadmium_gam_m0, view = c("x", "y"), plot.type = "persp", phi = 55)
+vis.gam(cadmium_gam_m0, view = c("x", "y"), plot.type = "persp", r = 0.1)
+```
+
+```{r}
+#| echo: false
+par(mfrow = c(1, 1))
+```
+
+## GAM可视化：`vis.gam()`
+
+
+```{r}
+#| code-fold: true
+par(mfrow = c(2, 2))
+vis.gam(cadmium_gam_m0, view = c("x", "y"), plot.type = "contour", color = "gray")
+vis.gam(cadmium_gam_m0, view = c("x", "y"), plot.type = "contour", contour.col = "blue")
+vis.gam(cadmium_gam_m0, view = c("x", "y"), plot.type = "contour", nlevels = 20)
+```
+
+```{r}
+#| echo: false
+par(mfrow = c(1, 1))
+```
+
+
+# GAM `ti(x, y, ...)` 和 `te(x, y, ...)`
+
+
+
+
+## `airquality` 数据集`
+`airquality`记录了1973年5月至9月间纽约空气质量数据。
+
+```{r}
+airquality
+```
+
+## `Ozone`与`Temp`、`Wind`的关系
+
+::: {.panel-tabset}
+### `Ozone` vs. `Temp`
+```{r}
+airquality |>
+  ggplot() +
+  geom_point(aes(x = Temp, y = Ozone)) +
+  labs(x = "Wind speed (mph)",
+       y = "Temperature (F)")
+```
+
+### `Ozone` vs. `Wind`
+```{r}
+airquality |>
+  ggplot() +
+  geom_point(aes(x = Wind, y = Ozone)) +
+  labs(x = "Wind speed (mph)",
+       y = "Temperature (F)")
+```
+
+:::
+
+## 模型1: 不考虑交互效应
+
+::: {.panel-tabset}
+
+### 模型构建
+```{r}
+Ozone_gam_m0 <- gam(Ozone ~ s(Temp) + s(Wind), data = airquality, method = "REML")
+
+```
+
+### 结果
+```{r}
+summary(Ozone_gam_m0)
+```
+
+### 模型检验
+```{r}
+gam.check(Ozone_gam_m0)
+```
+
+:::
+
+
+## 模型2: 考虑交互效应
+
+::: {.panel-tabset}
+### 模型构建
+```{r}
+Ozone_gam_m1 <- gam(Ozone ~ te(Temp, Wind), data = airquality, method = "REML")
+```
+
+### 结果
+```{r}
+summary(Ozone_gam_m1)
+```
+
+### 模型检验
+```{r}
+gam.check(Ozone_gam_m1)
+```
+
+
+### 模型比较 
+```{r}
+AIC(Ozone_gam_m0, Ozone_gam_m1)
+```
+
+:::
+
+## 模型3: 主效应+交互效应
+
+::: {.panel-tabset}
+### 模型构建
+```{r}
+Ozone_gam_m2 <- gam(Ozone ~ s(Temp) + s(Wind ) + ti(Temp, Wind), data = airquality, method = "REML")
+```
+### 结果
+```{r}
+summary(Ozone_gam_m2)
+```
+### 模型检验
+```{r}
+gam.check(Ozone_gam_m2)
+```
+### 模型比较
+```{r}
+AIC(Ozone_gam_m0, Ozone_gam_m1, Ozone_gam_m2)
+```
+:::
+
+## s()、te()和ti() 的区别
+
+
+
+
+
+## 学习资料
+- [QCBS R Workshop Series:Workshop 8: Generalized additive models in R](https://r.qcbs.ca/workshop08/book-en/)
+
+- [A Free, Interactive Course using mgcv](https://noamross.github.io/gams-in-r-course/)
+
