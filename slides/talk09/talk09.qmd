@@ -16,6 +16,7 @@ format:
 execute:
   echo: true
   message: false
+  warning: false
 ---
 
 ```{r}
@@ -46,7 +47,7 @@ theme_set(
 
 ## 你将学到
 
-::: {.incremental style="font-size: 1.5em;"}
+::: {.incremental style="font-size: 1.2em;"}
 
 - 回顾：
   - 交互效应的基本概念
@@ -62,6 +63,16 @@ theme_set(
 # 回顾：交互效应
 
 ## 什么是交互效应？
+
+::: {.fragment}
+交互效应（Interaction Effect）指两个或多个自变量（解释变量）共同作用时，对因变量（响应变量）的影响不等于它们独立效应的简单相加。
+
+换句话说，一个变量对结果的影响依赖于另一个变量的取值。
+:::
+
+::: {.fragment}
+拮抗作用（Antagonistic Effect）与 协同作用（Synergistic Effect）
+:::
 
 # 分类变量间的交互效应
 
