@@ -19,3 +19,4 @@ slides/talk01/talk01.zip
 .qwen/
 docs/
 .positai
+*/*/*.html

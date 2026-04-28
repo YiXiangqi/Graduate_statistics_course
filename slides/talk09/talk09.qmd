@@ -64,14 +64,14 @@ theme_set(
 
 ## 什么是交互效应？
 
-::: {.fragment}
-交互效应（Interaction Effect）指两个或多个自变量（解释变量）共同作用时，对因变量（响应变量）的影响不等于它们独立效应的简单相加。
+::: {.incremental}
 
-换句话说，一个变量对结果的影响依赖于另一个变量的取值。
-:::
+- 交互效应（Interaction Effect）指两个或多个自变量（解释变量）共同作用时，对因变量（响应变量）的影响不等于它们独立效应的简单相加。
 
-::: {.fragment}
-拮抗作用（Antagonistic Effect）与 协同作用（Synergistic Effect）
+- 换句话说，一个变量对结果的影响依赖于另一个变量的取值。
+
+- 拮抗作用（Antagonistic Effect）与 协同作用（Synergistic Effect）
+
 :::
 
 # 分类变量间的交互效应
@@ -248,8 +248,24 @@ summary(cadmium_gam_m0)
 ```
 ## GAM模型检验
 ```{r}
+#| eval: false
 gam.check(cadmium_gam_m0)
 ```
+
+::: {.panel-tabset}
+
+### 诊断图
+```{r}
+#| echo: false
+text_output <- capture.output(gam.check(cadmium_gam_m0))
+```
+
+### 诊断结果
+```{r}
+#| echo: false
+cat(text_output, sep = "\n") 
+```
+:::
 
 ## GAM可视化：`plot.gam()`
 ```{r}
@@ -289,7 +305,7 @@ vis.gam(x = cadmium_gam_m0, view = c("x", "y"), plot.type = "persp")
 ## GAM可视化：`vis.gam()`
 
 ```{r}
-vis.gam(x = cadmium_gam_m0, view = c("x", "y"), plot.type = "contour") 
+vis.gam(x = cadmium_gam_m0, view = c("x", "y"), plot.type = "contour")
 ```
 
 ## GAM可视化：`vis.gam()`
@@ -345,35 +361,35 @@ par(mfrow = c(1, 1))
 
 # GAM `ti(x, y, ...)` 和 `te(x, y, ...)`
 
+## `airquality` 数据集
 
-
-
-## `airquality` 数据集`
 `airquality`记录了1973年5月至9月间纽约空气质量数据。
 
 ```{r}
 airquality
 ```
 
-## `Ozone`与`Temp`、`Wind`的关系
+## `Ozone` 与 `Temp`、`Wind` 的关系
 
 ::: {.panel-tabset}
 ### `Ozone` vs. `Temp`
 ```{r}
+#| echo: false
 airquality |>
   ggplot() +
   geom_point(aes(x = Temp, y = Ozone)) +
-  labs(x = "Wind speed (mph)",
-       y = "Temperature (F)")
+  labs(y = "Ozone (ppb)",
+       x = "Temperature (F)")
 ```
 
 ### `Ozone` vs. `Wind`
 ```{r}
+#| echo: false
 airquality |>
   ggplot() +
   geom_point(aes(x = Wind, y = Ozone)) +
   labs(x = "Wind speed (mph)",
-       y = "Temperature (F)")
+       y = "Ozone (ppb)")
 ```
 
 :::
@@ -384,7 +400,9 @@ airquality |>
 
 ### 模型构建
 ```{r}
-Ozone_gam_m0 <- gam(Ozone ~ s(Temp) + s(Wind), data = airquality, method = "REML")
+Ozone_gam_m0 <- gam(Ozone ~ s(Temp) + s(Wind), 
+                    data = airquality, 
+                    method = "REML")
 
 ```
 
@@ -401,12 +419,14 @@ gam.check(Ozone_gam_m0)
 :::
 
 
-## 模型2: 考虑交互效应
+## 模型2: 联合平滑曲面，考虑交互效应
 
 ::: {.panel-tabset}
 ### 模型构建
 ```{r}
-Ozone_gam_m1 <- gam(Ozone ~ te(Temp, Wind), data = airquality, method = "REML")
+Ozone_gam_m1 <- gam(Ozone ~ te(Temp, Wind), 
+                    data = airquality, 
+                    method = "REML")
 ```
 
 ### 结果
@@ -432,7 +452,9 @@ AIC(Ozone_gam_m0, Ozone_gam_m1)
 ::: {.panel-tabset}
 ### 模型构建
 ```{r}
-Ozone_gam_m2 <- gam(Ozone ~ s(Temp) + s(Wind ) + ti(Temp, Wind), data = airquality, method = "REML")
+Ozone_gam_m2 <- gam(Ozone ~ s(Temp) + s(Wind ) + ti(Temp, Wind), 
+                    data = airquality, 
+                    method = "REML")
 ```
 ### 结果
 ```{r}
@@ -451,11 +473,15 @@ AIC(Ozone_gam_m0, Ozone_gam_m1, Ozone_gam_m2)
 ## s()、te()和ti() 的区别
 
 
-
-
+::: {style="font-size: 0.8em;"}
+| 函数 | 主要作用 | 适用场景 | 关键说明 |
+| --- | --- | --- | --- |
+| `s(x, z)` | 对两个连续变量建立二维平滑曲面 | 两个变量尺度相近，想直接描述联合非线性效应 | 常用薄板样条等各向同性平滑，不拆分主效应与交互效应 |
+| `te(x, z)` | 为多个连续变量构建张量积平滑 | 两个变量量纲不同，且希望直接建模完整平滑曲面 | 各维度可使用不同基函数，适合量纲差异明显的情形 |
+| `ti(x, z)` | 构建“纯交互”平滑项 | 已经单独加入 `s(x)` 和 `s(z)` 主效应后，再加入交互效应 | 常与主效应项配合使用，避免与主效应重复 |
+:::
 
 ## 学习资料
 - [QCBS R Workshop Series:Workshop 8: Generalized additive models in R](https://r.qcbs.ca/workshop08/book-en/)
 
 - [A Free, Interactive Course using mgcv](https://noamross.github.io/gams-in-r-course/)
-
