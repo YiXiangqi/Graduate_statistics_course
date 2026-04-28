@@ -9,7 +9,6 @@ slides/talk02/talk02_files/
 slides/talk03/talk03_files/
 slides/talk02/homework02_files/
 slides/talk03/homework03_files/
-*/*/*_files/
 cases/linear_regression/MLR_files
 slides/talk01/talk01.zip
 .DS_Store
@@ -20,3 +19,5 @@ slides/talk01/talk01.zip
 docs/
 .positai
 */*/*.html
+*/*/*_files/
+slides/talk09/talk09_files/

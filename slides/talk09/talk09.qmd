@@ -45,6 +45,97 @@ theme_set(
   )
 ```
 
+# 作业讲评
+
+## Section C：`Metals` 的分组时间趋势与整体比较
+
+::: {.panel-tabset}
+
+### 问题
+
+使用 GAM 分析不同 `SoilType` 下 Hg 随时间的变化，回答：
+
+1. `SoilType = "eroded"` 的时间演化是否不同于另外两类土壤？
+2. 在 `gratia::difference_smooths()` 默认设置下，它比较的对象是什么？
+3. 如何将比较目标扩展为“整体趋势”（平滑项+截距项）并用于比较不同 `SoilType`？
+4. 基于你的比较结果，给出对 `eroded` 与其余两组差异的统计结论与解释。
+
+### 数据图像
+```{r}
+#| echo: false
+metals <- 
+  read_csv("data/metals.csv") |>
+  mutate(SoilType = factor(SoilType, levels = c("non-eroded", "eroded", "thin")))
+```
+
+```{r}
+#| echo: false
+metals |>
+  ggplot() + 
+  geom_point(aes(Date, Hg, color = SoilType)) +
+  geom_line(aes(Date, Hg, color = SoilType)) +
+  theme(legend.position = "inside",
+        legend.position.inside = c(0.15, 0.8),
+        legend.background = element_rect(fill = "transparent"))
+```
+
+:::
+
+## `eroded` 与其他两类土壤的时间演化差异
+
+- 以 `eroded` 为参考组，构建有序因子（ordered factor）：
+```{r}
+metals_eroded_ref <-
+  metals |>
+  mutate(
+    oSoilType = ordered(SoilType, levels = c('eroded', 'non-eroded', 'thin')),
+    SoilType = factor(SoilType, levels = c('eroded', 'non-eroded', 'thin'))
+  )
+```
+
+- GAM模型构建：以 `eroded` 为参考组，比较 `non-eroded` 和 `thin` 与 `eroded` 的整体趋势差异（平滑项+截距项）
+
+```{r}
+Hg_gam_eroded_ref <-
+  gam(Hg ~ s(Date) + s(Date, by = oSoilType) + SoilType,
+      data = metals_eroded_ref,
+      method = 'REML')
+```
+
+## `eroded` 与其他两类土壤的时间演化差异
+
+::: {.panel-tabset}
+
+### 模型结果
+```{r}
+summary(Hg_gam_eroded_ref)
+```
+
+### 模型检验
+```{r}
+gam.check(Hg_gam_eroded_ref)
+```
+
+### 平滑项图
+```{r}
+plot(Hg_gam_eroded_ref)
+```
+
+:::
+
+## `gratia::difference_smooths()`
+
+- 查阅`gratia::difference_smooths()`文档，有一参数`group_means`用于控制组间均值差异是否纳入比较
+- 该参数默认为`FALSE`，表示比较的对象仅限于平滑项的差异，不包括截距项（组间均值差异）
+- 如果设置为`TRUE`，则比较的对象将包括平滑项和截距项的整体趋势差异。
+
+## 学习资料
+
+- [Comparing smooths in factor-smooth interactions I by-variable smooths](https://fromthebottomoftheheap.net/2017/10/11/difference-splines-i/)
+
+- [Comparing smooths in factor-smooth interactions II ordered factors](https://fromthebottomoftheheap.net/2017/12/14/difference-splines-ii/)
+
+
 ## 你将学到
 
 ::: {.incremental style="font-size: 1.2em;"}
@@ -76,12 +167,7 @@ theme_set(
 
 # 分类变量间的交互效应
 
-## 分类变量 × 分类变量：一个直观例子
-
-- 设有一个 2×2 的应用场景：教学方法（传统/互动） × 学生基础（较弱/较强）影响考试成绩。
-- 如果互动教学对基础较弱的学生帮助更大、对基础较强的学生帮助较小，那么教学方法的效果就会依赖于学生基础。
-- 这种“一个因素的效应取决于另一个因素”的现象，就是分类变量间交互效应的直观含义。
-- 下面的 4 行数据是示意性的组均值（illustrative grouped means），不是原始观测值；这里只是用来说明交互结构，不作推断解释。
+## 如何识别分类变量间的交互效应
 
 ```{r}
 #| echo: false
@@ -91,8 +177,6 @@ teaching_demo <- tibble(
   score = c(68, 82, 78, 84)
 )
 ```
-
-## 如何识别分类变量间的交互效应
 
 ::: {.panel-tabset}
 
@@ -116,7 +200,10 @@ teaching_demo |>
   geom_line(linewidth = 0.8) +
   geom_point(size = 3) +
   labs(x = "学生基础", y = "平均成绩", color = "教学方法") +
-  theme(legend.position.inside = c(0.85, 0.25))
+  theme(
+    text = element_text(family = "PingFang SC"),
+    legend.position.inside = c(0.85, 0.25)
+  )
 ```
 
 :::
@@ -126,21 +213,6 @@ teaching_demo |>
 - 如果两条线大致平行，说明教学方法的影响在不同学生基础下较稳定。
 - 如果两条线不平行，说明教学方法的影响随学生基础而变化，也就是存在交互效应。
 - 因此，不平行的线条是交互效应的一个重要视觉信号。
-
-:::
-
-## 在线性模型中表示分类变量间交互
-
-```{r}
-interaction_lm <- lm(score ~ method * background, data = teaching_demo)
-interaction_lm
-```
-
-::: {.incremental}
-
-- `method` 和 `background` 是两个主效应，分别刻画教学方法和学生基础的平均差异。
-- `method:background` 是交互项，用来描述两者联合作用是否偏离简单相加。
-- 在公式中，`method * background` 等价于 `method + background + method:background`。
 
 :::
 
@@ -284,7 +356,7 @@ meuse |>
 ### 对数化后的直方图
 ```{r}
 #| code-fold: true
-#| code-line-numbers: "|3"
+#| code-line-numbers: "|4"
 meuse |>
   ggplot() +
   geom_histogram(aes(cadmium), bins = 15) +
