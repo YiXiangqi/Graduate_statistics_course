@@ -76,6 +76,74 @@ theme_set(
 
 # 分类变量间的交互效应
 
+## 分类变量 × 分类变量：一个直观例子
+
+- 设有一个 2×2 的应用场景：教学方法（传统/互动） × 学生基础（较弱/较强）影响考试成绩。
+- 如果互动教学对基础较弱的学生帮助更大、对基础较强的学生帮助较小，那么教学方法的效果就会依赖于学生基础。
+- 这种“一个因素的效应取决于另一个因素”的现象，就是分类变量间交互效应的直观含义。
+- 下面的 4 行数据是示意性的组均值（illustrative grouped means），不是原始观测值；这里只是用来说明交互结构，不作推断解释。
+
+```{r}
+#| echo: false
+teaching_demo <- tibble(
+  method = factor(c("传统", "传统", "互动", "互动"), levels = c("传统", "互动")),
+  background = factor(c("较弱", "较强", "较弱", "较强"), levels = c("较弱", "较强")),
+  score = c(68, 82, 78, 84)
+)
+```
+
+## 如何识别分类变量间的交互效应
+
+::: {.panel-tabset}
+
+### 汇总表
+
+```{r}
+#| echo: false
+teaching_demo |>
+  group_by(method, background) |>
+  summarise(平均成绩 = mean(score), .groups = "drop") |>
+  rename(教学方法 = method, 学生基础 = background) |>
+  knitr::kable()
+```
+
+### 点线图
+
+```{r}
+#| echo: false
+teaching_demo |>
+  ggplot(aes(x = background, y = score, group = method, color = method)) +
+  geom_line(linewidth = 0.8) +
+  geom_point(size = 3) +
+  labs(x = "学生基础", y = "平均成绩", color = "教学方法") +
+  theme(legend.position.inside = c(0.85, 0.25))
+```
+
+:::
+
+::: {.incremental}
+
+- 如果两条线大致平行，说明教学方法的影响在不同学生基础下较稳定。
+- 如果两条线不平行，说明教学方法的影响随学生基础而变化，也就是存在交互效应。
+- 因此，不平行的线条是交互效应的一个重要视觉信号。
+
+:::
+
+## 在线性模型中表示分类变量间交互
+
+```{r}
+interaction_lm <- lm(score ~ method * background, data = teaching_demo)
+interaction_lm
+```
+
+::: {.incremental}
+
+- `method` 和 `background` 是两个主效应，分别刻画教学方法和学生基础的平均差异。
+- `method:background` 是交互项，用来描述两者联合作用是否偏离简单相加。
+- 在公式中，`method * background` 等价于 `method + background + method:background`。
+
+:::
+
 
 # 分类变量与连续变量间的交互效应 
 
@@ -257,6 +325,7 @@ gam.check(cadmium_gam_m0)
 ### 诊断图
 ```{r}
 #| echo: false
+set.seed(123)
 text_output <- capture.output(gam.check(cadmium_gam_m0))
 ```
 
@@ -413,6 +482,7 @@ summary(Ozone_gam_m0)
 
 ### 模型检验
 ```{r}
+set.seed(123)
 gam.check(Ozone_gam_m0)
 ```
 
@@ -436,6 +506,7 @@ summary(Ozone_gam_m1)
 
 ### 模型检验
 ```{r}
+set.seed(123)
 gam.check(Ozone_gam_m1)
 ```
 
@@ -462,6 +533,7 @@ summary(Ozone_gam_m2)
 ```
 ### 模型检验
 ```{r}
+set.seed(123)
 gam.check(Ozone_gam_m2)
 ```
 ### 模型比较
