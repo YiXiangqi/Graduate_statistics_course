@@ -45,6 +45,97 @@ theme_set(
   )
 ```
 
+# 作业讲评
+
+## Section C：`Metals` 的分组时间趋势与整体比较
+
+::: {.panel-tabset}
+
+### 问题
+
+使用 GAM 分析不同 `SoilType` 下 Hg 随时间的变化，回答：
+
+1. `SoilType = "eroded"` 的时间演化是否不同于另外两类土壤？
+2. 在 `gratia::difference_smooths()` 默认设置下，它比较的对象是什么？
+3. 如何将比较目标扩展为“整体趋势”（平滑项+截距项）并用于比较不同 `SoilType`？
+4. 基于你的比较结果，给出对 `eroded` 与其余两组差异的统计结论与解释。
+
+### 数据图像
+```{r}
+#| echo: false
+metals <- 
+  read_csv("data/metals.csv") |>
+  mutate(SoilType = factor(SoilType, levels = c("non-eroded", "eroded", "thin")))
+```
+
+```{r}
+#| echo: false
+metals |>
+  ggplot() + 
+  geom_point(aes(Date, Hg, color = SoilType)) +
+  geom_line(aes(Date, Hg, color = SoilType)) +
+  theme(legend.position = "inside",
+        legend.position.inside = c(0.15, 0.8),
+        legend.background = element_rect(fill = "transparent"))
+```
+
+:::
+
+## `eroded` 与其他两类土壤的时间演化差异
+
+- 以 `eroded` 为参考组，构建有序因子（ordered factor）：
+```{r}
+metals_eroded_ref <-
+  metals |>
+  mutate(
+    oSoilType = ordered(SoilType, levels = c('eroded', 'non-eroded', 'thin')),
+    SoilType = factor(SoilType, levels = c('eroded', 'non-eroded', 'thin'))
+  )
+```
+
+- GAM模型构建：以 `eroded` 为参考组，比较 `non-eroded` 和 `thin` 与 `eroded` 的整体趋势差异（平滑项+截距项）
+
+```{r}
+Hg_gam_eroded_ref <-
+  gam(Hg ~ s(Date) + s(Date, by = oSoilType) + SoilType,
+      data = metals_eroded_ref,
+      method = 'REML')
+```
+
+## `eroded` 与其他两类土壤的时间演化差异
+
+::: {.panel-tabset}
+
+### 模型结果
+```{r}
+summary(Hg_gam_eroded_ref)
+```
+
+### 模型检验
+```{r}
+gam.check(Hg_gam_eroded_ref)
+```
+
+### 平滑项图
+```{r}
+plot(Hg_gam_eroded_ref)
+```
+
+:::
+
+## `gratia::difference_smooths()`
+
+- 查阅`gratia::difference_smooths()`文档，有一参数`group_means`用于控制组间均值差异是否纳入比较
+- 该参数默认为`FALSE`，表示比较的对象仅限于平滑项的差异，不包括截距项（组间均值差异）
+- 如果设置为`TRUE`，则比较的对象将包括平滑项和截距项的整体趋势差异。
+
+## 学习资料
+
+- [Comparing smooths in factor-smooth interactions I by-variable smooths](https://fromthebottomoftheheap.net/2017/10/11/difference-splines-i/)
+
+- [Comparing smooths in factor-smooth interactions II ordered factors](https://fromthebottomoftheheap.net/2017/12/14/difference-splines-ii/)
+
+
 ## 你将学到
 
 ::: {.incremental style="font-size: 1.2em;"}
@@ -64,17 +155,66 @@ theme_set(
 
 ## 什么是交互效应？
 
-::: {.fragment}
-交互效应（Interaction Effect）指两个或多个自变量（解释变量）共同作用时，对因变量（响应变量）的影响不等于它们独立效应的简单相加。
+::: {.incremental}
 
-换句话说，一个变量对结果的影响依赖于另一个变量的取值。
-:::
+- 交互效应（Interaction Effect）指两个或多个自变量（解释变量）共同作用时，对因变量（响应变量）的影响不等于它们独立效应的简单相加。
 
-::: {.fragment}
-拮抗作用（Antagonistic Effect）与 协同作用（Synergistic Effect）
+- 换句话说，一个变量对结果的影响依赖于另一个变量的取值。
+
+- 拮抗作用（Antagonistic Effect）与 协同作用（Synergistic Effect）
+
 :::
 
 # 分类变量间的交互效应
+
+## 如何识别分类变量间的交互效应
+
+```{r}
+#| echo: false
+teaching_demo <- tibble(
+  method = factor(c("传统", "传统", "互动", "互动"), levels = c("传统", "互动")),
+  background = factor(c("较弱", "较强", "较弱", "较强"), levels = c("较弱", "较强")),
+  score = c(68, 82, 78, 84)
+)
+```
+
+::: {.panel-tabset}
+
+### 汇总表
+
+```{r}
+#| echo: false
+teaching_demo |>
+  group_by(method, background) |>
+  summarise(平均成绩 = mean(score), .groups = "drop") |>
+  rename(教学方法 = method, 学生基础 = background) |>
+  knitr::kable()
+```
+
+### 点线图
+
+```{r}
+#| echo: false
+teaching_demo |>
+  ggplot(aes(x = background, y = score, group = method, color = method)) +
+  geom_line(linewidth = 0.8) +
+  geom_point(size = 3) +
+  labs(x = "学生基础", y = "平均成绩", color = "教学方法") +
+  theme(
+    text = element_text(family = "PingFang SC"),
+    legend.position.inside = c(0.85, 0.25)
+  )
+```
+
+:::
+
+::: {.incremental}
+
+- 如果两条线大致平行，说明教学方法的影响在不同学生基础下较稳定。
+- 如果两条线不平行，说明教学方法的影响随学生基础而变化，也就是存在交互效应。
+- 因此，不平行的线条是交互效应的一个重要视觉信号。
+
+:::
 
 
 # 分类变量与连续变量间的交互效应 
@@ -216,7 +356,7 @@ meuse |>
 ### 对数化后的直方图
 ```{r}
 #| code-fold: true
-#| code-line-numbers: "|3"
+#| code-line-numbers: "|4"
 meuse |>
   ggplot() +
   geom_histogram(aes(cadmium), bins = 15) +
@@ -248,8 +388,25 @@ summary(cadmium_gam_m0)
 ```
 ## GAM模型检验
 ```{r}
+#| eval: false
 gam.check(cadmium_gam_m0)
 ```
+
+::: {.panel-tabset}
+
+### 诊断图
+```{r}
+#| echo: false
+set.seed(123)
+text_output <- capture.output(gam.check(cadmium_gam_m0))
+```
+
+### 诊断结果
+```{r}
+#| echo: false
+cat(text_output, sep = "\n") 
+```
+:::
 
 ## GAM可视化：`plot.gam()`
 ```{r}
@@ -289,7 +446,7 @@ vis.gam(x = cadmium_gam_m0, view = c("x", "y"), plot.type = "persp")
 ## GAM可视化：`vis.gam()`
 
 ```{r}
-vis.gam(x = cadmium_gam_m0, view = c("x", "y"), plot.type = "contour") 
+vis.gam(x = cadmium_gam_m0, view = c("x", "y"), plot.type = "contour")
 ```
 
 ## GAM可视化：`vis.gam()`
@@ -345,35 +502,35 @@ par(mfrow = c(1, 1))
 
 # GAM `ti(x, y, ...)` 和 `te(x, y, ...)`
 
+## `airquality` 数据集
 
-
-
-## `airquality` 数据集`
 `airquality`记录了1973年5月至9月间纽约空气质量数据。
 
 ```{r}
 airquality
 ```
 
-## `Ozone`与`Temp`、`Wind`的关系
+## `Ozone` 与 `Temp`、`Wind` 的关系
 
 ::: {.panel-tabset}
 ### `Ozone` vs. `Temp`
 ```{r}
+#| echo: false
 airquality |>
   ggplot() +
   geom_point(aes(x = Temp, y = Ozone)) +
-  labs(x = "Wind speed (mph)",
-       y = "Temperature (F)")
+  labs(y = "Ozone (ppb)",
+       x = "Temperature (F)")
 ```
 
 ### `Ozone` vs. `Wind`
 ```{r}
+#| echo: false
 airquality |>
   ggplot() +
   geom_point(aes(x = Wind, y = Ozone)) +
   labs(x = "Wind speed (mph)",
-       y = "Temperature (F)")
+       y = "Ozone (ppb)")
 ```
 
 :::
@@ -384,7 +541,9 @@ airquality |>
 
 ### 模型构建
 ```{r}
-Ozone_gam_m0 <- gam(Ozone ~ s(Temp) + s(Wind), data = airquality, method = "REML")
+Ozone_gam_m0 <- gam(Ozone ~ s(Temp) + s(Wind), 
+                    data = airquality, 
+                    method = "REML")
 
 ```
 
@@ -395,18 +554,21 @@ summary(Ozone_gam_m0)
 
 ### 模型检验
 ```{r}
+set.seed(123)
 gam.check(Ozone_gam_m0)
 ```
 
 :::
 
 
-## 模型2: 考虑交互效应
+## 模型2: 联合平滑曲面，考虑交互效应
 
 ::: {.panel-tabset}
 ### 模型构建
 ```{r}
-Ozone_gam_m1 <- gam(Ozone ~ te(Temp, Wind), data = airquality, method = "REML")
+Ozone_gam_m1 <- gam(Ozone ~ te(Temp, Wind), 
+                    data = airquality, 
+                    method = "REML")
 ```
 
 ### 结果
@@ -416,6 +578,7 @@ summary(Ozone_gam_m1)
 
 ### 模型检验
 ```{r}
+set.seed(123)
 gam.check(Ozone_gam_m1)
 ```
 
@@ -432,7 +595,9 @@ AIC(Ozone_gam_m0, Ozone_gam_m1)
 ::: {.panel-tabset}
 ### 模型构建
 ```{r}
-Ozone_gam_m2 <- gam(Ozone ~ s(Temp) + s(Wind ) + ti(Temp, Wind), data = airquality, method = "REML")
+Ozone_gam_m2 <- gam(Ozone ~ s(Temp) + s(Wind ) + ti(Temp, Wind), 
+                    data = airquality, 
+                    method = "REML")
 ```
 ### 结果
 ```{r}
@@ -440,6 +605,7 @@ summary(Ozone_gam_m2)
 ```
 ### 模型检验
 ```{r}
+set.seed(123)
 gam.check(Ozone_gam_m2)
 ```
 ### 模型比较
@@ -451,11 +617,15 @@ AIC(Ozone_gam_m0, Ozone_gam_m1, Ozone_gam_m2)
 ## s()、te()和ti() 的区别
 
 
-
-
+::: {style="font-size: 0.8em;"}
+| 函数 | 主要作用 | 适用场景 | 关键说明 |
+| --- | --- | --- | --- |
+| `s(x, z)` | 对两个连续变量建立二维平滑曲面 | 两个变量尺度相近，想直接描述联合非线性效应 | 常用薄板样条等各向同性平滑，不拆分主效应与交互效应 |
+| `te(x, z)` | 为多个连续变量构建张量积平滑 | 两个变量量纲不同，且希望直接建模完整平滑曲面 | 各维度可使用不同基函数，适合量纲差异明显的情形 |
+| `ti(x, z)` | 构建“纯交互”平滑项 | 已经单独加入 `s(x)` 和 `s(z)` 主效应后，再加入交互效应 | 常与主效应项配合使用，避免与主效应重复 |
+:::
 
 ## 学习资料
 - [QCBS R Workshop Series:Workshop 8: Generalized additive models in R](https://r.qcbs.ca/workshop08/book-en/)
 
 - [A Free, Interactive Course using mgcv](https://noamross.github.io/gams-in-r-course/)
-
