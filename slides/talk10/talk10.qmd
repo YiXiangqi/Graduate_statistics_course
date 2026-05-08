@@ -1,0 +1,337 @@
+---
+title: "高等数据统计分析"
+subtitle: "第十讲：线性混合效应模型"
+author: "易湘琦"
+format:
+  revealjs:
+    slide-number: true
+    chalkboard:
+      buttons: false
+    preview-links: auto
+    scrollable: true
+    df-print: default
+    logo: images/JMU_logo.jpg
+    css: styles.css
+    footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r}
+#| echo: false
+library(tidyverse)
+library(nlme)
+library(ggtext)
+```
+
+```{r}
+#| echo: false
+theme_set(
+  theme_light(base_size = 16, base_family = "serif") +
+    theme(
+      legend.background = element_rect(fill = "transparent"),
+      legend.key = element_rect(fill = "transparent", color = NA),
+      panel.grid.minor = element_blank(),
+      panel.border = element_rect(color = "black", linewidth = 0.5, fill = NA),
+      plot.margin = margin(5, 5, 5, 5, unit = "pt")
+    )
+)
+```
+
+## 你将学到
+
+::: {.incremental style="font-size: 1.2em;"}
+
+- 为什么分组数据往往不能直接用普通线性模型处理
+- 固定效应模型与随机效应模型的核心区别
+- 组间变异与组内变异在线性混合效应模型中的含义
+- 如何使用 `nlme::lme()` 拟合随机截距模型
+- 如何比较不同随机效应结构下的模型
+- 如何通过 `Rail`、`ergoStool`、`Machines` 与 `Orthodont` 例子理解模型设定
+
+:::
+
+# 线性混合效应模型
+
+## 基本介绍
+
+混合效应模型主要用来对分组数据（按照一个或多个分类因子分组）进行统计建模。通过将相同的**随机效应**分配给共享同一分类因子水平的观测值，混合效应模型能够灵活地呈现由数据分组所导致的协方差结构。
+
+## 例子：`Rail`
+
+```{r}
+#| echo: false
+Rail |>
+  mutate(Rail = factor(Rail, levels = c("1", "2", "3", "4", "5", "6"))) |>
+  ggplot() +
+  geom_point(aes(Rail, travel), size = 3, shape = 1, position = position_jitter(width = 0.1))
+```
+
+需要估算的量：
+
+1. “典型”钢轨的平均行程时间（期望行程时间）
+2. 不同钢轨之间平均行程时间的差异（钢轨间的变异性）
+3. 单根钢轨多次观测到的行程时间的差异（钢轨内的变异性）
+
+## 最简单的模型
+
+忽略分组结构，最简单的模型：
+$$
+y_{ij} = \beta + \varepsilon_{ij},\;i = 1,\dots,M, \;j = 1,\dots,n_i\\
+\varepsilon_{ij} \sim N(0, \sigma^2)
+$$
+
+## 最简单的模型
+
+```{r}
+Rail_lm0 <- lm(travel ~ 1, data = Rail)
+summary(Rail_lm0)
+```
+
+## 最简单的模型
+
+```{r}
+#| echo: false
+Rail |>
+  mutate(Rail = factor(Rail, levels = c("1", "2", "3", "4", "5", "6"))) |>
+  mutate(Residuals = resid(Rail_lm0)) |>
+  ggplot() +
+  geom_boxplot(aes(Rail, Residuals)) +
+  geom_point(aes(Rail, Residuals), size = 3, shape = 1, position = position_jitter(width = 0.1)) +
+  geom_hline(yintercept = 0, linetype = 2)
+```
+
+## 固定效应模型
+
+固定效应模型：
+$$
+y_{ij} = \beta_i + \varepsilon_{ij},\;i = 1,\dots,M, \;j = 1,\dots,n_i\\
+\varepsilon_{ij} \sim N(0, \sigma^2)
+$$
+
+```{r}
+Rail_lm1 <- lm(travel ~ Rail - 1, data = Rail)
+```
+
+## 固定效应模型
+
+```{r}
+#| echo: false
+text_output <- capture.output(summary(Rail_lm1))
+text_output[str_length(text_output) > 0] |>
+  cat(sep = "\n")
+```
+
+## 固定效应模型
+
+```{r}
+#| echo: false
+Rail |>
+  mutate(Rail = factor(Rail, levels = c("1", "2", "3", "4", "5", "6"))) |>
+  mutate(Residuals = resid(Rail_lm1)) |>
+  ggplot() +
+  geom_boxplot(aes(Rail, Residuals)) +
+  geom_point(aes(Rail, Residuals), size = 3, shape = 1, position = position_jitter(width = 0.1)) +
+  geom_hline(yintercept = 0, linetype = 2)
+```
+
+## 固定效应模型
+
+该固定效应模型的缺点在于：
+
+::: {.incremental}
+
+1. 它仅针对实验所用的特定钢轨样本，而不是这些样本所来源的钢轨总体
+2. 无法估计钢轨间的变异程度
+3. 参数数量会随钢轨数量的增加而线性增长
+
+:::
+
+## 随机效应模型
+
+随机效应模型将钢轨效应视为围绕总体均值的随机变异：
+$$
+y_{ij} = \beta + b_i + \varepsilon_{ij},\;i = 1,\dots,M, \;j = 1,\dots,n_i\\
+b_i \sim N(0, \sigma_b^2), \; \varepsilon_{ij} \sim N(0, \sigma^2)
+$$
+
+$\beta$ 代表所抽样钢轨总体的平均通过时间。
+
+$b_i$ 是表示第 $i$ 根钢轨平均通过时间与总体均值偏离的**随机变量**，反映钢轨间的变异程度（between-rail variability）。
+
+$\varepsilon_{ij}$ 则表示第 $i$ 根钢轨上第 $j$ 次观测通过时间与该钢轨平均通过时间偏离的随机变量，反映钢轨内的变异程度（within-rail variability）。
+
+## 随机效应模型
+
+$b_i$ 被称为随机效应，因为它们与从目标总体中随机选取的特定实验单元（本例中的钢轨）相关联，“效应”体现在它们代表了与总体均值的偏离。选择第 $i$ 根钢轨的“效应”会使平均通过时间从 $\beta$ 偏移至 $\beta + b_i$。
+
+由于同一钢轨上的观测共享相同的随机效应 $b_i$，这些观测值之间具有相关性。同一钢轨上观测值之间的协方差为 $\sigma_b^2$，对应的相关系数为 $\sigma_b^2 / (\sigma_b^2 + \sigma^2)$。
+
+构建的统计模型，其参数包括 $\beta$、$\sigma_b^2$ 和 $\sigma^2$。
+
+## 随机效应模型
+
+需特别注意的是，无论实验中包含多少钢轨，模型参数的数量始终固定。虽然随机效应 $b_i$ 在表现上类似于参数，但严格来说它们只是模型中另一层级的随机变量，因此并不直接对其进行“估计”。不过，仍会通过预测的方法来推断这些随机效应的取值。
+
+## `nlme::lme()`
+
+```{r}
+Rail_lme0 <- lme(travel ~ 1, random = ~1 | Rail, data = Rail)
+```
+
+## `summary(Rail_lme0)`
+
+```{r}
+#| echo: false
+summary(Rail_lme0)
+```
+
+## AIC 和 BIC
+
+AIC（Akaike Information Criterion）和 BIC（Bayesian Information Criterion）：
+$$
+AIC = -2\log Lik + 2n_{par} \\
+BIC = -2\log Lik + 2n_{par}\log(N)
+$$
+
+**Smaller is better.**
+
+## 例子：`ergoStool`
+
+实验人员记录了九位不同受试者从四种不同类型的凳子上起身所需的用力程度。
+
+```{r}
+#| echo: false
+ergoStool |>
+  mutate(Subject = factor(Subject, levels = as.character(1:9))) |>
+  ggplot() +
+  geom_point(aes(Type, effort, color = Subject), position = position_jitter(width = 0.1))
+```
+
+固定效应：`Type`；随机效应：`Subject`
+
+## 混合效应模型拟合
+
+$$
+y_{ij} = \beta_j + b_i + \varepsilon_{ij},\;i = 1,\dots,M, \;j = 1,\dots,n_i\\
+b_i \sim N(0, \sigma_b^2), \; \varepsilon_{ij} \sim N(0, \sigma^2)
+$$
+
+```{r}
+Stool_lme0 <-
+  lme(effort ~ Type, random = ~1 | Subject, data = ergoStool)
+```
+
+## 混合效应模型拟合
+
+```{r}
+#| echo: false
+summary(Stool_lme0)
+```
+
+## `contrast`
+
+pages 14 - 19, *Mixed-Effect Models in S and S-PLUS*
+
+## 例子：`Machines`
+
+```{r}
+#| echo: false
+Machines |>
+  mutate(Worker = factor(Worker, levels = as.character(1:6))) |>
+  ggplot() +
+  geom_point(aes(Worker, score, color = Machine), position = position_jitter(width = 0.1))
+```
+
+## 混合效应模型拟合
+
+A model without interactions between Worker and Machine
+$$
+y_{ijk} = \beta_j + b_i + \varepsilon_{ijk},\;i = 1,\dots,6, \;j = 1,\dots,3,\;k = 1,\dots,3\\
+b_i \sim N(0, \sigma_b^2), \; \varepsilon_{ijk} \sim N(0, \sigma^2)
+$$
+
+```{r}
+Machine_lme0 <-
+  lme(score ~ Machine, random = ~1 | Worker, data = Machines)
+```
+
+## 混合效应模型拟合
+
+```{r}
+#| echo: false
+summary(Machine_lme0)
+```
+
+## 混合效应模型拟合
+
+A model with interactions between Worker and Machine
+$$
+y_{ijk} = \beta_j + b_i + b_{ij} + \varepsilon_{ijk},\;i = 1,\dots,6, \;j = 1,\dots,3,\;k = 1,\dots,3\\
+b_i \sim N(0, \sigma_1^2), \;b_{ij} \sim N(0, \sigma_2^2), \; \varepsilon_{ijk} \sim N(0, \sigma^2)
+$$
+
+```{r}
+Machine_lme1 <-
+  update(Machine_lme0, random = ~1 | Worker / Machine)
+```
+
+## 混合效应模型拟合
+
+```{r}
+#| echo: false
+summary(Machine_lme1)
+```
+
+## 混合效应模型比较
+
+```{r}
+anova(Machine_lme0, Machine_lme1)
+```
+
+## 例子：Orthodont
+
+```{r}
+#| echo: false
+#| out-width: 100%
+Orthodont |>
+  filter(Sex == "Male") |>
+  ggplot() +
+  geom_point(aes(age, distance), colour = "#0072B2") +
+  facet_wrap(~ Subject) +
+  guides(colour = "none") +
+  theme(strip.text = element_text(size = 6))
+```
+
+## 例子：Orthodont
+
+```{r}
+#| echo: false
+#| out-width: 100%
+Orthodont |>
+  filter(Sex == "Female") |>
+  ggplot() +
+  geom_point(aes(age, distance), color = "#D55E00") +
+  facet_wrap(~ Subject) +
+  guides(colour = "none") +
+  theme(strip.text = element_text(size = 6))
+```
+
+## 混合效应模型拟合
+
+```{r}
+#| code-fold: true
+OrthF_lme0 <- lme(distance ~ age, data = Orthodont, random = ~age | Subject)
+OrthF_lme1 <- lme(distance ~ age, data = Orthodont, random = ~1 | Subject)
+OrthF_lme2 <- lme(distance ~ age, data = Orthodont, random = ~(age - 1) | Subject)
+OrthF_lme3 <- lme(distance ~ age + Sex, data = Orthodont, random = ~age | Subject)
+OrthF_lme4 <- lme(distance ~ age * Sex, data = Orthodont, random = ~1 | Subject)
+OrthF_lme5 <- lme(distance ~ age * Sex, data = Orthodont, random = ~(age - 1) | Subject)
+```
+
+## 学习资料
+
+- Chapter 1, *Mixed-Effect Models in S and S-PLUS*
+- [INTRODUCTION TO LINEAR MIXED MODELS](https://ourcodingclub.github.io/tutorials/mixed-models/)
