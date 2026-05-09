@@ -99,6 +99,110 @@ sleep_group2  <-
 t.test(sleep_group1, sleep_group2, paired = TRUE)
 ```
 
+## 例子：`ergoStool`
+
+实验人员记录了九位受试者在四种凳子类型下起身所需的用力程度，同一受试者被重复测量。
+
+```{r}
+#| echo: false
+fig_ergoStool <-
+  ergoStool |>
+    mutate(Subject = factor(Subject, levels = as.character(1:9))) |>
+    ggplot() +
+    geom_line(aes(Type, effort, group = Subject), color = "grey70") +
+    geom_point(aes(Type, effort), color = "#0072B2", size = 2.5)
+fig_ergoStool
+```
+
+## 重复测量 ANOVA
+
+```{r}
+Stool_aov0 <-
+  aov(effort ~ Type + Error(Subject), data = ergoStool)
+
+summary(Stool_aov0)
+```
+
+
+## 例子：实验设计中的分层结构
+
+::: {.fragment}
+
+**场景**
+
+- 先选取多块样地，再在每块样地内分别布置不同处理，比较海草床恢复效果。
+
+:::
+
+::: {.fragment}
+
+**数据特点**
+
+- 同一块样地内的观测共享相似背景环境。
+- 不同处理是在样地内部进行比较。
+
+:::
+
+::: {.fragment}
+
+**思考问题**
+
+- 当观测单位处在不同层级中时，统计模型应该如何反映这种结构？
+
+:::
+
+## 例子：观测中的分组结构
+
+::: {.fragment}
+
+**场景**
+
+- 在多个海洋监测站点持续观测，研究营养盐浓度与浮游植物丰度之间的线性关系。
+
+:::
+
+::: {.fragment}
+
+**数据特点**
+
+- 不同站点的基线水平可能不同。
+- 营养盐浓度变化带来的响应幅度也可能不同。
+
+:::
+
+::: {.fragment}
+
+**思考问题**
+
+- 如果有些站点整体偏高，而有些站点随营养盐浓度升高变化得更快，这样的差异应该怎样体现在统计模型中？
+
+:::
+
+## 例子：海洋监测中的重复观测
+
+::: {.fragment}
+
+**场景**
+
+- 在多个固定站位连续数月监测叶绿素浓度。
+:::
+
+::: {.fragment}
+
+**数据特点**
+
+- 同一站位会被反复观测。
+- 不同站位之间还可能存在背景差异。
+:::
+
+::: {.fragment}
+
+**思考问题**
+
+- 时间变化与空间差异交织在一起时，应该怎样描述这种数据结构？
+
+:::
+
 # 混合效应模型
 
 ## 基本介绍
@@ -108,21 +212,41 @@ t.test(sleep_group1, sleep_group2, paired = TRUE)
 
 ## 例子：`Rail`
 
+::: {.panel-tabset}
+
+### 数据介绍
+
 ```{r}
 #| echo: false
-Rail |>
+fig_rail <-
+  Rail |>
   mutate(Rail = factor(Rail, levels = c("1", "2", "3", "4", "5", "6"))) |>
   ggplot() +
-  geom_point(aes(Rail, travel), size = 3, shape = 1, position = position_jitter(width = 0.1))
+  geom_point(
+    aes(Rail, travel),
+    size = 3,
+    shape = 1,
+    position = position_jitter(width = 0.1)
+  )
+
+fig_rail
+
 ```
 
-需要估算的量：
+### 研究问题
 
 1. “典型”钢轨的平均行程时间（期望行程时间）
 2. 不同钢轨之间平均行程时间的差异（钢轨间的变异性）
 3. 单根钢轨多次观测到的行程时间的差异（钢轨内的变异性）
+:::
 
 ## 最简单的模型
+
+```{r}
+#| echo: false
+#| fig-align: center
+fig_rail
+```
 
 忽略分组结构，最简单的模型：
 $$
@@ -152,23 +276,23 @@ Rail |>
 
 ## 固定效应模型
 
+```{r}
+#| echo: false
+#| fig-align: center
+fig_rail
+```
+
 固定效应模型：
 $$
 y_{ij} = \beta_i + \varepsilon_{ij},\;i = 1,\dots,M, \;j = 1,\dots,n_i\\
 \varepsilon_{ij} \sim N(0, \sigma^2)
 $$
 
-```{r}
-Rail_lm1 <- lm(travel ~ Rail - 1, data = Rail)
-```
-
 ## 固定效应模型
 
 ```{r}
-#| echo: false
-text_output <- capture.output(summary(Rail_lm1))
-text_output[str_length(text_output) > 0] |>
-  cat(sep = "\n")
+Rail_lm1 <- lm(travel ~ Rail - 1, data = Rail)
+summary(Rail_lm1)
 ```
 
 ## 固定效应模型
@@ -204,83 +328,66 @@ y_{ij} = \beta + b_i + \varepsilon_{ij},\;i = 1,\dots,M, \;j = 1,\dots,n_i\\
 b_i \sim N(0, \sigma_b^2), \; \varepsilon_{ij} \sim N(0, \sigma^2)
 $$
 
-$\beta$ 代表所抽样钢轨总体的平均通过时间。
+- $\beta$ 代表所抽样钢轨总体的平均通过时间。
 
-$b_i$ 是表示第 $i$ 根钢轨平均通过时间与总体均值偏离的**随机变量**，反映钢轨间的变异程度（between-rail variability）。
+- $b_i$ 是表示第 $i$ 根钢轨平均通过时间与总体均值偏离的**随机变量**，反映钢轨间的变异程度（between-rail variability）。
 
-$\varepsilon_{ij}$ 则表示第 $i$ 根钢轨上第 $j$ 次观测通过时间与该钢轨平均通过时间偏离的随机变量，反映钢轨内的变异程度（within-rail variability）。
-
-## 随机效应模型
-
-$b_i$ 被称为随机效应，因为它们与从目标总体中随机选取的特定实验单元（本例中的钢轨）相关联，“效应”体现在它们代表了与总体均值的偏离。选择第 $i$ 根钢轨的“效应”会使平均通过时间从 $\beta$ 偏移至 $\beta + b_i$。
-
-由于同一钢轨上的观测共享相同的随机效应 $b_i$，这些观测值之间具有相关性。同一钢轨上观测值之间的协方差为 $\sigma_b^2$，对应的相关系数为 $\sigma_b^2 / (\sigma_b^2 + \sigma^2)$。
-
-构建的统计模型，其参数包括 $\beta$、$\sigma_b^2$ 和 $\sigma^2$。
+- $\varepsilon_{ij}$ 则表示第 $i$ 根钢轨上第 $j$ 次观测通过时间与该钢轨平均通过时间偏离的随机变量，反映钢轨内的变异程度（within-rail variability）。
 
 ## 随机效应模型
 
-需特别注意的是，无论实验中包含多少钢轨，模型参数的数量始终固定。虽然随机效应 $b_i$ 在表现上类似于参数，但严格来说它们只是模型中另一层级的随机变量，因此并不直接对其进行“估计”。不过，仍会通过预测的方法来推断这些随机效应的取值。
+::: {.incremental}
+- $b_i$ 被称为随机效应，因为它们与从目标总体中随机选取的特定实验单元（本例中的钢轨）相关联，“效应”体现在它们代表了与总体均值的偏离。选择第 $i$ 根钢轨的“效应”会使平均通过时间从 $\beta$ 偏移至 $\beta + b_i$。
 
-## `nlme::lme()`
+- 由于同一钢轨上的观测共享相同的随机效应 $b_i$，这些观测值之间具有相关性。同一钢轨上观测值之间的协方差为 $\sigma_b^2$，对应的相关系数为 $\sigma_b^2 / (\sigma_b^2 + \sigma^2)$。
+
+- 构建的统计模型，其参数包括 $\beta$、$\sigma_b^2$ 和 $\sigma^2$。
+
+:::
+
+## 随机效应模型
+
+::: {.incremental}
+- 需特别注意的是，无论实验中包含多少钢轨，模型参数的数量始终固定。
+
+- 虽然随机效应 $b_i$ 在表现上类似于参数，但严格来说它们只是模型中另一层级的随机变量，因此并不直接对其进行“估计”。
+
+- 不过，仍会通过预测的方法来推断这些随机效应的取值。
+:::
+
+## R 拟合随机效应模型
+
+`nlme`包是R中用于拟合线性和非线性混合效应模型的主要工具之一。
 
 ```{r}
 Rail_lme0 <- lme(travel ~ 1, random = ~1 | Rail, data = Rail)
-```
-
-## `summary(Rail_lme0)`
-
-```{r}
-#| echo: false
 summary(Rail_lme0)
 ```
 
-## AIC 和 BIC
-
-AIC（Akaike Information Criterion）和 BIC（Bayesian Information Criterion）：
-$$
-AIC = -2\log Lik + 2n_{par} \\
-BIC = -2\log Lik + 2n_{par}\log(N)
-$$
-
-**Smaller is better.**
-
 ## 例子：`ergoStool`
-
-实验人员记录了九位不同受试者从四种不同类型的凳子上起身所需的用力程度。
-
 ```{r}
 #| echo: false
-ergoStool |>
-  mutate(Subject = factor(Subject, levels = as.character(1:9))) |>
-  ggplot() +
-  geom_point(aes(Type, effort, color = Subject), position = position_jitter(width = 0.1))
+#| fig-align: center
+fig_ergoStool
 ```
 
-固定效应：`Type`；随机效应：`Subject`
-
-## 混合效应模型拟合
-
+::: {.fragment}
 $$
 y_{ij} = \beta_j + b_i + \varepsilon_{ij},\;i = 1,\dots,M, \;j = 1,\dots,n_i\\
 b_i \sim N(0, \sigma_b^2), \; \varepsilon_{ij} \sim N(0, \sigma^2)
 $$
 
-```{r}
-Stool_lme0 <-
-  lme(effort ~ Type, random = ~1 | Subject, data = ergoStool)
-```
+固定效应：`Type`；随机效应：`Subject`
+:::
 
 ## 混合效应模型拟合
 
+
 ```{r}
-#| echo: false
+Stool_lme0 <-
+  lme(effort ~ Type, random = ~1 | Subject, data = ergoStool)
 summary(Stool_lme0)
 ```
-
-## `contrast`
-
-pages 14 - 19, *Mixed-Effect Models in S and S-PLUS*
 
 ## 例子：`Machines`
 
@@ -339,6 +446,7 @@ anova(Machine_lme0, Machine_lme1)
 ```
 
 ## 例子：Orthodont
+`Male`
 
 ```{r}
 #| echo: false
@@ -353,6 +461,7 @@ Orthodont |>
 ```
 
 ## 例子：Orthodont
+`female`
 
 ```{r}
 #| echo: false
