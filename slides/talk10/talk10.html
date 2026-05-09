@@ -6,8 +6,8 @@
 <script src="talk10_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="talk10_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="talk10_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="talk10_files/libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.9.35">
+<link href="talk10_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.9.36">
 
   <meta name="author" content="易湘琦">
   <title>高等数据统计分析</title>
@@ -194,6 +194,8 @@
       margin-right: 0; 
     }
   </style>
+  <link href="talk10_files/libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+  <script src="talk10_files/libs/pagedtable-1.1/js/pagedtable.js"></script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -216,28 +218,101 @@
 <h2>你将学到</h2>
 <div style="font-size: 1.2em;">
 <ul>
-<li class="fragment">为什么分组数据往往不能直接用普通线性模型处理</li>
-<li class="fragment">固定效应模型与随机效应模型的核心区别</li>
-<li class="fragment">组间变异与组内变异在线性混合效应模型中的含义</li>
-<li class="fragment">如何使用 <code>nlme::lme()</code> 拟合随机截距模型</li>
-<li class="fragment">如何比较不同随机效应结构下的模型</li>
-<li class="fragment">如何通过 <code>Rail</code>、<code>ergoStool</code>、<code>Machines</code> 与 <code>Orthodont</code> 例子理解模型设定</li>
+<li class="fragment">回顾：
+<ul>
+<li class="fragment">线性模型的基本假设</li>
+<li class="fragment">配对 t 检验与重复测量 ANOVA</li>
+</ul></li>
+<li class="fragment">混合效应模型的基本概念</li>
+<li class="fragment">使用 <code>nlme::lme()</code> 拟合混合效应模型</li>
+<li class="fragment">如何确定随机效应和固定效应的结构</li>
 </ul>
 </div>
 </section>
 <section>
-<section id="线性混合效应模型" class="title-slide slide level1 center">
-<h1>线性混合效应模型</h1>
+<section id="回顾" class="title-slide slide level1 center">
+<h1>回顾</h1>
+
+</section>
+<section id="线性模型的基本假设" class="slide level2">
+<h2>线性模型的基本假设</h2>
+<ul>
+<li class="fragment">线性关系：响应变量与解释变量之间存在线性关系。</li>
+<li class="fragment">独立性：观测值之间相互独立。</li>
+<li class="fragment">同方差性：误差项的方差在所有水平上是相同的。</li>
+<li class="fragment">正态性：误差项服从正态分布。</li>
+<li class="fragment">无多重共线性(多元线性回归)：解释变量之间不存在高度相关性。</li>
+</ul>
+</section>
+<section id="线性模型的基本假设-1" class="slide level2">
+<h2>线性模型的基本假设</h2>
+<ul>
+<li>线性关系：响应变量与解释变量之间存在线性关系。</li>
+<li><strong>独立性：观测值之间相互独立。</strong></li>
+<li>同方差性：误差项的方差在所有水平上是相同的。</li>
+<li>正态性：误差项服从正态分布。</li>
+<li>无多重共线性(多元线性回归)：解释变量之间不存在高度相关性。</li>
+</ul>
+</section>
+<section id="案例sleep" class="slide level2">
+<h2>案例：<code>sleep</code></h2>
+<p><code>sleep</code>记录了两种催眠药物在10名患者中的作用效果：</p>
+<div class="cell">
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["extra"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["group"],"name":[2],"type":["fct"],"align":["left"]},{"label":["ID"],"name":[3],"type":["fct"],"align":["left"]}],"data":[{"1":"0.7","2":"1","3":"1"},{"1":"-1.6","2":"1","3":"2"},{"1":"-0.2","2":"1","3":"3"},{"1":"-1.2","2":"1","3":"4"},{"1":"-0.1","2":"1","3":"5"},{"1":"3.4","2":"1","3":"6"},{"1":"3.7","2":"1","3":"7"},{"1":"0.8","2":"1","3":"8"},{"1":"0.0","2":"1","3":"9"},{"1":"2.0","2":"1","3":"10"},{"1":"1.9","2":"2","3":"1"},{"1":"0.8","2":"2","3":"2"},{"1":"1.1","2":"2","3":"3"},{"1":"0.1","2":"2","3":"4"},{"1":"-0.1","2":"2","3":"5"},{"1":"4.4","2":"2","3":"6"},{"1":"5.5","2":"2","3":"7"},{"1":"1.6","2":"2","3":"8"},{"1":"4.6","2":"2","3":"9"},{"1":"3.4","2":"2","3":"10"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>如何比较两种药物的效果？</p>
+</section>
+<section id="配对-t-检验" class="slide level2">
+<h2>配对 t 检验</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>sleep_group1  <span class="ot">&lt;-</span></span>
+<span id="cb1-2"><a href=""></a>  sleep <span class="sc">|&gt;</span></span>
+<span id="cb1-3"><a href=""></a>  <span class="fu">filter</span>(group <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-4"><a href=""></a>  <span class="fu">pull</span>(extra)</span>
+<span id="cb1-5"><a href=""></a></span>
+<span id="cb1-6"><a href=""></a>sleep_group2  <span class="ot">&lt;-</span></span>
+<span id="cb1-7"><a href=""></a>  sleep <span class="sc">|&gt;</span></span>
+<span id="cb1-8"><a href=""></a>  <span class="fu">filter</span>(group <span class="sc">==</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-9"><a href=""></a>  <span class="fu">pull</span>(extra)</span>
+<span id="cb1-10"><a href=""></a></span>
+<span id="cb1-11"><a href=""></a><span class="fu">t.test</span>(sleep_group1, sleep_group2, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Paired t-test
+
+data:  sleep_group1 and sleep_group2
+t = -4.0621, df = 9, p-value = 0.002833
+alternative hypothesis: true mean difference is not equal to 0
+95 percent confidence interval:
+ -2.4598858 -0.7001142
+sample estimates:
+mean difference 
+          -1.58 </code></pre>
+</div>
+</div>
+</section></section>
+<section>
+<section id="混合效应模型" class="title-slide slide level1 center">
+<h1>混合效应模型</h1>
 
 </section>
 <section id="基本介绍" class="slide level2">
 <h2>基本介绍</h2>
-<p>混合效应模型主要用来对分组数据（按照一个或多个分类因子分组）进行统计建模。通过将相同的<strong>随机效应</strong>分配给共享同一分类因子水平的观测值，混合效应模型能够灵活地呈现由数据分组所导致的协方差结构。</p>
+<ul>
+<li>混合效应模型主要用来对分组数据（按照一个或多个分类因子分组）进行统计建模。</li>
+<li>通过将相同的<strong>随机效应</strong>分配给共享同一分类因子水平的观测值，混合效应模型能够灵活地呈现由数据分组所导致的协方差结构。</li>
+</ul>
 </section>
 <section id="例子rail" class="slide level2 scrollable">
 <h2>例子：<code>Rail</code></h2>
 
-<img data-src="talk10_files/figure-revealjs/unnamed-chunk-3-1.png" width="960" class="r-stretch"><p>需要估算的量：</p>
+<img data-src="talk10_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"><p>需要估算的量：</p>
 <ol type="1">
 <li>“典型”钢轨的平均行程时间（期望行程时间）</li>
 <li>不同钢轨之间平均行程时间的差异（钢轨间的变异性）</li>
@@ -254,8 +329,8 @@ y_{ij} = \beta + \varepsilon_{ij},\;i = 1,\dots,M, \;j = 1,\dots,n_i\\
 <section id="最简单的模型-1" class="slide level2">
 <h2>最简单的模型</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a>Rail_lm0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(travel <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> Rail)</span>
-<span id="cb1-2"><a href=""></a><span class="fu">summary</span>(Rail_lm0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>Rail_lm0 <span class="ot">&lt;-</span> <span class="fu">lm</span>(travel <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> Rail)</span>
+<span id="cb3-2"><a href=""></a><span class="fu">summary</span>(Rail_lm0)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -278,7 +353,7 @@ Residual standard error: 23.65 on 17 degrees of freedom</code></pre>
 <section id="最简单的模型-2" class="slide level2">
 <h2>最简单的模型</h2>
 
-<img data-src="talk10_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"></section>
+<img data-src="talk10_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"></section>
 <section id="固定效应模型" class="slide level2">
 <h2>固定效应模型</h2>
 <p>固定效应模型： <span class="math display">\[
@@ -286,7 +361,7 @@ y_{ij} = \beta_i + \varepsilon_{ij},\;i = 1,\dots,M, \;j = 1,\dots,n_i\\
 \varepsilon_{ij} \sim N(0, \sigma^2)
 \]</span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a>Rail_lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(travel <span class="sc">~</span> Rail <span class="sc">-</span> <span class="dv">1</span>, <span class="at">data =</span> Rail)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>Rail_lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(travel <span class="sc">~</span> Rail <span class="sc">-</span> <span class="dv">1</span>, <span class="at">data =</span> Rail)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="固定效应模型-1" class="slide level2">
@@ -317,7 +392,7 @@ F-statistic: 916.6 on 6 and 12 DF,  p-value: 2.971e-15</code></pre>
 <section id="固定效应模型-2" class="slide level2">
 <h2>固定效应模型</h2>
 
-<img data-src="talk10_files/figure-revealjs/unnamed-chunk-8-1.png" width="960" class="r-stretch"></section>
+<img data-src="talk10_files/figure-revealjs/unnamed-chunk-10-1.png" width="960" class="r-stretch"></section>
 <section id="固定效应模型-3" class="slide level2 scrollable">
 <h2>固定效应模型</h2>
 <p>该固定效应模型的缺点在于：</p>
@@ -350,7 +425,7 @@ b_i \sim N(0, \sigma_b^2), \; \varepsilon_{ij} \sim N(0, \sigma^2)
 <section id="nlmelme" class="slide level2">
 <h2><code>nlme::lme()</code></h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href=""></a>Rail_lme0 <span class="ot">&lt;-</span> <span class="fu">lme</span>(travel <span class="sc">~</span> <span class="dv">1</span>, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Rail, <span class="at">data =</span> Rail)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>Rail_lme0 <span class="ot">&lt;-</span> <span class="fu">lme</span>(travel <span class="sc">~</span> <span class="dv">1</span>, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Rail, <span class="at">data =</span> Rail)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="summaryrail_lme0" class="slide level2">
@@ -392,7 +467,7 @@ BIC = -2\log Lik + 2n_{par}\log(N)
 <h2>例子：<code>ergoStool</code></h2>
 <p>实验人员记录了九位不同受试者从四种不同类型的凳子上起身所需的用力程度。</p>
 
-<img data-src="talk10_files/figure-revealjs/unnamed-chunk-11-1.png" width="960" class="r-stretch"><p>固定效应：<code>Type</code>；随机效应：<code>Subject</code></p>
+<img data-src="talk10_files/figure-revealjs/unnamed-chunk-13-1.png" width="960" class="r-stretch"><p>固定效应：<code>Type</code>；随机效应：<code>Subject</code></p>
 </section>
 <section id="混合效应模型拟合" class="slide level2">
 <h2>混合效应模型拟合</h2>
@@ -401,8 +476,8 @@ y_{ij} = \beta_j + b_i + \varepsilon_{ij},\;i = 1,\dots,M, \;j = 1,\dots,n_i\\
 b_i \sim N(0, \sigma_b^2), \; \varepsilon_{ij} \sim N(0, \sigma^2)
 \]</span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>Stool_lme0 <span class="ot">&lt;-</span></span>
-<span id="cb7-2"><a href=""></a>  <span class="fu">lme</span>(effort <span class="sc">~</span> Type, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Subject, <span class="at">data =</span> ergoStool)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>Stool_lme0 <span class="ot">&lt;-</span></span>
+<span id="cb9-2"><a href=""></a>  <span class="fu">lme</span>(effort <span class="sc">~</span> Type, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Subject, <span class="at">data =</span> ergoStool)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="混合效应模型拟合-1" class="slide level2">
@@ -447,7 +522,7 @@ Number of Groups: 9 </code></pre>
 <section id="例子machines" class="slide level2">
 <h2>例子：<code>Machines</code></h2>
 
-<img data-src="talk10_files/figure-revealjs/unnamed-chunk-14-1.png" width="960" class="r-stretch"></section>
+<img data-src="talk10_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"></section>
 <section id="混合效应模型拟合-2" class="slide level2">
 <h2>混合效应模型拟合</h2>
 <p>A model without interactions between Worker and Machine <span class="math display">\[
@@ -455,8 +530,8 @@ y_{ijk} = \beta_j + b_i + \varepsilon_{ijk},\;i = 1,\dots,6, \;j = 1,\dots,3,\;k
 b_i \sim N(0, \sigma_b^2), \; \varepsilon_{ijk} \sim N(0, \sigma^2)
 \]</span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href=""></a>Machine_lme0 <span class="ot">&lt;-</span></span>
-<span id="cb9-2"><a href=""></a>  <span class="fu">lme</span>(score <span class="sc">~</span> Machine, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Worker, <span class="at">data =</span> Machines)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>Machine_lme0 <span class="ot">&lt;-</span></span>
+<span id="cb11-2"><a href=""></a>  <span class="fu">lme</span>(score <span class="sc">~</span> Machine, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Worker, <span class="at">data =</span> Machines)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="混合效应模型拟合-3" class="slide level2">
@@ -499,8 +574,8 @@ y_{ijk} = \beta_j + b_i + b_{ij} + \varepsilon_{ijk},\;i = 1,\dots,6, \;j = 1,\d
 b_i \sim N(0, \sigma_1^2), \;b_{ij} \sim N(0, \sigma_2^2), \; \varepsilon_{ijk} \sim N(0, \sigma^2)
 \]</span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>Machine_lme1 <span class="ot">&lt;-</span></span>
-<span id="cb11-2"><a href=""></a>  <span class="fu">update</span>(Machine_lme0, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Worker <span class="sc">/</span> Machine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>Machine_lme1 <span class="ot">&lt;-</span></span>
+<span id="cb13-2"><a href=""></a>  <span class="fu">update</span>(Machine_lme0, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Worker <span class="sc">/</span> Machine)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="混合效应模型拟合-5" class="slide level2">
@@ -545,7 +620,7 @@ Number of Groups:
 <section id="混合效应模型比较" class="slide level2">
 <h2>混合效应模型比较</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="fu">anova</span>(Machine_lme0, Machine_lme1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="fu">anova</span>(Machine_lme0, Machine_lme1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             Model df      AIC      BIC    logLik   Test  L.Ratio p-value
 Machine_lme0     1  5 296.8782 306.5373 -143.4391                        
@@ -556,22 +631,22 @@ Machine_lme1     2  6 227.6876 239.2785 -107.8438 1 vs 2 71.19063  &lt;.0001</co
 <section id="例子orthodont" class="slide level2">
 <h2>例子：Orthodont</h2>
 
-<img data-src="talk10_files/figure-revealjs/unnamed-chunk-20-1.png" style="width:100.0%" class="r-stretch"></section>
+<img data-src="talk10_files/figure-revealjs/unnamed-chunk-22-1.png" style="width:100.0%" class="r-stretch"></section>
 <section id="例子orthodont-1" class="slide level2">
 <h2>例子：Orthodont</h2>
 
-<img data-src="talk10_files/figure-revealjs/unnamed-chunk-21-1.png" style="width:100.0%" class="r-stretch"></section>
+<img data-src="talk10_files/figure-revealjs/unnamed-chunk-23-1.png" style="width:100.0%" class="r-stretch"></section>
 <section id="混合效应模型拟合-6" class="slide level2">
 <h2>混合效应模型拟合</h2>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a>OrthF_lme0 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span>age <span class="sc">|</span> Subject)</span>
-<span id="cb15-2"><a href=""></a>OrthF_lme1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Subject)</span>
-<span id="cb15-3"><a href=""></a>OrthF_lme2 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span>(age <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">|</span> Subject)</span>
-<span id="cb15-4"><a href=""></a>OrthF_lme3 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age <span class="sc">+</span> Sex, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span>age <span class="sc">|</span> Subject)</span>
-<span id="cb15-5"><a href=""></a>OrthF_lme4 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age <span class="sc">*</span> Sex, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Subject)</span>
-<span id="cb15-6"><a href=""></a>OrthF_lme5 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age <span class="sc">*</span> Sex, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span>(age <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">|</span> Subject)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a>OrthF_lme0 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span>age <span class="sc">|</span> Subject)</span>
+<span id="cb17-2"><a href=""></a>OrthF_lme1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Subject)</span>
+<span id="cb17-3"><a href=""></a>OrthF_lme2 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span>(age <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">|</span> Subject)</span>
+<span id="cb17-4"><a href=""></a>OrthF_lme3 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age <span class="sc">+</span> Sex, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span>age <span class="sc">|</span> Subject)</span>
+<span id="cb17-5"><a href=""></a>OrthF_lme4 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age <span class="sc">*</span> Sex, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> Subject)</span>
+<span id="cb17-6"><a href=""></a>OrthF_lme5 <span class="ot">&lt;-</span> <span class="fu">lme</span>(distance <span class="sc">~</span> age <span class="sc">*</span> Sex, <span class="at">data =</span> Orthodont, <span class="at">random =</span> <span class="sc">~</span>(age <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">|</span> Subject)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
