@@ -1,0 +1,703 @@
+---
+title: "高等数据统计分析"
+subtitle: "第十一讲：线性混合效应模型进阶"
+author: "易湘琦"
+format:
+  revealjs:
+    slide-number: true
+    chalkboard:
+      buttons: false
+    preview-links: auto
+    scrollable: true
+    df-print: default
+    math: mathjax
+    logo: ../talk10/images/JMU_logo.jpg
+    css: styles.css
+    footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r}
+#| include: false
+knitr::opts_chunk$set(fig.align = "center")
+```
+
+```{r}
+#| echo: false
+library(tidyverse)
+library(nlme)
+library(lme4)
+library(ggtext)
+load("data/dragons.RData")
+```
+
+```{r}
+#| echo: false
+theme_set(
+  theme_light(base_size = 16, base_family = "serif") +
+    theme(
+      legend.background = element_rect(fill = "transparent"),
+      legend.key = element_rect(fill = "transparent", color = NA),
+      panel.grid.minor = element_blank(),
+      panel.border = element_rect(color = "black", linewidth = 0.5, fill = NA),
+      plot.margin = margin(5, 5, 5, 5, unit = "pt")
+    )
+)
+```
+
+# 作业讲评
+
+## Tips
+
+- workspace `.RData`
+- find and replace
+- `map`系列函数与函数式编程（Functional Programming）
+
+## 交叉与嵌套（crossed vs. nested）
+
+### 交叉效应
+
+当两个或多个随机因素的所有水平都能互相组合时，称为交叉效应。即，一因素的每一水平可与另一因素的每一水平配对出现。因素间无层级关系，数据呈“网格状”。
+
+- 受试者和刺激项通常是交叉的，因为每个受试者会看到多个刺激项，每个刺激项也被多个受试者看到。
+- 用户和商品交叉，每个用户购买多种商品，每个商品被多个用户购买。
+
+### 嵌套效应
+
+当一个随机因素的水平仅属于另一个因素的特定水平时，称为嵌套效应。因素之间有层级关系，数据呈现“树状”结构。
+
+- 学生嵌套在班级中，因为每个学生只属于一个班级。
+- 树木嵌套在森林地块中，因为每棵树仅生长在一个地块内。
+
+# 嵌套效应
+
+## 数据集：dragons
+
+```{r}
+#| echo: false
+dragons %>% select(-X) %>% head(10)
+```
+
+## 数据集：dragons
+
+```{r}
+#| echo: false
+dragons %>%
+  ggplot(aes(bodyLength, testScore, color = mountainRange)) +
+  geom_point() +
+  theme(
+    legend.position = "top",
+    legend.title = element_blank()
+  )
+```
+
+## lme vs. lme4: m0
+
+```{r}
+dragon_lme_m0 <- lme(testScore ~ bodyLength, random = ~1 | mountainRange,
+                     data = dragons)
+
+dragon_lme4_m0 <- lmer(testScore ~ bodyLength + (1 | mountainRange),
+                       data = dragons)
+```
+
+## lme vs. lme4: m0
+
+### 固定效应
+
+dragon_lme_m0
+
+```{r}
+#| echo: false
+s1 <- summary(dragon_lme_m0)
+coef(s1)
+```
+
+dragon_lme4_m0
+
+```{r}
+#| echo: false
+s2 <- summary(dragon_lme4_m0)
+coef(s2)
+```
+
+## lme vs. lme4: m0
+
+### 随机效应
+
+dragon_lme_m0
+
+```{r}
+#| echo: false
+VarCorr(dragon_lme_m0)
+```
+
+dragon_lme4_m0
+
+```{r}
+#| echo: false
+VarCorr(dragon_lme4_m0)
+```
+
+## lme vs. lme4: m1
+
+```{r}
+dragon_lme_m1 <- lme(testScore ~ bodyLength, random = ~1 | mountainRange/site,
+                     data = dragons)
+
+dragon_lme4_m1 <- lmer(testScore ~ bodyLength + (1 | mountainRange/site),
+                       data = dragons)
+```
+
+## lme vs. lme4: m1
+
+### 固定效应
+
+dragon_lme_m1
+
+```{r}
+#| echo: false
+summary(dragon_lme_m1) %>%
+  coef()
+```
+
+dragon_lme4_m1
+
+```{r}
+#| echo: false
+summary(dragon_lme4_m1) %>%
+  coef()
+```
+
+## lme vs. lme4: m1
+
+### 随机效应
+
+dragon_lme_m1
+
+```{r}
+#| echo: false
+VarCorr(dragon_lme_m1)
+```
+
+dragon_lme4_m1
+
+```{r}
+#| echo: false
+VarCorr(dragon_lme4_m1)
+```
+
+## lme vs. lme4: m2
+
+```{r}
+dragon_lme_m2 <- lme(testScore ~ bodyLength, random = ~1 + bodyLength | mountainRange,
+                     data = dragons)
+
+dragon_lme4_m2 <- lmer(testScore ~ bodyLength + (1 + bodyLength | mountainRange),
+                       data = dragons)
+```
+
+## lme vs. lme4: m2
+
+### 固定效应
+
+dragon_lme_m2
+
+```{r}
+#| echo: false
+summary(dragon_lme_m2) %>%
+  coef()
+```
+
+dragon_lme4_m2
+
+```{r}
+#| echo: false
+summary(dragon_lme4_m2) %>%
+  coef()
+```
+
+## lme vs. lme4: m2
+
+### 随机效应
+
+dragon_lme_m2
+
+```{r}
+#| echo: false
+VarCorr(dragon_lme_m2)
+```
+
+dragon_lme4_m2
+
+```{r}
+#| echo: false
+VarCorr(dragon_lme4_m2)
+```
+
+## lme vs. lme4: m2
+
+```{r}
+#| echo: false
+text_output <- capture.output(summary(dragon_lme4_m2))
+text_output[-c(2, 3, 4, 6, 10, 17, 22, 23, 24, 25)] %>%
+  cat(sep = "\n")
+```
+
+# 交叉效应
+
+## `politeness` 数据集
+
+```{r}
+#| echo: false
+# politeness <-
+#   read_csv("http://www.bodowinter.com/tutorial/politeness_data.csv")
+# write_csv(politeness, "data/politeness.csv")
+politeness <-
+  read_csv("data/politeness.csv", col_types = "ffffn")
+
+politeness %>%
+  ggplot() +
+  geom_boxplot(aes(scenario, frequency, color = attitude)) +
+  geom_point(
+    aes(scenario, frequency, color = attitude, shape = subject),
+    position = position_dodge(width = 0.5)
+  ) +
+  theme(
+    legend.position = "top",
+    legend.title = element_blank()
+  )
+```
+
+## `politeness` 数据集
+
+```{r}
+#| echo: false
+head(politeness, n = 10)
+```
+
+## lme4
+
+```{r}
+politeness_lme4_m0 <-
+  lmer(frequency ~ attitude + (1 | subject) + (1 | scenario), data = politeness)
+
+politeness_lme4_m1 <-
+  lmer(frequency ~ attitude + gender + (1 | subject) + (1 | scenario), data = politeness)
+```
+
+## lme
+
+用`nlme`包构造交叉随机效应比较复杂，如有需要查阅：
+
+- pages 163 - 166 in *Mixed Effects Models in S and S-Plus*
+
+# 显著性检验
+
+## nlme vs. lme4
+
+- nlme提供的p值容易偏低，容易犯第一类错误（Type I error）
+- lme4不提供p值，因为LME模型中的自由度很难确定。
+
+```{r}
+anova(politeness_lme4_m0)
+```
+
+```{r}
+summary(politeness_lme4_m0) %>%
+  coef()
+```
+
+## Likelihood Ratio Test
+
+### lme4
+
+```{r}
+politeness_lme4_null <- lmer(frequency ~ gender + (1 | subject) + (1 | scenario), data = politeness, REML = FALSE)
+politeness_lme4_alternative <- lmer(
+  frequency ~ attitude + gender + (1 | subject) + (1 | scenario),
+  data = politeness,
+  REML = FALSE
+)
+anova(politeness_lme4_null, politeness_lme4_alternative)
+```
+
+## Likelihood Ratio Test
+
+### nlme
+
+```{r}
+dragon_lme_null <- lme(testScore ~ 1, random = ~1 | mountainRange,
+                       data = dragons, method = "ML")
+dragon_lme_alternative <- lme(testScore ~ bodyLength, random = ~1 | mountainRange,
+                              data = dragons, method = "ML")
+anova(dragon_lme_null, dragon_lme_alternative)
+```
+
+## package `lmerTest`
+
+```{r}
+library(lmerTest)
+```
+
+```{r}
+politeness_lme4_m1 <-
+  lmer(frequency ~ attitude + gender + (1 | subject) + (1 | scenario), data = politeness)
+anova(politeness_lme4_m1)
+```
+
+分母自由度使用 Satterthwaite's method近似
+
+## Type I, II, III anova和Kenward-Roger近似
+
+```{r}
+library("pbkrtest")
+anova(politeness_lme4_m1, type = 1, ddf = "Kenward-Roger")
+```
+
+## 学习资料
+
+- [lmerTest Package: Tests in Linear Mixed Effects Models](https://www.jstatsoft.org/article/view/v082i13)
+
+# 作业讲评与重点回顾
+
+## `Bees`数据集介绍
+
+本次作业用到的数据集`Bees`包含4列：
+
+- `Spobee`: 病菌孢子密度
+- `Hive`：采样的蜂巢；取值$1, 2, 3\dots,24$, 对应24个蜂巢
+- `Infection`：感染程度；取值0（无感染），1（轻度感染），2（中度感染），3（重度感染）
+- `BeesN`：蜂巢内的蜜蜂数量
+
+```{r}
+#| echo: false
+Bees <-
+  read_csv("data/Bees.csv")
+head(Bees, n = 5)
+```
+
+## 数据初步探索
+
+```{r}
+#| echo: false
+Bees %>%
+  ggplot() +
+  geom_boxplot(aes(as.factor(Infection), Spobee)) +
+  geom_point(
+    aes(as.factor(Infection), Spobee),
+    position = position_jitter(width = 0.3),
+    size = 2.5,
+    shape = 1
+  )
+```
+
+## 数据初步探索
+
+```{r}
+#| echo: false
+Bees %>%
+  ggplot() +
+  geom_point(
+    aes(BeesN, Spobee),
+    position = position_jitter(width = 0.3),
+    size = 2.5,
+    shape = 1
+  )
+```
+
+## 数据初步探索
+
+```{r}
+#| echo: false
+Bees %>%
+  ggplot() +
+  geom_histogram(aes(x = Spobee), color = "black", fill = "white")
+```
+
+## 数据初步探索
+
+```{r}
+#| echo: false
+Bees %>%
+  ggplot() +
+  geom_histogram(aes(x = log10(Spobee + 1)), color = "black", fill = "white")
+```
+
+## 数据清洗
+
+::: {style="background-color: #ffff99; padding: 10px; border-radius: 5px;"}
+
+> 针对以上情况请对数据框做如下处理：
+> 1. 对于`Infection`，将取值为1，2，3的数据统一为1。处理后`Infection`的取值只有0和1，分别表示无感染和有感染
+> 2. 对于`Spobee`,加一后取对数
+> 3. 确保`Infection`和`Hive`两列是因子变量
+
+:::
+
+```{r}
+Bees_clean <-
+  Bees %>%
+  mutate(
+    Infection = if_else(Infection > 0, 1, 0),
+    log_Spobee = log10(Spobee + 1),
+    Hive = factor(Hive),
+    f_Infection = factor(Infection)
+  )
+```
+
+## 数据清洗
+
+```{r}
+Bees_clean
+```
+
+## 线性模型构建
+
+```{r}
+Bees_lm_m0 <-
+  lm(log_Spobee ~ f_Infection * BeesN, data = Bees_clean)
+```
+
+```{r}
+#| echo: false
+text_output <- capture.output(summary(Bees_lm_m0))
+text_output[str_length(text_output) > 5] %>%
+  cat(sep = "\n")
+```
+
+## 线性模型的验证
+
+```{r}
+par(mfrow = c(2, 2))
+plot(Bees_lm_m0)
+```
+
+## 线性模型的验证
+
+```{r}
+#| echo: false
+Bees_clean %>%
+  mutate(stand_resid = rstandard(Bees_lm_m0)) %>%
+  ggplot() +
+  geom_boxplot(aes(Hive, stand_resid)) +
+  geom_line(aes(x, y), data = data.frame(x = 1:24, y = 0), linetype = 2) +
+  ylab("Standardized residuals")
+```
+
+## 线性混合效应模型的构建
+
+```{r}
+Bees_lme4_m0 <-
+  lmer(log_Spobee ~ f_Infection * BeesN + (1 | Hive), data = Bees_clean)
+```
+
+```{r}
+#| echo: false
+text_output <- capture.output(summary(Bees_lme4_m0))
+text_output[11:15] %>%
+  cat(sep = "\n")
+```
+
+```{r}
+confint(Bees_lme4_m0)
+```
+
+## 线性混合效应模型的验证
+
+```{r}
+plot(Bees_lme4_m0)
+```
+
+## 线性混合效应模型的验证
+
+```{r}
+#| echo: false
+Bees_clean %>%
+  mutate(stand_resid = resid(Bees_lme4_m0, type = "pearson")) %>%
+  ggplot() +
+  geom_boxplot(aes(Hive, stand_resid)) +
+  geom_line(aes(x, y), data = data.frame(x = 1:24, y = 0), linetype = 2) +
+  ylab("Pearson residuals")
+```
+
+## 线性混合效应模型的验证
+
+```{r}
+#| echo: false
+Bees_clean %>%
+  mutate(stand_resid = resid(Bees_lme4_m0, type = "pearson")) %>%
+  ggplot() +
+  geom_boxplot(aes(f_Infection, stand_resid)) +
+  geom_line(aes(x, y), data = data.frame(x = 0:3, y = 0), linetype = 2) +
+  ylab("Pearson residuals")
+```
+
+## 是否需要加入随机斜率
+
+```{r}
+Bees_lme4_m1 <-
+  lmer(log_Spobee ~ f_Infection * BeesN + (1 + f_Infection | Hive), data = Bees_clean)
+```
+
+```{r}
+#| echo: false
+text_output <- capture.output(summary(Bees_lme4_m1))
+text_output[11:15] %>%
+  cat(sep = "\n")
+```
+
+```{r}
+Bees_lme4_m2 <-
+  lmer(log_Spobee ~ f_Infection * BeesN + (1 + BeesN | Hive), data = Bees_clean)
+```
+
+```{r}
+#| echo: false
+text_output <- capture.output(summary(Bees_lme4_m2))
+text_output[11:15] %>%
+  cat(sep = "\n")
+```
+
+## 是否需要加入随机斜率
+
+```{r}
+anova(Bees_lme4_m0, Bees_lme4_m1)
+anova(Bees_lme4_m0, Bees_lme4_m2)
+```
+
+## 固定效应的显著性检验
+
+```{r}
+text_output <- capture.output(summary(Bees_lme4_m0))
+text_output[17:22] %>%
+  cat(sep = "\n")
+```
+
+## 固定效应的显著性检验: `lmerTest`包
+
+载入`lmerTest`包后，重新拟合模型，模型结果中会给出p值
+
+```{r}
+library(lmerTest)
+Bees_lme4_m0 <-
+  lmer(log_Spobee ~ f_Infection * BeesN + (1 | Hive), data = Bees_clean)
+```
+
+```{r}
+text_output <- capture.output(summary(Bees_lme4_m0))
+text_output[18:23] %>%
+  cat(sep = "\n")
+```
+
+## 固定效应的显著性检验: LRT
+
+```{r}
+Bees_lme4_m0_1 <-
+  lmer(log_Spobee ~ f_Infection * BeesN + (1 | Hive), data = Bees_clean, REML = FALSE)
+Bees_lme4_m0_2 <-
+  lmer(log_Spobee ~ f_Infection + BeesN + (1 | Hive), data = Bees_clean, REML = FALSE)
+Bees_lme4_m0_3 <-
+  lmer(log_Spobee ~ f_Infection + (1 | Hive), data = Bees_clean, REML = FALSE)
+Bees_lme4_m0_4 <-
+  lmer(log_Spobee ~ BeesN + (1 | Hive), data = Bees_clean, REML = FALSE)
+Bees_lme4_m0_5 <-
+  lmer(log_Spobee ~ 1 + (1 | Hive), data = Bees_clean, REML = FALSE)
+```
+
+## 固定效应的显著性检验: LRT
+
+### 交互效应是否显著
+
+```{r}
+anova(Bees_lme4_m0_1, Bees_lme4_m0_2)
+```
+
+## 固定效应的显著性检验: LRT
+
+### `BeesN`效应是否显著
+
+```{r}
+anova(Bees_lme4_m0_2, Bees_lme4_m0_3)
+```
+
+## 固定效应的显著性检验: LRT
+
+### `f_Infection`效应是否显著
+
+```{r}
+anova(Bees_lme4_m0_2, Bees_lme4_m0_4)
+```
+
+## 固定效应的显著性检验: LRT
+
+### `f_Infection`效应是否显著
+
+```{r}
+anova(Bees_lme4_m0_4, Bees_lme4_m0_5)
+```
+
+## "最佳"模型
+
+```{r}
+Bees_lme4_m_best <-
+  lmer(log_Spobee ~ f_Infection + (1 | Hive), data = Bees_clean, REML = TRUE)
+```
+
+```{r}
+#| echo: false
+Bees_clean %>%
+  mutate(stand_resid = resid(Bees_lme4_m_best, type = "pearson")) %>%
+  ggplot() +
+  geom_boxplot(aes(Hive, stand_resid)) +
+  geom_line(aes(x, y), data = data.frame(x = 1:24, y = 0), linetype = 2) +
+  ylab("Pearson residuals")
+```
+
+## "最佳"模型
+
+```{r}
+#| echo: false
+Bees_clean %>%
+  mutate(stand_resid = resid(Bees_lme4_m_best, type = "pearson")) %>%
+  ggplot() +
+  geom_boxplot(aes(f_Infection, stand_resid)) +
+  geom_line(aes(x, y), data = data.frame(x = 0:3, y = 0), linetype = 2) +
+  ylab("Pearson residuals")
+```
+
+## `nlme`包：处理异方差
+
+```{r}
+Bees_lme_m0 <-
+  lme(
+    log_Spobee ~ f_Infection,
+    random = ~1 | Hive,
+    data = Bees_clean,
+    weights = varIdent(form = ~1 | f_Infection)
+  )
+```
+
+## `nlme`包：处理异方差
+
+```{r}
+#| echo: false
+text_output <- capture.output(summary(Bees_lme_m0))
+text_output[6:20] %>%
+  cat(sep = "\n")
+```
+
+## `nlme`包：处理异方差
+
+```{r}
+#| echo: false
+Bees_clean %>%
+  mutate(stand_resid = resid(Bees_lme_m0, type = "pearson")) %>%
+  ggplot() +
+  geom_boxplot(aes(f_Infection, stand_resid)) +
+  geom_line(aes(x, y), data = data.frame(x = 0:3, y = 0), linetype = 2) +
+  ylab("Pearson residuals")
+```
