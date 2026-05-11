@@ -1,6 +1,6 @@
 ---
 title: "高等数据统计分析"
-subtitle: "第十一讲：线性混合效应模型进阶"
+subtitle: "第十一讲：混合效应模型 (2)"
 author: "易湘琦"
 format:
   revealjs:
@@ -48,22 +48,10 @@ theme_set(
 )
 ```
 
-# 作业讲评
-
-## Tips
-
-- workspace `.RData`
-- find and replace
-- `map`系列函数与函数式编程（Functional Programming）
 
 ## 交叉与嵌套（crossed vs. nested）
 
-### 交叉效应
-
-当两个或多个随机因素的所有水平都能互相组合时，称为交叉效应。即，一因素的每一水平可与另一因素的每一水平配对出现。因素间无层级关系，数据呈“网格状”。
-
-- 受试者和刺激项通常是交叉的，因为每个受试者会看到多个刺激项，每个刺激项也被多个受试者看到。
-- 用户和商品交叉，每个用户购买多种商品，每个商品被多个用户购买。
+::: {.panel-tabset} 
 
 ### 嵌套效应
 
@@ -72,20 +60,34 @@ theme_set(
 - 学生嵌套在班级中，因为每个学生只属于一个班级。
 - 树木嵌套在森林地块中，因为每棵树仅生长在一个地块内。
 
-# 嵌套效应
+### 交叉效应
+
+当两个或多个随机因素的所有水平都能互相组合时，称为交叉效应。即，一因素的每一水平可与另一因素的每一水平配对出现。因素间无层级关系，数据呈“网格状”。
+
+- 受试者和刺激项通常是交叉的，因为每个受试者会看到多个刺激项，每个刺激项也被多个受试者看到。
+- 用户和商品交叉，每个用户购买多种商品，每个商品被多个用户购买。
+
+:::
 
 ## 数据集：dragons
 
+`dragons`是个虚拟的数据集[^1]，包含了来自不同山脉的龙的身体长度和测试分数。每个山脉有多个采样点，每个采样点有多条龙的数据。
+
+[^1]: 数据来源：[https://ourcodingclub.github.io/tutorials/mixed-models/](https://ourcodingclub.github.io/tutorials/mixed-models/)
+
 ```{r}
 #| echo: false
-dragons %>% select(-X) %>% head(10)
+dragons <- read_rds("data/dragons.rds")
+```
+```{r}
+rmarkdown::paged_table(dragons)
 ```
 
 ## 数据集：dragons
 
 ```{r}
 #| echo: false
-dragons %>%
+dragons |>
   ggplot(aes(bodyLength, testScore, color = mountainRange)) +
   geom_point() +
   theme(
@@ -94,53 +96,49 @@ dragons %>%
   )
 ```
 
-## lme vs. lme4: m0
+## nlme vs. lme4: m0
+`nlme`包中的`lme()`函数和`lme4`包中的`lmer()`函数都可以用来拟合线性混合效应模型。分别拟合相同结构的混合效应模型，比较它们的结果。
 
+::: {.panel-tabset}
+
+### 模型拟合
 ```{r}
-dragon_lme_m0 <- lme(testScore ~ bodyLength, random = ~1 | mountainRange,
+dragon_lme_m0 <- 
+  lme(testScore ~ bodyLength, random = ~1 | mountainRange,
                      data = dragons)
 
-dragon_lme4_m0 <- lmer(testScore ~ bodyLength + (1 | mountainRange),
+dragon_lme4_m0 <- 
+  lmer(testScore ~ bodyLength + (1 | mountainRange),
                        data = dragons)
 ```
 
-## lme vs. lme4: m0
-
-### 固定效应
-
-dragon_lme_m0
+### 固定效应 
 
 ```{r}
-#| echo: false
 s1 <- summary(dragon_lme_m0)
 coef(s1)
 ```
 
-dragon_lme4_m0
-
 ```{r}
-#| echo: false
 s2 <- summary(dragon_lme4_m0)
 coef(s2)
 ```
-
-## lme vs. lme4: m0
+> 注意：`lme4`包不提供`t value`或者 `F value`对应的 *p* 值。
 
 ### 随机效应
 
 dragon_lme_m0
 
 ```{r}
-#| echo: false
 VarCorr(dragon_lme_m0)
 ```
 
 dragon_lme4_m0
 
 ```{r}
-#| echo: false
 VarCorr(dragon_lme4_m0)
 ```
+:::
 
 ## lme vs. lme4: m1
 
@@ -160,7 +158,7 @@ dragon_lme_m1
 
 ```{r}
 #| echo: false
-summary(dragon_lme_m1) %>%
+summary(dragon_lme_m1) |>
   coef()
 ```
 
@@ -168,7 +166,7 @@ dragon_lme4_m1
 
 ```{r}
 #| echo: false
-summary(dragon_lme4_m1) %>%
+summary(dragon_lme4_m1) |>
   coef()
 ```
 
@@ -208,7 +206,7 @@ dragon_lme_m2
 
 ```{r}
 #| echo: false
-summary(dragon_lme_m2) %>%
+summary(dragon_lme_m2) |>
   coef()
 ```
 
@@ -216,7 +214,7 @@ dragon_lme4_m2
 
 ```{r}
 #| echo: false
-summary(dragon_lme4_m2) %>%
+summary(dragon_lme4_m2) |>
   coef()
 ```
 
@@ -243,7 +241,7 @@ VarCorr(dragon_lme4_m2)
 ```{r}
 #| echo: false
 text_output <- capture.output(summary(dragon_lme4_m2))
-text_output[-c(2, 3, 4, 6, 10, 17, 22, 23, 24, 25)] %>%
+text_output[-c(2, 3, 4, 6, 10, 17, 22, 23, 24, 25)] |>
   cat(sep = "\n")
 ```
 
@@ -259,7 +257,7 @@ text_output[-c(2, 3, 4, 6, 10, 17, 22, 23, 24, 25)] %>%
 politeness <-
   read_csv("data/politeness.csv", col_types = "ffffn")
 
-politeness %>%
+politeness |>
   ggplot() +
   geom_boxplot(aes(scenario, frequency, color = attitude)) +
   geom_point(
@@ -307,7 +305,7 @@ anova(politeness_lme4_m0)
 ```
 
 ```{r}
-summary(politeness_lme4_m0) %>%
+summary(politeness_lme4_m0) |>
   coef()
 ```
 
@@ -362,8 +360,6 @@ anova(politeness_lme4_m1, type = 1, ddf = "Kenward-Roger")
 
 - [lmerTest Package: Tests in Linear Mixed Effects Models](https://www.jstatsoft.org/article/view/v082i13)
 
-# 作业讲评与重点回顾
-
 ## `Bees`数据集介绍
 
 本次作业用到的数据集`Bees`包含4列：
@@ -384,7 +380,7 @@ head(Bees, n = 5)
 
 ```{r}
 #| echo: false
-Bees %>%
+Bees |>
   ggplot() +
   geom_boxplot(aes(as.factor(Infection), Spobee)) +
   geom_point(
@@ -399,7 +395,7 @@ Bees %>%
 
 ```{r}
 #| echo: false
-Bees %>%
+Bees |>
   ggplot() +
   geom_point(
     aes(BeesN, Spobee),
@@ -413,7 +409,7 @@ Bees %>%
 
 ```{r}
 #| echo: false
-Bees %>%
+Bees |>
   ggplot() +
   geom_histogram(aes(x = Spobee), color = "black", fill = "white")
 ```
@@ -422,7 +418,7 @@ Bees %>%
 
 ```{r}
 #| echo: false
-Bees %>%
+Bees |>
   ggplot() +
   geom_histogram(aes(x = log10(Spobee + 1)), color = "black", fill = "white")
 ```
@@ -440,7 +436,7 @@ Bees %>%
 
 ```{r}
 Bees_clean <-
-  Bees %>%
+  Bees |>
   mutate(
     Infection = if_else(Infection > 0, 1, 0),
     log_Spobee = log10(Spobee + 1),
@@ -465,7 +461,7 @@ Bees_lm_m0 <-
 ```{r}
 #| echo: false
 text_output <- capture.output(summary(Bees_lm_m0))
-text_output[str_length(text_output) > 5] %>%
+text_output[str_length(text_output) > 5] |>
   cat(sep = "\n")
 ```
 
@@ -480,8 +476,8 @@ plot(Bees_lm_m0)
 
 ```{r}
 #| echo: false
-Bees_clean %>%
-  mutate(stand_resid = rstandard(Bees_lm_m0)) %>%
+Bees_clean |>
+  mutate(stand_resid = rstandard(Bees_lm_m0)) |>
   ggplot() +
   geom_boxplot(aes(Hive, stand_resid)) +
   geom_line(aes(x, y), data = data.frame(x = 1:24, y = 0), linetype = 2) +
@@ -498,7 +494,7 @@ Bees_lme4_m0 <-
 ```{r}
 #| echo: false
 text_output <- capture.output(summary(Bees_lme4_m0))
-text_output[11:15] %>%
+text_output[11:15] |>
   cat(sep = "\n")
 ```
 
@@ -516,8 +512,8 @@ plot(Bees_lme4_m0)
 
 ```{r}
 #| echo: false
-Bees_clean %>%
-  mutate(stand_resid = resid(Bees_lme4_m0, type = "pearson")) %>%
+Bees_clean |>
+  mutate(stand_resid = resid(Bees_lme4_m0, type = "pearson")) |>
   ggplot() +
   geom_boxplot(aes(Hive, stand_resid)) +
   geom_line(aes(x, y), data = data.frame(x = 1:24, y = 0), linetype = 2) +
@@ -528,8 +524,8 @@ Bees_clean %>%
 
 ```{r}
 #| echo: false
-Bees_clean %>%
-  mutate(stand_resid = resid(Bees_lme4_m0, type = "pearson")) %>%
+Bees_clean |>
+  mutate(stand_resid = resid(Bees_lme4_m0, type = "pearson")) |>
   ggplot() +
   geom_boxplot(aes(f_Infection, stand_resid)) +
   geom_line(aes(x, y), data = data.frame(x = 0:3, y = 0), linetype = 2) +
@@ -546,7 +542,7 @@ Bees_lme4_m1 <-
 ```{r}
 #| echo: false
 text_output <- capture.output(summary(Bees_lme4_m1))
-text_output[11:15] %>%
+text_output[11:15] |>
   cat(sep = "\n")
 ```
 
@@ -558,7 +554,7 @@ Bees_lme4_m2 <-
 ```{r}
 #| echo: false
 text_output <- capture.output(summary(Bees_lme4_m2))
-text_output[11:15] %>%
+text_output[11:15] |>
   cat(sep = "\n")
 ```
 
@@ -573,7 +569,7 @@ anova(Bees_lme4_m0, Bees_lme4_m2)
 
 ```{r}
 text_output <- capture.output(summary(Bees_lme4_m0))
-text_output[17:22] %>%
+text_output[17:22] |>
   cat(sep = "\n")
 ```
 
@@ -589,7 +585,7 @@ Bees_lme4_m0 <-
 
 ```{r}
 text_output <- capture.output(summary(Bees_lme4_m0))
-text_output[18:23] %>%
+text_output[18:23] |>
   cat(sep = "\n")
 ```
 
@@ -649,8 +645,8 @@ Bees_lme4_m_best <-
 
 ```{r}
 #| echo: false
-Bees_clean %>%
-  mutate(stand_resid = resid(Bees_lme4_m_best, type = "pearson")) %>%
+Bees_clean |>
+  mutate(stand_resid = resid(Bees_lme4_m_best, type = "pearson")) |>
   ggplot() +
   geom_boxplot(aes(Hive, stand_resid)) +
   geom_line(aes(x, y), data = data.frame(x = 1:24, y = 0), linetype = 2) +
@@ -661,8 +657,8 @@ Bees_clean %>%
 
 ```{r}
 #| echo: false
-Bees_clean %>%
-  mutate(stand_resid = resid(Bees_lme4_m_best, type = "pearson")) %>%
+Bees_clean |>
+  mutate(stand_resid = resid(Bees_lme4_m_best, type = "pearson")) |>
   ggplot() +
   geom_boxplot(aes(f_Infection, stand_resid)) +
   geom_line(aes(x, y), data = data.frame(x = 0:3, y = 0), linetype = 2) +
@@ -686,7 +682,7 @@ Bees_lme_m0 <-
 ```{r}
 #| echo: false
 text_output <- capture.output(summary(Bees_lme_m0))
-text_output[6:20] %>%
+text_output[6:20] |>
   cat(sep = "\n")
 ```
 
@@ -694,8 +690,8 @@ text_output[6:20] %>%
 
 ```{r}
 #| echo: false
-Bees_clean %>%
-  mutate(stand_resid = resid(Bees_lme_m0, type = "pearson")) %>%
+Bees_clean |>
+  mutate(stand_resid = resid(Bees_lme_m0, type = "pearson")) |>
   ggplot() +
   geom_boxplot(aes(f_Infection, stand_resid)) +
   geom_line(aes(x, y), data = data.frame(x = 0:3, y = 0), linetype = 2) +
