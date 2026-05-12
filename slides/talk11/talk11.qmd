@@ -69,11 +69,17 @@ theme_set(
 
 :::
 
+# 嵌套效应
+
 ## 数据集：dragons
 
 `dragons`是个虚拟的数据集[^1]，包含了来自不同山脉的龙的身体长度和测试分数。每个山脉有多个采样点，每个采样点有多条龙的数据。
 
 [^1]: 数据来源：[https://ourcodingclub.github.io/tutorials/mixed-models/](https://ourcodingclub.github.io/tutorials/mixed-models/)
+
+::: {.panel-tabset}
+
+### 数据框
 
 ```{r}
 #| echo: false
@@ -83,7 +89,7 @@ dragons <- read_rds("data/dragons.rds")
 rmarkdown::paged_table(dragons)
 ```
 
-## 数据集：dragons
+### 图像
 
 ```{r}
 #| echo: false
@@ -95,18 +101,21 @@ dragons |>
     legend.title = element_blank()
   )
 ```
+:::
 
 ## nlme vs. lme4: m0
-`nlme`包中的`lme()`函数和`lme4`包中的`lmer()`函数都可以用来拟合线性混合效应模型。分别拟合相同结构的混合效应模型，比较它们的结果。
+
+- `nlme`包中的`lme()`函数和`lme4`包中的`lmer()`函数都可以用来拟合线性混合效应模型。
 
 ::: {.panel-tabset}
 
 ### 模型拟合
 ```{r}
+# nlme包中的lme函数
 dragon_lme_m0 <- 
   lme(testScore ~ bodyLength, random = ~1 | mountainRange,
                      data = dragons)
-
+# lme4包中的lmer函数
 dragon_lme4_m0 <- 
   lmer(testScore ~ bodyLength + (1 | mountainRange),
                        data = dragons)
@@ -123,17 +132,14 @@ coef(s1)
 s2 <- summary(dragon_lme4_m0)
 coef(s2)
 ```
-> 注意：`lme4`包不提供`t value`或者 `F value`对应的 *p* 值。
+> 注意：`lme4` 包不提供 `t value` 或者 `F value` 对应的 *p* 值。
 
 ### 随机效应
-
-dragon_lme_m0
 
 ```{r}
 VarCorr(dragon_lme_m0)
 ```
 
-dragon_lme4_m0
 
 ```{r}
 VarCorr(dragon_lme4_m0)
@@ -142,6 +148,9 @@ VarCorr(dragon_lme4_m0)
 
 ## lme vs. lme4: m1
 
+::: {.panel-tabset}
+
+### 模型拟合
 ```{r}
 dragon_lme_m1 <- lme(testScore ~ bodyLength, random = ~1 | mountainRange/site,
                      data = dragons)
@@ -150,104 +159,86 @@ dragon_lme4_m1 <- lmer(testScore ~ bodyLength + (1 | mountainRange/site),
                        data = dragons)
 ```
 
-## lme vs. lme4: m1
-
 ### 固定效应
 
-dragon_lme_m1
-
 ```{r}
-#| echo: false
 summary(dragon_lme_m1) |>
   coef()
 ```
 
-dragon_lme4_m1
-
 ```{r}
-#| echo: false
 summary(dragon_lme4_m1) |>
   coef()
 ```
 
-## lme vs. lme4: m1
-
 ### 随机效应
 
-dragon_lme_m1
-
 ```{r}
-#| echo: false
 VarCorr(dragon_lme_m1)
 ```
 
-dragon_lme4_m1
-
 ```{r}
-#| echo: false
 VarCorr(dragon_lme4_m1)
 ```
+:::
 
 ## lme vs. lme4: m2
 
+::: {.panel-tabset}
+
+### 模型拟合
 ```{r}
-dragon_lme_m2 <- lme(testScore ~ bodyLength, random = ~1 + bodyLength | mountainRange,
+#| warnings: true
+dragon_lme_m2 <- lme(testScore ~ bodyLength, 
+                     random = ~1 + bodyLength | mountainRange,
                      data = dragons)
 
 dragon_lme4_m2 <- lmer(testScore ~ bodyLength + (1 + bodyLength | mountainRange),
                        data = dragons)
 ```
 
-## lme vs. lme4: m2
-
 ### 固定效应
 
 dragon_lme_m2
 
 ```{r}
-#| echo: false
 summary(dragon_lme_m2) |>
   coef()
 ```
 
-dragon_lme4_m2
-
 ```{r}
-#| echo: false
 summary(dragon_lme4_m2) |>
   coef()
 ```
 
-## lme vs. lme4: m2
-
 ### 随机效应
 
-dragon_lme_m2
-
 ```{r}
-#| echo: false
 VarCorr(dragon_lme_m2)
 ```
 
-dragon_lme4_m2
-
 ```{r}
-#| echo: false
 VarCorr(dragon_lme4_m2)
 ```
+:::
 
 ## lme vs. lme4: m2
 
 ```{r}
-#| echo: false
-text_output <- capture.output(summary(dragon_lme4_m2))
-text_output[-c(2, 3, 4, 6, 10, 17, 22, 23, 24, 25)] |>
-  cat(sep = "\n")
+summary(dragon_lme4_m2) 
 ```
 
 # 交叉效应
 
 ## `politeness` 数据集
+
+`politeness`[^2]记录了不同性别（gender）的受试者（subject）在不同情境（scenario）下表达不同态度（attitude）时的声音频率。
+
+[^2]: 数据来源：[http://www.bodowinter.com/tutorial/politeness_data.csv](http://www.bodowinter.com/tutorial/politeness_data.csv)
+
+::: {.panel-tabset}
+
+### 数据框
 
 ```{r}
 #| echo: false
@@ -256,7 +247,16 @@ text_output[-c(2, 3, 4, 6, 10, 17, 22, 23, 24, 25)] |>
 # write_csv(politeness, "data/politeness.csv")
 politeness <-
   read_csv("data/politeness.csv", col_types = "ffffn")
+```
 
+```{r}
+rmarkdown::paged_table(politeness)
+```
+
+### 图像
+
+```{r}
+#| echo: false
 politeness |>
   ggplot() +
   geom_boxplot(aes(scenario, frequency, color = attitude)) +
@@ -269,15 +269,9 @@ politeness |>
     legend.title = element_blank()
   )
 ```
+:::
 
-## `politeness` 数据集
-
-```{r}
-#| echo: false
-head(politeness, n = 10)
-```
-
-## lme4
+## `lme4`构造交叉随机效应模型
 
 ```{r}
 politeness_lme4_m0 <-
@@ -356,13 +350,9 @@ library("pbkrtest")
 anova(politeness_lme4_m1, type = 1, ddf = "Kenward-Roger")
 ```
 
-## 学习资料
-
-- [lmerTest Package: Tests in Linear Mixed Effects Models](https://www.jstatsoft.org/article/view/v082i13)
-
 ## `Bees`数据集介绍
 
-本次作业用到的数据集`Bees`包含4列：
+数据集`Bees`包含4列：
 
 - `Spobee`: 病菌孢子密度
 - `Hive`：采样的蜂巢；取值$1, 2, 3\dots,24$, 对应24个蜂巢
@@ -371,9 +361,13 @@ anova(politeness_lme4_m1, type = 1, ddf = "Kenward-Roger")
 
 ```{r}
 #| echo: false
+detach("package:lmerTest", unload = TRUE)
 Bees <-
   read_csv("data/Bees.csv")
-head(Bees, n = 5)
+```
+
+```{r}
+rmarkdown::paged_table(Bees)
 ```
 
 ## 数据初步探索
@@ -460,9 +454,7 @@ Bees_lm_m0 <-
 
 ```{r}
 #| echo: false
-text_output <- capture.output(summary(Bees_lm_m0))
-text_output[str_length(text_output) > 5] |>
-  cat(sep = "\n")
+summary(Bees_lm_m0)
 ```
 
 ## 线性模型的验证
@@ -584,9 +576,7 @@ Bees_lme4_m0 <-
 ```
 
 ```{r}
-text_output <- capture.output(summary(Bees_lme4_m0))
-text_output[18:23] |>
-  cat(sep = "\n")
+summary(Bees_lme4_m0)
 ```
 
 ## 固定效应的显著性检验: LRT
@@ -697,3 +687,7 @@ Bees_clean |>
   geom_line(aes(x, y), data = data.frame(x = 0:3, y = 0), linetype = 2) +
   ylab("Pearson residuals")
 ```
+
+## 学习资料
+
+- [lmerTest Package: Tests in Linear Mixed Effects Models](https://www.jstatsoft.org/article/view/v082i13)
