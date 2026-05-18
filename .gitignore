@@ -21,3 +21,4 @@ docs/
 */*/*.html
 */*/*_files/
 slides/talk09/talk09_files/
+node_modules/

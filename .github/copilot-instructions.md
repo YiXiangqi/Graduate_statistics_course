@@ -4,9 +4,10 @@
 - **Purpose:** Graduate Statistics course materials.
 - **Structure:** `slides/talkNN/` contains `talkNN.qmd` (revealjs slides) and `homeworkNN.qmd` (HTML exercises).
 - **Workflow:** Edit `.qmd` sources; rendered `.html` may be committed in-place.
+- **Slide validation:** Use `bash scripts/render_and_check.sh talkNN` after rendering.
 
 ## Technical Stack
-- **Environment:** R, Quarto (.qmd).
+- **Environment:** R, Quarto (.qmd), Node.js (package.json at root for puppeteer-core).
 - **R Style:** 
   - Use the native pipe `|>` instead of `%>%`. 
   - `lower_snake_case` for objects/files; avoid dots in names.

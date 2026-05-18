@@ -1,0 +1,11 @@
+{
+  "name": "graduate-statistics-course",
+  "private": true,
+  "devDependencies": {
+    "puppeteer-core": "^25.0.0"
+  },
+  "scripts": {
+    "render-check": "bash scripts/render_and_check.sh",
+    "check": "node scripts/validate_slides.js"
+  }
+}

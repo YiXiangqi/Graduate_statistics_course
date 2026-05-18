@@ -1,0 +1,343 @@
+---
+title: "作业12：用 GAM 构造混合效应模型"
+subtitle: "复习第十二讲内容，掌握 mgcv 中随机效应的拟合与比较"
+author: 易湘琦
+author-title: ""
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: false
+    df-print: tibble
+execute:
+  echo: true
+  warning: false
+  message: false
+params:
+  show_solutions: false
+---
+
+## 作业目标
+
+本次作业对应第十二讲 `talk12.qmd`，目标是：
+
+1. 回顾 GAM 中平滑项的惩罚机制与 EDF 的解读。
+2. 学会使用 `gam()` + `bs = "re"` 拟合随机效应，并与 `lmer()` 结果对比。
+3. 学会使用 `gam()` + `bs = "fs"` 拟合因子-平滑交互。
+4. 能根据问题选择合适的混合效应模型结构。
+
+预计完成时间：**2-3 小时**。
+
+## 提交要求（必须遵守）
+
+- 提交：
+  - `homework12.qmd`
+  - `homework12.html`
+  - ***渲染后生成的同名文件夹***：`homework12_files`
+- 所有代码必须可运行，渲染后 HTML 不报错。
+- 文末必须包含 **AI 使用声明**（按模板填写；未使用也要填写）。
+- 报告完成本次作业花费的时间。
+
+## 本次作业会用到的 R 包
+
+```{r}
+library(tidyverse)
+library(mgcv)
+library(gratia)
+library(lme4)
+library(nlme)
+```
+
+---
+
+## Part A：GAM 回顾——sleepstudy 数据 {#part-a}
+
+本部分使用 `lme4` 包内置的 `sleepstudy` 数据集。该数据记录了 18 名受试者在 0-9 天睡眠剥夺后的反应时间。
+
+### A1
+
+加载数据，用 `str()` 查看结构。绘制每位受试者的反应时间随时间变化的折线图（按受试者分面）。
+
+```{r}
+#| eval: false
+# 你的代码
+```
+
+### A2
+
+拟合一个简单的 GAM：用 `s(Days)` 解释 `Reaction`。
+
+```{r}
+#| eval: false
+gam_a2 <- gam(Reaction ~ s(Days), data = sleepstudy, method = "REML")
+```
+
+- 输出 `summary()`。
+- 找出 `s(Days)` 的 **EDF** 值。这个值说明了什么？如果 EDF 接近 1 意味着什么，接近 k-1 又意味着什么？
+- 运行 `gam.check()`，查看诊断图。你是否看到任何异常模式？（提示：注意不同受试者间的差异是否被该模型忽略。）
+
+```{r}
+#| eval: false
+# 你的代码
+```
+
+**你的回答：**
+
+::: {.content-visible when-meta="show_solutions"}
+**解答 A2：**
+
+EDF 是"有效自由度"，衡量平滑项实际使用的弯曲能力。若 EDF 接近 1，说明趋势接近直线（强收缩）；若 EDF 接近 k-1（k 为基函数个数），说明几乎无收缩，曲线很弯曲。
+
+`gam.check()` 的残差 vs 线性预测值图可能显示明显的分组结构，因为该模型完全忽略了受试者间的差异——所有受试者共用一条平滑曲线。
+
+```{r}
+#| include: false
+gam_a2 <- gam(Reaction ~ s(Days), data = sleepstudy, method = "REML")
+summary(gam_a2)
+gam.check(gam_a2)
+```
+:::
+
+---
+
+## Part B：用 GAM 拟合随机截距 {#part-b}
+
+### B1
+
+用 `gam()` + `bs = "re"` 拟合随机截距模型：
+
+```{r}
+#| eval: false
+gam_b1 <- gam(Reaction ~ s(Days) + s(Subject, bs = "re"),
+              data = sleepstudy, method = "REML")
+```
+
+同时用 `lmer()` 拟合等价的 LMM：
+
+```{r}
+#| eval: false
+lmer_b1 <- lmer(Reaction ~ s(Days) + (1 | Subject), data = sleepstudy)
+```
+
+- 对比两个模型的固定效应系数（`coef()` 和 `fixef()`）。
+- 对比两个模型的随机效应标准差（`variance_comp()` 和 `VarCorr()` 提取）。
+- 它们的参数是否一致？为什么？
+
+**提示**：`lmer()` 中 `Reaction ~ s(Days)` 会报错，因为 `lmer()` 不认识 `s()`。你需要用 `poly(Days, 1)` 或直接使用 `Days` 来近似线性关系。这里我们用一个简化版本对比，关注随机截距部分的可比性。
+
+（实际教学中的技术说明：`lmer()` 无法直接处理平滑项，这里的对比只是为了展示随机效应部分的一致性。更严谨的做法是先用 `lm()` 的残差部分做对比，或使用 `gamm4()`。）
+
+```{r}
+#| eval: false
+# 你的代码
+```
+
+```{r}
+#| eval: false
+# 对比代码
+```
+
+**你的回答：**
+
+::: {.content-visible when-meta="show_solutions"}
+**解答 B1：**
+
+```{r}
+#| include: false
+library(gratia)
+
+sleepstudy <- sleepstudy |> mutate(Days_num = Days)
+
+gam_b1 <- gam(Reaction ~ Days + s(Subject, bs = "re"),
+              data = sleepstudy, method = "REML")
+lmer_b1 <- lmer(Reaction ~ Days + (1 | Subject), data = sleepstudy)
+
+# 固定效应对比
+tribble(
+  ~项, ~gam, ~lmer,
+  "(Intercept)",
+    coef(gam_b1)[[1]] |> round(2),
+    fixef(lmer_b1)[[1]] |> round(2),
+  "Days",
+    coef(gam_b1)[[2]] |> round(2),
+    fixef(lmer_b1)[[2]] |> round(2)
+) |>
+  knitr::kable()
+
+# 方差组分对比
+v_gam <- variance_comp(gam_b1)
+v_lmer <- as.data.frame(VarCorr(lmer_b1))
+
+tribble(
+  ~成分, ~gam, ~lmer,
+  "Subject (Intercept)",
+    v_gam |> filter(.component == "s(Subject)") |> pull(.std_dev) |> round(2),
+    attr(VarCorr(lmer_b1)$Subject, "stddev")[[1]] |> round(2),
+  "Residual",
+    v_gam |> filter(.component == "scale") |> pull(.std_dev) |> round(2),
+    sigma(lmer_b1) |> round(2)
+) |>
+  knitr::kable()
+```
+
+固定效应系数和随机效应标准差高度一致。这是因为 `bs = "re"` 使用的单位阵惩罚与 LMM 中的随机效应在数学上是等价的。
+```
+:::
+
+### B2
+
+现在添加随机斜率。如果各受试者对睡眠剥夺的反应速度不同，除了随机截距，还应考虑随机斜率。
+
+```{r}
+#| eval: false
+gam_b2 <- gam(Reaction ~ Days + s(Subject, bs = "re") +
+                s(Subject, Days, bs = "re"),
+              data = sleepstudy, method = "REML")
+```
+
+- 用 `summary()` 查看平滑项的 EDF 和显著性检验。
+- `s(Subject, Days, bs = "re")` 的 EDF 是多少？这暗示了什么？
+- 用 `AIC(gam_b1, gam_b2)` 比较两个模型。哪个模型更优？
+
+```{r}
+#| eval: false
+# 你的代码
+```
+
+**你的回答：**
+
+::: {.content-visible when-meta="show_solutions"}
+**解答 B2：**
+
+```{r}
+#| include: false
+gam_b2 <- gam(Reaction ~ Days + s(Subject, bs = "re") +
+                s(Subject, Days, bs = "re"),
+              data = sleepstudy, method = "REML")
+summary(gam_b2)
+AIC(gam_b1, gam_b2)
+```
+
+`s(Subject, Days, bs = "re")` 的 EDF 约为 12（接近最大可能值 17），说明受试者间的时间斜率变异很大，随机斜率是必要的。AIC 也支持包含随机斜率的模型。
+```
+:::
+
+---
+
+## Part C：因子-平滑交互——Orthodont 数据 {#part-c}
+
+本部分使用 `nlme` 包内置的 `Orthodont` 数据集。该数据记录了 27 名儿童（16 男 11 女）在 8、10、12、14 岁时的颅面距离测量值。
+
+### C1
+
+加载数据，绘制每位受试者的 `distance ~ age` 折线图，按性别分面。
+
+```{r}
+#| eval: false
+# 你的代码
+```
+
+### C2
+
+用 `gam()` 拟合一个包含因子-平滑交互的模型：为每位受试者（Subject）拟合各自的年龄平滑趋势。
+
+```{r}
+#| eval: false
+gam_c2 <- gam(distance ~ s(age, k = 4) + Sex + s(Subject, age, bs = "fs", m = 1, k = 4),
+              data = Orthodont, method = "REML")
+```
+
+- 输出 `summary()`。`s(Subject, age, bs = "fs")` 的 EDF 总和是多少？这意味着每位受试者的年龄趋势偏离整体趋势的程度如何？
+- 对比这个模型与一个不含 `s(Subject, age, bs = "fs")` 的模型（仅 `s(age, k = 4) + Sex`），用 AIC 比较。
+
+```{r}
+#| eval: false
+# 你的代码
+```
+
+### C3
+
+画出拟合曲线。使用 `predict()` 生成每位受试者的预测值，并按性别分面绘图。
+
+```{r}
+#| eval: false
+# 你的代码
+```
+
+**你的回答：**
+
+::: {.content-visible when-meta="show_solutions"}
+**解答 C2 / C3：**
+
+```{r}
+#| include: false
+gam_c2 <- gam(distance ~ s(age, k = 4) + Sex + s(Subject, age, bs = "fs", m = 1, k = 4),
+              data = Orthodont, method = "REML")
+summary(gam_c2)
+
+gam_c2_no_re <- gam(distance ~ s(age, k = 4) + Sex,
+                    data = Orthodont, method = "REML")
+AIC(gam_c2, gam_c2_no_re)
+
+# 拟合值
+new_data <- tidyr::expand(Orthodont, nesting(Subject, Sex), age = unique(age))
+pred_c2 <- bind_cols(new_data,
+                     as.data.frame(predict(gam_c2, newdata = new_data,
+                                           se.fit = TRUE)))
+pred_c2 |>
+  ggplot(aes(age, fit, group = Subject)) +
+  geom_line(alpha = 0.5) +
+  facet_wrap(~ Sex) +
+  labs(y = "Fitted distance (mm)", x = "Age (yr)")
+```
+
+因子-平滑交互的 EDF 总和较大（约 50+），说明儿童间的生长曲线形态差异明显。AIC 支持含随机效应的模型。
+```
+:::
+
+---
+
+## Part D：综合应用 {#part-d}
+
+从下面的数据集中选择一个（也可用课堂上的其他数据集），回答以下问题：
+
+**可选数据集**：
+- `CO2`（R 内置）：CO₂吸收率，含 Plant / Type / Treatment / conc
+- `Milk`（`nlme` 内置）：奶牛产奶量，含 Time / Cow / Diet
+- `sleepstudy`（继续 Part B 的分析）
+
+**问题**：
+
+1. 你的研究问题是什么？
+2. 哪些变量应该作为固定效应？哪些作为随机效应？为什么？
+3. 用 `gam()` 拟合你认为合适的模型。
+4. 解释输出中的 EDF 和显著性检验结果。
+5. 给出一个简短的统计结论。
+
+```{r}
+#| eval: false
+# 你的代码
+```
+
+**你的回答：**
+
+::: {.content-visible when-meta="show_solutions"}
+本部分为开放题，无标准答案。评分标准：
+
+- 合理选择固定效应和随机效应结构（2 分）
+- 模型代码正确可运行（2 分）
+- 正确解读 EDF 和显著性检验（3 分）
+- 结论合理且与数据分析一致（3 分）
+:::
+
+---
+
+## AI 使用声明
+
+请在此处说明你是否使用了 AI 工具辅助完成本次作业。如果使用了，请说明使用了哪些工具以及如何使用。（即使未使用也请填写"未使用"。）
+
+---
+
+## 花费时间
+
+本次作业你花费了____小时完成。

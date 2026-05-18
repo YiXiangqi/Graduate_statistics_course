@@ -1,0 +1,771 @@
+---
+title: "高等数据统计分析"
+subtitle: "第十二讲：用 GAM 构造混合效应模型"
+author: "易湘琦"
+format:
+  revealjs:
+    slide-number: true
+    chalkboard:
+      buttons: false
+    preview-links: auto
+    scrollable: true
+    df-print: default
+    math: mathjax
+    logo: images/JMU_logo.jpg
+    css: styles.css
+    footer: '[https://github.com/YiXiangqi/Graduate_statistics_course](https://github.com/YiXiangqi/Graduate_statistics_course)'
+execute:
+  echo: true
+  message: false
+  warning: false
+  fig-align: "center"
+---
+
+
+
+```{r}
+#| echo: false
+library(tidyverse)
+library(mgcv)
+library(gratia)
+library(itsadug)
+library(nlme)
+library(lme4)
+library(ggtext)
+library(patchwork)
+library(showtext)
+font_add("PingFang SC", regular = "/System/Library/AssetsV2/com_apple_MobileAsset_Font8/86ba2c91f017a3749571a82f2c6d890ac7ffb2fb.asset/AssetData/PingFang.ttc")
+font_add("TNR", regular = "/System/Library/Fonts/Supplemental/Times New Roman.ttf")
+showtext_auto()
+```
+
+
+
+```{r}
+#| echo: false
+theme_set(
+  theme_light(base_size = 16, base_family = "PingFang SC") +
+    theme(
+      legend.background = element_rect(fill = "transparent"),
+      legend.key = element_rect(fill = "transparent", color = NA),
+      panel.grid.minor = element_blank(),
+      panel.border = element_rect(color = "black", linewidth = 0.5, fill = NA),
+      plot.margin = margin(5, 5, 5, 5, unit = "pt")
+    )
+)
+```
+
+
+
+```{r}
+#| echo: false
+#| include: false
+
+# --- rats data preparation ---
+rats_raw <- read.table("data/rats.txt", header = TRUE)
+
+rats <-
+  rats_raw |>
+  mutate(
+    treatment = fct_recode(
+      factor(group, levels = c(2, 1, 3)),
+      Control = "2",
+      Low = "1",
+      High = "3"
+    ),
+    subject = factor(subject)
+  )
+
+# --- Mesocosm data preparation ---
+meso <- read_rds("data/Mesocosm_TA.rds")
+
+# --- GAM demo for EDF ---
+set.seed(42)
+x <- seq(0, 10, length = 50)
+y <- sin(x) + rnorm(50, sd = 0.3)
+
+gam_wiggly <- gam(y ~ s(x, sp = 1e-4), method = "REML")
+gam_smooth <- gam(y ~ s(x, sp = 100), method = "REML")
+
+# --- LMM demo for shrinkage ---
+sim_data <-
+  tibble(
+    group = factor(rep(1:5, each = 10)),
+    y = rep(c(5, 8, 6, 9, 4), each = 10) + rnorm(50, sd = 1.5)
+  )
+m_lmer <- lmer(y ~ 1 + (1 | group), data = sim_data)
+ranef_vals <- ranef(m_lmer)$group[[1]]
+fixef_val <- fixef(m_lmer)[[1]]
+
+# --- bs = re demo ---
+demo_gam <- gam(Reaction ~ Days + s(Subject, bs = "re"),
+                data = sleepstudy, method = "REML")
+demo_lmer <- lmer(Reaction ~ Days + (1 | Subject), data = sleepstudy)
+```
+
+
+
+## 你将学到
+
+::: incremental
+
+- GAM 回顾：惩罚 → 收缩 → EDF
+- LMM 回顾：随机效应的收缩
+- 连接：平滑项 $\approx$ 随机效应
+- 案例：用 `gam()` 拟合混合效应模型
+  - `bs = "re"`：随机截距 + 随机斜率
+  - `bs = "fs"`：因子-平滑交互
+- `gamm()` / `gamm4()` 简介
+
+:::
+
+
+
+## GAM 回顾：惩罚 = 对"弯曲"收税
+
+::: {.panel-tabset}
+
+### λ 小 → 曲线弯曲
+
+```{r}
+#| echo: false
+tibble(x, y) |>
+  ggplot() +
+  geom_point(aes(x, y), alpha = 0.4) +
+  geom_line(aes(x, fitted(gam_wiggly)), color = "red", linewidth = 1) +
+  labs(title = "λ 小 → 曲线过度拟合数据")
+```
+
+### λ 大 → 曲线平滑
+
+```{r}
+#| echo: false
+tibble(x, y) |>
+  ggplot() +
+  geom_point(aes(x, y), alpha = 0.4) +
+  geom_line(aes(x, fitted(gam_smooth)), color = "blue", linewidth = 1) +
+  labs(title = "λ 大 → 系数被压向零，曲线平滑")
+```
+
+:::
+
+- GAM 在最大化对数似然的同时，减去 $\lambda \times$ **"弯曲度"**惩罚
+- $\lambda$ 越大，惩罚越重，系数越被压向零 → 曲线越平滑
+
+
+
+## EDF 衡量收缩程度
+
+- **EDF（有效自由度）**：衡量一个平滑项实际用了多少"弯曲能力"
+- EDF $\approx$ 1：接近直线（强收缩）
+- EDF $\approx$ $k-1$：接近插值（几乎无收缩）
+- EDF 介于之间：部分收缩
+
+```{r}
+#| echo: false
+tibble(
+  lambda = c("1e-4", "0.1", "1", "10", "100"),
+  edf = c(
+    summary(gam_wiggly)$edf,
+    summary(gam(y ~ s(x, sp = 0.1), method = "REML"))$edf,
+    summary(gam(y ~ s(x, sp = 1), method = "REML"))$edf,
+    summary(gam(y ~ s(x, sp = 10), method = "REML"))$edf,
+    summary(gam_smooth)$edf
+  )
+) |>
+  knitr::kable(col.names = c("λ", "EDF"))
+```
+
+- 这个"收缩"机制——把估计向某个方向压——与随机效应的收缩**本质相同**
+
+
+
+## LMM 回顾：固定效应 vs 随机效应
+
+::: {.panel-tabset}
+
+### 固定效应：无收缩
+
+```{r}
+#| echo: false
+sim_data |>
+  group_by(group) |>
+  summarise(m = mean(y)) |>
+  ggplot() +
+  geom_hline(yintercept = mean(sim_data$y), linetype = 2, alpha = 0.5) +
+  geom_point(aes(group, m), size = 3, color = "red") +
+  ylim(2, 12) +
+  labs(
+    title = "固定效应：各组均值独立估计",
+    subtitle = "无收缩，各组完全自由"
+  )
+```
+
+### 随机效应：有收缩
+
+```{r}
+#| echo: false
+tibble(
+  group = factor(1:5),
+  blup = fixef_val + ranef_vals,
+  raw_mean = sim_data |> group_by(group) |> summarise(m = mean(y)) |> pull(m)
+) |>
+  ggplot() +
+  geom_hline(yintercept = fixef_val, linetype = 2, alpha = 0.5) +
+  geom_point(aes(group, raw_mean), size = 3, color = "red", alpha = 0.3) +
+  geom_point(aes(group, blup), size = 3, color = "blue") +
+  ylim(2, 12) +
+  labs(
+    title = "随机效应：各组向总体均值收缩",
+    subtitle = "蓝色 = 收缩后估计，红色（淡）= 原始组均值"
+  )
+```
+
+:::
+
+- 随机效应 = 各组的估计被"拉回"总体均值
+- **组方差小 → 拉回力度大（收缩强）；组方差大 → 拉回力度小（收缩弱）**
+
+
+
+## 连接：平滑项 ≈ 随机效应
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 4
+#| fig-align: center
+
+p_gam <-
+  tibble(x, y) |>
+  ggplot() +
+  geom_point(aes(x, y), alpha = 0.2, size = 0.8) +
+  geom_line(aes(x, fitted(gam_wiggly), color = "λ 小（wiggly）"),
+            linewidth = 1) +
+  geom_line(aes(x, fitted(gam_smooth), color = "λ 大（smooth）"),
+            linewidth = 1) +
+  scale_color_manual(values = c("λ 小（wiggly）" = "red",
+                                 "λ 大（smooth）" = "blue")) +
+  labs(title = "GAM：λ 控制平滑曲线弯曲程度",
+       color = NULL) +
+  theme(legend.position = "bottom")
+
+p_lmm <-
+  sim_data |>
+  group_by(group) |>
+  summarise(raw = mean(y)) |>
+  mutate(shrunken = fixef_val + ranef(m_lmer)$group[[1]]) |>
+  pivot_longer(c(raw, shrunken), names_to = "type", values_to = "mean") |>
+  mutate(type = fct_recode(type,
+                           "原始组均值" = "raw",
+                           "收缩后（BLUP）" = "shrunken")) |>
+  ggplot() +
+  geom_point(aes(group, mean, color = type), size = 3) +
+  geom_hline(yintercept = fixef_val, linetype = 2, alpha = 0.5) +
+  scale_color_manual(values = c("原始组均值" = "red",
+                                 "收缩后（BLUP）" = "blue")) +
+  labs(title = "LMM：组方差控制随机效应收缩",
+       color = NULL,
+       x = "group") +
+  theme(legend.position = "bottom")
+
+p_gam | p_lmm
+```
+
+- **左图**：GAM 中 $\lambda$ 控制平滑曲线的收缩
+- **右图**：LMM 中组方差控制随机效应的收缩
+- **本质相同**：都是通过一个"收缩参数"控制估计被压向零/总均值的力度
+
+
+
+## `bs = "re"` 怎么用
+
+::: {.panel-tabset}
+
+### `gam()` 写法
+
+```{r}
+gam(Reaction ~ Days + s(Subject, bs = "re"),
+    data = sleepstudy, method = "REML")
+```
+
+### `lmer()` 写法
+
+```{r}
+lmer(Reaction ~ Days + (1 | Subject), data = sleepstudy)
+```
+
+:::
+
+- `s(subject, bs = "re")` = 随机截距：每个 subject 一个基函数，单位阵惩罚
+- `s(subject, x, bs = "re")` = 随机斜率：每个 subject 对 x 的斜率随机
+
+
+
+## 何时用 `gam()` + `bs = "re"`？
+
+| 方案 | 非高斯族 | 大规模 RE | 额外功能 |
+|------|----------|-----------|----------|
+| `gam()` + `bs = "re"` | ✅ 扩展家族 | ❌ 慢 | — |
+| `gamm()` | ⚠️ PQL | 中等 | 相关结构 / 异方差 |
+| `gamm4()` | ⚠️ PQL | ✅ 高效 | — |
+
+- 教学和小规模分析：`gam()` + `bs = "re"` 最直接
+- 需要相关/方差结构：`gamm()`
+- 随机效应水平数很多：`gamm4()`
+
+
+
+# 案例一：rats 数据
+
+## 大鼠实验数据
+
+- 50 只大鼠随机分配到 3 个处理组：Control、Low、High
+- 从第 50 天开始测量头部高度（response），共 7 个时间点
+- 时间变量 `transf_time` = $\log(1 + (\text{time} - 45) / 10)$
+
+::: {.panel-tabset}
+
+### 数据表
+
+```{r}
+#| echo: false
+rats |>
+  select(subject, treatment, time, transf_time, response) |>
+  head(10) |>
+  knitr::kable()
+```
+
+### 时序图
+
+```{r}
+#| echo: false
+rats |>
+  ggplot(aes(time, response, group = subject, color = treatment)) +
+  geom_line(alpha = 0.6) +
+  facet_wrap(~ treatment, ncol = 3) +
+  labs(y = "Head height (pixels)", x = "Age (days)")
+```
+
+:::
+
+
+
+## 模型 1：随机截距
+
+```{r}
+#| eval: false
+gam_ri <- gam(response ~ treatment:transf_time + s(subject, bs = "re"),
+              data = rats, method = "REML")
+lmer_ri <- lmer(response ~ treatment:transf_time + (1 | subject),
+                data = rats)
+```
+
+::: {.panel-tabset}
+
+### 固定效应对比
+
+```{r}
+#| echo: false
+gam_ri <- gam(response ~ treatment:transf_time + s(subject, bs = "re"),
+              data = rats, method = "REML")
+lmer_ri <- lmer(response ~ treatment:transf_time + (1 | subject),
+                data = rats)
+
+tribble(
+  ~项, ~gam, ~lmer,
+  "(Intercept)",
+    coef(gam_ri)[[1]] |> round(3),
+    fixef(lmer_ri)[[1]] |> round(3),
+  "Control:transf_time",
+    coef(gam_ri)[[2]] |> round(3),
+    fixef(lmer_ri)[[2]] |> round(3),
+  "Low:transf_time",
+    coef(gam_ri)[[3]] |> round(3),
+    fixef(lmer_ri)[[3]] |> round(3),
+  "High:transf_time",
+    coef(gam_ri)[[4]] |> round(3),
+    fixef(lmer_ri)[[4]] |> round(3)
+) |>
+  knitr::kable()
+```
+
+### 方差组分对比
+
+```{r}
+#| echo: false
+v_gam <- variance_comp(gam_ri)
+
+tribble(
+  ~成分, ~gam, ~lmer,
+  "s(subject) / subject (Intercept)",
+    v_gam |> filter(.component == "s(subject)") |> pull(.std_dev) |> round(3),
+    attr(VarCorr(lmer_ri)$subject, "stddev")[[1]] |> round(3),
+  "Residual / scale",
+    v_gam |> filter(.component == "scale") |> pull(.std_dev) |> round(3),
+    sigma(lmer_ri) |> round(3)
+) |>
+  knitr::kable()
+```
+
+:::
+
+- 系数几乎完全一致！方差组分也几乎一致！
+
+
+
+## 模型 2：加入随机斜率
+
+```{r}
+#| eval: false
+gam_rs <- gam(response ~ treatment:transf_time +
+                s(subject, bs = "re") +
+                s(subject, transf_time, bs = "re"),
+              data = rats, method = "REML")
+lmer_rs <- lmer(response ~ treatment:transf_time +
+                  (1 | subject) + (0 + transf_time | subject),
+                data = rats)
+```
+
+::: {.panel-tabset}
+
+### 方差组分
+
+```{r}
+#| echo: false
+gam_rs <- gam(response ~ treatment:transf_time +
+                s(subject, bs = "re") +
+                s(subject, transf_time, bs = "re"),
+              data = rats, method = "REML")
+lmer_rs <- lmer(response ~ treatment:transf_time +
+                  (1 | subject) + (0 + transf_time | subject),
+                data = rats)
+
+v_gam2 <- variance_comp(gam_rs)
+
+tribble(
+  ~成分, ~gam, ~lmer,
+  "s(subject)",
+    v_gam2 |> filter(.component == "s(subject)") |> pull(.std_dev) |> round(3),
+    attr(VarCorr(lmer_rs)$subject, "stddev")[[1]] |> round(3),
+  "s(subject,transf_time)",
+    v_gam2 |> filter(.component == "s(subject,transf_time)") |> pull(.std_dev) |> round(3),
+    attr(VarCorr(lmer_rs)$subject.1, "stddev")[[1]] |> round(3),
+  "Scale",
+    v_gam2 |> filter(.component == "scale") |> pull(.std_dev) |> round(3),
+    sigma(lmer_rs) |> round(3)
+) |>
+  knitr::kable()
+```
+
+### EDF：收缩程度
+
+```{r}
+#| echo: false
+edf_tab <-
+  edf(gam_rs) |>
+  mutate(收缩 = if_else(.edf < 1, "强收缩（≈ 0）", "弱收缩"))
+
+knitr::kable(edf_tab)
+```
+
+### 随机效应显著性检验
+
+```{r}
+summary(gam_rs)
+```
+
+:::
+
+- 随机斜率的 EDF ≈ 0：说明几乎没有大鼠间的时间斜率变异
+- `lmer()` 给出了 singular fit 警告，对应一致
+
+
+
+## 两模型比较
+
+```{r}
+AIC(gam_ri, gam_rs)
+```
+
+- AIC 几乎相同 → 随机斜率项冗余
+- 这与 EDF 接近 0 及 `lmer()` singular fit 警告一致
+- 用 `gam()` 拟合随机效应的好处之一：EDF 直接告诉你哪些随机项被强烈收缩
+
+
+
+## 绘制模型拟合曲线
+
+```{r}
+#| echo: false
+new_data <-
+  tidyr::expand(rats, nesting(subject, treatment),
+                transf_time = unique(transf_time))
+
+m1_pred <-
+  bind_cols(new_data,
+            as.data.frame(predict(gam_ri, newdata = new_data,
+                                  se.fit = TRUE)))
+```
+
+```{r}
+#| fig-align: center
+m1_pred |>
+  ggplot(aes(transf_time, fit, group = subject, color = treatment)) +
+  geom_line(alpha = 0.6) +
+  facet_wrap(~ treatment, ncol = 3) +
+  labs(y = "Fitted head height (pixels)", x = "Transformed time")
+```
+
+
+
+# 案例二：Mesocosm TA 数据
+
+## 中尺度围隔实验数据
+
+- 8 个实验袋（Bag），分两种 CO₂ 处理（AC = 酸化 / HC = 对照）
+- 测量**总碱度（TA）**随时间的变化，实验分 4 个阶段（Stage）
+- 每个 Bag 有多次重复测量 → Bag 是合理的随机因子
+
+::: {.panel-tabset}
+
+### 数据表
+
+```{r}
+#| echo: false
+meso |>
+  select(Bag, Treatment, Day, TA, Stage) |>
+  head(10) |>
+  knitr::kable()
+```
+
+### TA 原始时序
+
+```{r}
+#| echo: false
+meso |>
+  ggplot(aes(Day, TA, color = Treatment, group = Bag)) +
+  geom_point(alpha = 0.6) +
+  geom_line(alpha = 0.4) +
+  labs(y = "TA (µM)", x = "Day")
+```
+
+:::
+
+- 问题：不同 Bag 的 TA 随时间如何变化？AC 与 HC 处理间有无显著差异？
+
+
+
+## 探索性分析：分组均值趋势
+
+- 实验分为 4 个阶段，每个阶段有营养盐添加操作
+- AC（酸化）处理的 TA 总体低于 HC（对照），随时间变化趋势不同
+
+```{r}
+#| echo: false
+#| fig-align: "center"
+ta_summary <-
+    meso |>
+    group_by(Treatment, Day, Stage) |>
+    summarise(
+        TA_mean = mean(TA, na.rm = TRUE),
+        TA_sd = sd(TA, na.rm = TRUE),
+        .groups = "drop"
+    )
+
+ta_summary |>
+    ggplot(aes(Day, TA_mean, color = Treatment)) +
+    geom_point(size = 2.5, shape = 1) +
+    geom_errorbar(aes(ymin = TA_mean - TA_sd, ymax = TA_mean + TA_sd),
+        width = 0.5
+    ) +
+    geom_line(aes(group = interaction(Treatment, Stage))) +
+    geom_vline(xintercept = c(8, 16, 20, 32), linetype = "dashed", alpha = 0.3) +
+    labs(
+        y = "TA (µM)", x = "Day",
+        title = "各处理组 TA 均值 ± SD（虚线 = 阶段切换）"
+    ) +
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()
+    )
+```
+
+
+
+
+
+## 模型 1：不含随机效应的 GAM
+
+```{r}
+ta_gam0 <- gam(TA ~ s(Day) + Treatment + Stage,
+               data = meso, method = "REML")
+```
+
+```{r}
+summary(ta_gam0)
+```
+
+- 但这里所有 Bag 共享同一条 Day 平滑曲线 → 忽略了 Bag 间的差异
+- 8 个 Bag 并非固定因子（我们关心的是全体实验袋的变异），应作为随机效应
+
+
+
+## 模型 2：含因子-平滑交互的 GAMM
+
+::: {.panel-tabset}
+
+### 模型拟合
+```{r}
+ta_gam1 <- gam(TA ~ s(Day) + Treatment + Stage +
+                 s(Bag, Day, bs = "fs", m = 1),
+               data = meso, method = "REML")
+```
+
+
+### 模型摘要
+
+```{r}
+summary(ta_gam1)
+```
+
+### 平滑项图
+
+```{r}
+plot(ta_gam1, page = 1, scheme = 1)
+```
+
+- `s(Bag, Day, bs = "fs", m = 1)`：每个 Bag 有自己的 Day 平滑，共享惩罚参数
+
+### AIC比较
+对比模型 1 和 2 的 AIC：
+
+```{r}
+AIC(ta_gam0, ta_gam1)
+```
+
+- AIC 大幅下降 → 随机效应必要
+
+:::
+
+
+
+
+## 模型 3：分组趋势比较
+
+允许 AC 和 HC 各自有独立的 Day 平滑趋势：
+
+```{r}
+ta_gam2 <- gam(TA ~ s(Day, by = Treatment) + Treatment + Stage +
+                 s(Bag, Day, bs = "fs", m = 1),
+               data = meso, method = "REML")
+```
+
+```{r}
+summary(ta_gam2)
+```
+
+- `s(Day, by = Treatment)` 分别为 AC 和 HC 拟合平滑项
+- EDF 差异反映两组时间趋势形态的不同
+
+
+
+## AC 与 HC 的 TA 差异何时显著？
+
+::: {.panel-tabset}
+
+### 数据处理
+
+```{r}
+ta_diff <-
+  get_difference(ta_gam2,
+                 comp = list(Treatment = c("HC", "AC")),
+                 cond = list(Day = seq(0, 36, length = 100),
+                             Stage = factor(1, levels = 1:4)),
+                 rm.ranef = TRUE)
+```
+
+### 绘图代码
+
+```{r}
+#| eval: false
+ta_diff |>
+  ggplot() +
+  geom_line(aes(Day, difference)) +
+  geom_ribbon(aes(x = Day, y = difference,
+                  ymax = difference + CI,
+                  ymin = difference - CI),
+              fill = "grey", alpha = 0.5) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  labs(y = "TA difference (HC − AC) (µM)", x = "Day",
+       title = "AC 与 HC 处理组的 TA 差异")
+```
+
+### 结果图
+
+```{r}
+#| echo: false
+ta_diff |>
+  ggplot() +
+  geom_line(aes(Day, difference)) +
+  geom_ribbon(aes(x = Day, y = difference,
+                  ymax = difference + CI,
+                  ymin = difference - CI),
+              fill = "grey", alpha = 0.5) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  labs(y = "TA difference (HC − AC) (µM)", x = "Day",
+       title = "AC 与 HC 处理组的 TA 差异")
+```
+
+- 灰色带状：95% 置信区间
+- 带状不包含零的时段 → 两处理间 TA 差异显著
+- 注意：前期（Day < 8）和后期（Day > 30）差异较小；中期（Day 10–25）差异最大
+
+:::
+
+
+## 模型比较与选择
+
+```{r}
+tribble(
+  ~模型, ~描述, ~AIC,
+  "ta_gam0", "仅固定效应：s(Day) + Treatment + Stage",
+    AIC(ta_gam0) |> round(1),
+  "ta_gam1", "含 fs 随机效应",
+    AIC(ta_gam1) |> round(1),
+  "ta_gam2", "分组平滑 + fs 随机效应",
+    AIC(ta_gam2) |> round(1)
+) |>
+  knitr::kable()
+```
+
+- ta_gam2（分组趋势 + 随机效应）AIC 最低
+- 最终模型同时捕捉了：
+  - 处理组间的时间趋势差异（`by = Treatment`）
+  - 实验袋间的随机变异（`bs = "fs"`）
+  - 实验阶段的整体影响（`Stage`）
+
+
+
+# 总结
+
+## 核心要点
+
+::: incremental
+
+- GAM 的惩罚项与 LMM 的随机效应共享相同的收缩机制
+- `s(subject, bs = "re")` 等价于 `(1 | subject)`
+- `s(subject, x, bs = "re")` 等价于 `(0 + x | subject)`
+- `s(factor, x, bs = "fs")` 为每个因子水平拟合相似的平滑趋势
+- `gam()` 拟合混合效应模型的优势：
+  - 统一框架：平滑 + 随机效应 + 非高斯族
+  - EDF 直接显示收缩程度
+  - 随机效应的显著性检验（Wood 2013）
+
+:::
+
+## 参考资源
+
+- Wood, S. N. (2017). *Generalized Additive Models* (2nd ed.), §5.8
+- [Gavin Simpson: Using random effects in GAMs with mgcv](https://fromthebottomoftheheap.net/2021/02/02/random-effects-in-gams/)
+- Fahrmeir et al. (2013). *Regression: Models, Methods and Applications*
