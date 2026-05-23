@@ -1,125 +1,69 @@
 # AGENTS.md — Graduate Statistics Course
 
-## Repository
+## Quarto conventions
 
-Graduate-level statistics course taught in Chinese (高等数据统计分析) by 易湘琦.
-Remote: `git@github.com:YiXiangqi/Graduate_statistics_course.git`
+- Talks: `slides/talkNN/talkNN.qmd` (revealjs), homework: `slides/talkNN/homeworkNN.qmd` (HTML)
+- Slides: `##` = new slide, `#` = section divider
+- Chunk options: hash-pipe syntax (`#|`), defaults in YAML `execute:` block — no `knitr::opts_chunk$set()`
+- YAML header template:
+  ```yaml
+  format:
+    revealjs:
+      slide-number: true
+      scrollable: true
+      df-print: default
+  execute:
+    echo: true
+    warning: false
+    message: false
+    fig-align: "center"
+  ```
+- Incremental lists: `::: incremental` / `:::`
+- Math: `$...$` inline, `$$...$$` display
+- Tabbed panels: `::: {.panel-tabset}` / `### Tab name` / content / `:::`
 
-## Structure
+## R code style
 
-| Path | What |
-|------|------|
-| `slides/talkNN/` | `talkNN.qmd` (revealjs slides) + `homeworkNN.qmd` (HTML exercises) |
-| `apps/student_selector_shiny/` | Standalone Shiny app (`app.R`, `R/`, `tests/`) |
-| `cases/linear_regression/` | Case study |
-| `docs/superpowers/plans/` | Talk development plans |
-| `docs/superpowers/specs/` | Homework/slide specs for OpenCode |
+- `|>` not `%>%`, `lower_snake_case`, `tidyverse`-first
+- Chinese text in plots → use `showtext`:
+  ```r
+  library(showtext)
+  font_add("PingFang SC", regular = "<path-to>/PingFang.ttc")
+  font_add("TNR", regular = "<path-to>/Times New Roman.ttf")
+  showtext_auto()
+  theme_set(theme_light(base_size = 16, base_family = "PingFang SC") + ...)
+  ```
+  Find font paths: `systemfonts::match_fonts("PingFang SC")$path`
+- No `dev: ragg_png` with showtext; no `expression()` in labels
 
-No CI. No pre-commit hooks. Node.js tools managed via `npm` (package.json at root).
+## .Rmd → .qmd conversion checklist
 
-## Tech
+When adapting ioslides `.Rmd` to revealjs `.qmd`:
 
-- **Language**: R, Quarto (.qmd)
-- **R style**: native pipe `|>` (not `%>%`), `lower_snake_case`, `tidyverse`-first
-- **Quarto format**: `revealjs` for talks, `html` for homework
-- **Key R packages**: `tidyverse`, `patchwork`, `nlme`, `lme4`, `mgcv`, `gstat`, `sp`
-- **Rproj defaults**: 2-space tabs, UTF-8
+1. Replace YAML header with Quarto `format: revealjs:` block
+2. `%>%` → `|>` throughout
+3. `<div style="...">` → `::: {style="..."}` fenced divs
+4. `<div align="center"><img ...>` → `::: {style="text-align: center;"} ![](images/...){width="NN%"} :::`
+5. Remove `knitr::opts_chunk$set()`, rely on YAML `execute:` defaults
+6. Add `showtext` setup if plots contain Chinese text
+7. Add `#| fig-align: center` to every plot-producing chunk
+8. Fix data paths: `Data/...` → `data/`
 
-## Workflow
-
-- **Render a talk**: `quarto render slides/talkNN/talkNN.qmd`
-- **Render + auto-validate**: `bash scripts/render_and_check.sh talkNN`
-- **Render a homework**: `quarto render slides/talkNN/homeworkNN.qmd`
-- **Render everything**: `quarto render`
-- Rendered `.html` and `*_files/` dirs are committed in-place (some `_files/` dirs gitignored — check `.gitignore`)
-- **Slide validation**: `node scripts/validate_slides.js slides/talkNN/talkNN.html`
-
-## Render verification (automated)
-
-After `quarto render`, run the slide checker:
+## After editing: render + validate
 
 ```bash
 bash scripts/render_and_check.sh talkNN
 ```
+Prerequisite: `npm install` (puppeteer-core).
 
-This launches headless Chrome (via puppeteer-core) and parses the rendered revealjs presentation. It only checks slides that changed (via `git diff` on the `.qmd`).
+- **0 FAILs required**; WARNs acceptable for `scrollable: true` talks
+- **Slide numbers** in validator output match the rendered HTML — use these when user says "slide N"
+- **R3 (image centering)**: auto-fix covers R chunks only. Markdown `![]()` images need manual fix
 
-### Detection rules
+## Homework solutions
 
-| Rule | Checks | Severity | Auto-fix |
-|------|--------|----------|----------|
-| R1 | `<img>` rendered height < 10px | FAIL | — |
-| R2 | `r-stretch` image < 15% of slide height | WARN | — |
-| R3 | Image not horizontally centered in slide | WARN | ✓ Adds `#\| fig-align: center` |
-| R4 | Image file referenced but missing on disk | FAIL | — |
-| R5 | `r-stretch` image followed by block content | WARN | — |
-| R6 | Any element overflows slide boundaries | FAIL / WARN¹ | — |
-| R7 | Two slide elements overlap | WARN | — |
-| R8 | Chinese text in plot but no showtext setup | WARN | — |
-
-¹ `FAIL` for non-scrollable talks; downgraded to `WARN` when `.qmd` YAML declares `scrollable: true`.
-
-### Fix workflow
-
-1. **R3** is auto-fixed in `.qmd` — no action needed
-2. **Other issues** — opencode will present each with fix options
-
-### Prerequisites
-
-```bash
-npm install   # installs puppeteer-core in project root
+```yaml
+params:
+  show_solutions: false
 ```
-
-## Quarto conventions
-
-- Slide headings: level-2 (`##`) = new slide
-- Incremental lists: `::: incremental` / `:::` fenced divs (or `{.incremental}` attr)
-- Chunk options: hash-pipe syntax (`#|`)
-- Chunk defaults: `echo: true`, `warning: false`, `message: false`
-- Math: LaTeX inline `$...$` and display `$$...$$`
-
-## Homework solutions pattern
-
-- `show_solutions` param in YAML: `params: show_solutions: false`
-- Wrapped in:
-  `::: {.content-visible when-meta="show_solutions"}`
-  **Solution:** ...
-  `:::`
-
-## Chinese / Greek font rendering in plots
-
-macOS default fonts (Helvetica, serif) lack Chinese glyphs. Chinese fonts (PingFang SC, Songti SC) lack Greek letters and arrows (λ, →).
-
-**Fix** — use `showtext` with explicit font registration in the setup chunk:
-
-```r
-library(showtext)
-font_add("PingFang SC", regular = "<path-to>/PingFang.ttc")
-font_add("TNR", regular = "<path-to>/Times New Roman.ttf")
-showtext_auto()
-```
-
-Then in the theme: `theme_light(base_family = "PingFang SC")`. `showtext` auto-falls back to TNR for glyphs PingFang SC lacks (λ, →, etc.).
-
-On macOS, find font paths via `systemfonts::match_fonts("PingFang SC")$path` and `match_fonts("Times New Roman")$path`.
-
-**Do NOT** use `dev: ragg_png` when showtext is active — they conflict. Use the default `png()` device.
-
-Also: avoid `expression()` in plot labels (may interfere with font rendering); use plain strings with Unicode literals instead (e.g., `"λ 小 → ..."`).
-
-## .gitignore notable entries
-
-```
-*.html
-*/*/*_cache
-slides/talkNN/talkNN_files/
-slides/talkNN/homeworkNN_files/
-cases/linear_regression/MLR_files
-docs/
-```
-
-HTML and `_files/` dirs may be tracked (talk05, talk09) or untracked — check before adding.
-
-## Existing instructions
-
-`.github/copilot-instructions.md` contains the same style/formatting rules above. Keep in sync.
+Wrap solutions: `::: {.content-visible when-meta="show_solutions"}` ... `:::`
