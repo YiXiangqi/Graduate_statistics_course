@@ -289,6 +289,9 @@ gam(Reaction ~ Days + s(Subject, bs = "re"),
     data = sleepstudy, method = "REML")
 ```
 
+- `s(subject, bs = "re")` = 随机截距：每个 subject 一个基函数，单位阵惩罚
+- `s(subject, x, bs = "re")` = 随机斜率：每个 subject 对 x 的斜率随机
+
 ### `lmer()` 写法
 
 ```{r}
@@ -297,12 +300,10 @@ lmer(Reaction ~ Days + (1 | Subject), data = sleepstudy)
 
 :::
 
-- `s(subject, bs = "re")` = 随机截距：每个 subject 一个基函数，单位阵惩罚
-- `s(subject, x, bs = "re")` = 随机斜率：每个 subject 对 x 的斜率随机
 
 
 
-## 何时用 `gam()` + `bs = "re"`？
+## GAMM 在R中的不同实现方式对比
 
 | 方案 | 非高斯族 | 大规模 RE | 额外功能 |
 |------|----------|-----------|----------|
@@ -310,18 +311,14 @@ lmer(Reaction ~ Days + (1 | Subject), data = sleepstudy)
 | `gamm()` | ⚠️ PQL | 中等 | 相关结构 / 异方差 |
 | `gamm4()` | ⚠️ PQL | ✅ 高效 | — |
 
-- 教学和小规模分析：`gam()` + `bs = "re"` 最直接
-- 需要相关/方差结构：`gamm()`
-- 随机效应水平数很多：`gamm4()`
-
-
-
 # 案例一：rats 数据
 
-## 大鼠实验数据
+## 大鼠实验数据[^1]
 
-- 50 只大鼠随机分配到 3 个处理组：Control、Low、High
-- 从第 50 天开始测量头部高度（response），共 7 个时间点
+[^1]: 数据来源：[https://www.uni-goettingen.de/de/551625.html](https://www.uni-goettingen.de/de/551625.html)
+
+- 大鼠随机分配到 3 个处理组：Control、Low、High
+- 第 50 天开始测量头部高度（response），共 7 个时间点
 - 时间变量 `transf_time` = $\log(1 + (\text{time} - 45) / 10)$
 
 ::: {.panel-tabset}
@@ -336,17 +333,29 @@ rats |>
   knitr::kable()
 ```
 
-### 时序图
+### 时序图 I
 
 ```{r}
 #| echo: false
 rats |>
   ggplot(aes(time, response, group = subject, color = treatment)) +
+  geom_point(alpha = 0.6) +
   geom_line(alpha = 0.6) +
   facet_wrap(~ treatment, ncol = 3) +
   labs(y = "Head height (pixels)", x = "Age (days)")
 ```
 
+### 时序图 II
+```{r}
+#| echo: false
+rats |>
+  ggplot(aes(transf_time, response, group = subject, color = treatment)) +
+  geom_point(alpha = 0.6) +
+  geom_line(alpha = 0.6) +
+  facet_wrap(~ treatment, ncol = 3) +
+  labs(y = "Head height (pixels)", x = "Transformed time")
+
+```
 :::
 
 
@@ -354,9 +363,10 @@ rats |>
 ## 模型 1：随机截距
 
 ```{r}
-#| eval: false
+#| warning: true
 gam_ri <- gam(response ~ treatment:transf_time + s(subject, bs = "re"),
               data = rats, method = "REML")
+
 lmer_ri <- lmer(response ~ treatment:transf_time + (1 | subject),
                 data = rats)
 ```
@@ -367,45 +377,25 @@ lmer_ri <- lmer(response ~ treatment:transf_time + (1 | subject),
 
 ```{r}
 #| echo: false
-gam_ri <- gam(response ~ treatment:transf_time + s(subject, bs = "re"),
-              data = rats, method = "REML")
-lmer_ri <- lmer(response ~ treatment:transf_time + (1 | subject),
-                data = rats)
-
 tribble(
-  ~项, ~gam, ~lmer,
-  "(Intercept)",
-    coef(gam_ri)[[1]] |> round(3),
-    fixef(lmer_ri)[[1]] |> round(3),
-  "Control:transf_time",
-    coef(gam_ri)[[2]] |> round(3),
-    fixef(lmer_ri)[[2]] |> round(3),
-  "Low:transf_time",
-    coef(gam_ri)[[3]] |> round(3),
-    fixef(lmer_ri)[[3]] |> round(3),
-  "High:transf_time",
-    coef(gam_ri)[[4]] |> round(3),
-    fixef(lmer_ri)[[4]] |> round(3)
+  ~ 项, ~ gam, ~ lmer,
+  "(Intercept)", coef(gam_ri)[[1]] |> round(3), fixef(lmer_ri)[[1]] |> round(3),
+  "Control:transf_time", coef(gam_ri)[[2]] |> round(3), fixef(lmer_ri)[[2]] |> round(3),
+  "Low:transf_time", coef(gam_ri)[[3]] |> round(3), fixef(lmer_ri)[[3]] |> round(3),
+  "High:transf_time", coef(gam_ri)[[4]] |> round(3), fixef(lmer_ri)[[4]] |> round(3)
 ) |>
   knitr::kable()
 ```
 
 ### 方差组分对比
 
+- `lmer()`:
 ```{r}
-#| echo: false
-v_gam <- variance_comp(gam_ri)
-
-tribble(
-  ~成分, ~gam, ~lmer,
-  "s(subject) / subject (Intercept)",
-    v_gam |> filter(.component == "s(subject)") |> pull(.std_dev) |> round(3),
-    attr(VarCorr(lmer_ri)$subject, "stddev")[[1]] |> round(3),
-  "Residual / scale",
-    v_gam |> filter(.component == "scale") |> pull(.std_dev) |> round(3),
-    sigma(lmer_ri) |> round(3)
-) |>
-  knitr::kable()
+summary(lmer_ri)$varcor
+```
+- `gam()`:
+```{r}
+variance_comp(gam_ri)
 ```
 
 :::
@@ -417,7 +407,6 @@ tribble(
 ## 模型 2：加入随机斜率
 
 ```{r}
-#| eval: false
 gam_rs <- gam(response ~ treatment:transf_time +
                 s(subject, bs = "re") +
                 s(subject, transf_time, bs = "re"),
@@ -431,32 +420,16 @@ lmer_rs <- lmer(response ~ treatment:transf_time +
 
 ### 方差组分
 
+- `lmer()`:
 ```{r}
-#| echo: false
-gam_rs <- gam(response ~ treatment:transf_time +
-                s(subject, bs = "re") +
-                s(subject, transf_time, bs = "re"),
-              data = rats, method = "REML")
-lmer_rs <- lmer(response ~ treatment:transf_time +
-                  (1 | subject) + (0 + transf_time | subject),
-                data = rats)
-
-v_gam2 <- variance_comp(gam_rs)
-
-tribble(
-  ~成分, ~gam, ~lmer,
-  "s(subject)",
-    v_gam2 |> filter(.component == "s(subject)") |> pull(.std_dev) |> round(3),
-    attr(VarCorr(lmer_rs)$subject, "stddev")[[1]] |> round(3),
-  "s(subject,transf_time)",
-    v_gam2 |> filter(.component == "s(subject,transf_time)") |> pull(.std_dev) |> round(3),
-    attr(VarCorr(lmer_rs)$subject.1, "stddev")[[1]] |> round(3),
-  "Scale",
-    v_gam2 |> filter(.component == "scale") |> pull(.std_dev) |> round(3),
-    sigma(lmer_rs) |> round(3)
-) |>
-  knitr::kable()
+summary(lmer_rs)$varcor
 ```
+- `gam()`:
+```{r}
+variance_comp(gam_rs)
+
+```
+
 
 ### EDF：收缩程度
 
@@ -508,22 +481,67 @@ m1_pred <-
                                   se.fit = TRUE)))
 ```
 
+::: {.panel-tabset}
+
+### `Control`
 ```{r}
 #| fig-align: center
+#| echo: false
+#| fig-height: 8
+#| fig-width: 12
 m1_pred |>
-  ggplot(aes(transf_time, fit, group = subject, color = treatment)) +
+  filter(treatment == "Control") |>
+  ggplot(aes(transf_time, fit)) +
   geom_line(alpha = 0.6) +
-  facet_wrap(~ treatment, ncol = 3) +
+  geom_point(data = rats|> filter(treatment == "Control"), aes(transf_time, response), alpha = 0.6) +
+  facet_wrap(~ subject, ncol = 6) +
   labs(y = "Fitted head height (pixels)", x = "Transformed time")
 ```
 
+### `Low`
+```{r}
+#| fig-align: center
+#| echo: false
+#| fig-height: 9
+#| fig-width: 12
+#| 
+m1_pred |>
+  filter(treatment == "Low") |>
+  ggplot(aes(transf_time, fit)) +
+  geom_line(alpha = 0.6) +
+  geom_point(data = rats|> filter(treatment == "Low"), aes(transf_time, response), alpha = 0.6) +
+  facet_wrap(~ subject, ncol = 6) +
+  labs(y = "Fitted head height (pixels)", x = "Transformed time")
+```
 
+### `High`
+```{r}
+#| fig-align: center
+#| echo: false
+#| fig-height: 9
+#| fig-width: 12
+#| 
+m1_pred |>
+  filter(treatment == "High") |>
+  ggplot(aes(transf_time, fit)) +
+  geom_line(alpha = 0.6) +
+  geom_point(data = rats|> filter(treatment == "High"), aes(transf_time, response), alpha = 0.6) +
+  facet_wrap(~ subject, ncol = 6) +
+  labs(y = "Fitted head height (pixels)", x = "Transformed time")
+```
 
+:::
 # 案例二：Mesocosm TA 数据
+
+## 背景介绍
+
+中尺度围隔实验：
+
+![](images/FOANIC-XMU-old.jpg){width=80%}
 
 ## 中尺度围隔实验数据
 
-- 8 个实验袋（Bag），分两种 CO₂ 处理（AC = 酸化 / HC = 对照）
+- 8 个实验袋（Bag），分两种 CO₂ 处理（AC = 对照 / HC = 酸化）
 - 测量**总碱度（TA）**随时间的变化，实验分 4 个阶段（Stage）
 - 每个 Bag 有多次重复测量 → Bag 是合理的随机因子
 
@@ -559,7 +577,6 @@ meso |>
 ## 探索性分析：分组均值趋势
 
 - 实验分为 4 个阶段，每个阶段有营养盐添加操作
-- AC（酸化）处理的 TA 总体低于 HC（对照），随时间变化趋势不同
 
 ```{r}
 #| echo: false
@@ -606,11 +623,6 @@ ta_gam0 <- gam(TA ~ s(Day) + Treatment + Stage,
 summary(ta_gam0)
 ```
 
-- 但这里所有 Bag 共享同一条 Day 平滑曲线 → 忽略了 Bag 间的差异
-- 8 个 Bag 并非固定因子（我们关心的是全体实验袋的变异），应作为随机效应
-
-
-
 ## 模型 2：含因子-平滑交互的 GAMM
 
 ::: {.panel-tabset}
@@ -648,9 +660,6 @@ AIC(ta_gam0, ta_gam1)
 
 :::
 
-
-
-
 ## 模型 3：分组趋势比较
 
 允许 AC 和 HC 各自有独立的 Day 平滑趋势：
@@ -664,11 +673,6 @@ ta_gam2 <- gam(TA ~ s(Day, by = Treatment) + Treatment + Stage +
 ```{r}
 summary(ta_gam2)
 ```
-
-- `s(Day, by = Treatment)` 分别为 AC 和 HC 拟合平滑项
-- EDF 差异反映两组时间趋势形态的不同
-
-
 
 ## AC 与 HC 的 TA 差异何时显著？
 
@@ -717,16 +721,13 @@ ta_diff |>
        title = "AC 与 HC 处理组的 TA 差异")
 ```
 
-- 灰色带状：95% 置信区间
-- 带状不包含零的时段 → 两处理间 TA 差异显著
-- 注意：前期（Day < 8）和后期（Day > 30）差异较小；中期（Day 10–25）差异最大
-
 :::
 
 
 ## 模型比较与选择
 
 ```{r}
+#| echo: false
 tribble(
   ~模型, ~描述, ~AIC,
   "ta_gam0", "仅固定效应：s(Day) + Treatment + Stage",
@@ -738,13 +739,6 @@ tribble(
 ) |>
   knitr::kable()
 ```
-
-- ta_gam2（分组趋势 + 随机效应）AIC 最低
-- 最终模型同时捕捉了：
-  - 处理组间的时间趋势差异（`by = Treatment`）
-  - 实验袋间的随机变异（`bs = "fs"`）
-  - 实验阶段的整体影响（`Stage`）
-
 
 
 # 总结
