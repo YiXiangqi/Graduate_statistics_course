@@ -140,10 +140,16 @@ $$
 
 ## 泊松分布（The Poisson Distribution）
 
-柏松分布是一种离散概率分布，用于描述在固定时间间隔内，某事件发生特定次数的概率。还可以推广到其它类型的空间，如空间区间，给定面积或体积内事件发生次数。典型实例：
+- 一种离散概率分布
+- 描述在固定时间间隔内，某事件发生特定次数的概率。
+- 可以推广到其它类型的空间，如空间区间，给定面积或体积内事件发生次数。
+
+典型实例：
 
 1. 客服每小时接到的电话数
 2. 放射性物质单位时间内的衰变次数
+
+## 泊松分布（The Poisson Distribution）
 
 在泊松分布中，若某区间内事件发生的期望值为 $\lambda$，则在该区间内恰好发生 k 次事件的概率为：
 
@@ -345,7 +351,7 @@ text_output[str_length(text_output) > 0] |>
   cat(sep = "\n")
 ```
 
-## 最大似然估计（maximum likelihood estimation）和离差（Deviance）
+## 最大似然估计（maximum likelihood estimation）
 
 给定一个概率分布 $D$，已知其 $pdf$（连续分布）或 $pmf$（离散分布）为 $f_D$，
 
@@ -362,7 +368,7 @@ $$
 
 ***最大似然估计*** 会在所有可能的 $\theta$ 取值中，寻找一个值使这个采样的"可能性"最大，即似然函数取到最大值。
 
-## 最大似然估计（maximum likelihood estimation）和离差（Deviance）
+## 最大似然估计（maximum likelihood estimation）
 
 在柏松 GLM 中：
 
@@ -379,7 +385,7 @@ log(L) &= \sum_i^n(log(\lambda_i^{y_i}e^{-\lambda_i}) - log(y_i!)) \\
 \end{align}
 $$
 
-## 最大似然估计（maximum likelihood estimation）和离差（Deviance）
+## 最大似然估计（maximum likelihood estimation）
 
 $$
 \begin{align}
@@ -390,7 +396,7 @@ log(L) &= \sum_i^n(log(\lambda_i^{y_i}e^{-\lambda_i}) - log(y_i!)) \\
 \end{align}
 $$
 
-## 最大似然估计（maximum likelihood estimation）和离差（Deviance）
+## 离差（Deviance）
 
 **零模型离差（Null Deviance）**：  
 饱和模型与仅包含截距项（无自变量）的基准模型的对数似然之差的 2 倍：
@@ -411,7 +417,7 @@ $$
 L(\overline{y},\dots,\overline{y}|y_1,\dots,y_n) = \prod_i^n\frac{\overline{y}^{y_i}e^{-\overline{y}}}{y_i!}
 $$
 
-## 最大似然估计（maximum likelihood estimation）和离差（Deviance）
+## 离差（Deviance）
 
 **残差离差（Residual Deviance）**：  
 饱和模型与当前模型的对数似然之差的 2 倍：
